@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import TimeEntriesView from "@/components/features/time-entries/TimeEntriesView";
+
+const title = "Wpisy Czasu - Coinect";
+---
+
+<Layout title={title}>
+  <TimeEntriesView client:load />
+</Layout>
