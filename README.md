@@ -1,94 +1,104 @@
-# 10x Astro Starter
+# Coinect
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+## Table of Contents
+1. [Project Description](#project-description)
+2. [Tech Stack](#tech-stack)
+3. [Getting Started Locally](#getting-started-locally)
+4. [Available Scripts](#available-scripts)
+5. [Project Scope](#project-scope)
+6. [Project Status](#project-status)
+7. [License](#license)
+
+## Project Description
+
+Coinect is a web application designed for freelancers who work with multiple clients. It automates the invoicing process and analyzes work patterns to help optimize rates and save time. The primary goal is to streamline administrative tasks by aggregating time tracking data from various sources and generating professional invoices automatically.
+
+### Key Features
+- **Bulk Time Entry**: Aggregate work hours from different time-tracking systems in one place.
+- **Automated Invoice Generation**: Create professional PDF invoices with a single click.
+- **AI-Powered Insights**: Analyze private work notes to identify patterns of undervalued work, such as overtime, scope creep, and rush jobs.
+- **Multi-Currency Support**: Handle invoicing in different currencies (PLN, EUR, USD) with automatic exchange rate fetching from the National Bank of Poland (NBP).
+- **Full Editability**: Modify generated invoices as needed, with a clear audit trail of changes.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+The project leverages a modern tech stack to deliver a fast, reliable, and user-friendly experience.
 
-## Prerequisites
+| Category      | Technology                                                              |
+|---------------|-------------------------------------------------------------------------|
+| **Frontend**  | [Astro](https://astro.build/) 5, [React](https://react.dev/) 19, [TypeScript](https://www.typescriptlang.org/) 5, [Tailwind CSS](https://tailwindcss.com/) 4, [Shadcn/ui](https://ui.shadcn.com/) |
+| **Backend**   | [Supabase](https://supabase.com/) (PostgreSQL, Authentication, BaaS SDK)  |
+| **AI**        | [Openrouter.ai](https://openrouter.ai/) for access to various AI models     |
+| **DevOps**    | [GitHub Actions](https://github.com/features/actions) for CI/CD, [DigitalOcean](https://www.digitalocean.com/) for hosting |
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+## Getting Started Locally
 
-## Getting Started
+To set up and run the project on your local machine, follow these steps.
 
-1. Clone the repository:
+### Prerequisites
+- **Node.js**: `v22.14.0` (as specified in the `.nvmrc` file). We recommend using a version manager like `nvm`.
+- **npm**: Comes bundled with Node.js.
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+### Installation
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/coinect.git
+    cd coinect
+    ```
 
-2. Install dependencies:
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-```bash
-npm install
-```
+3.  **Set up environment variables:**
+    Create a `.env` file in the root of the project by copying the example file:
+    ```bash
+    cp .env.example .env
+    ```
+    You will need to populate this file with your credentials for services like Supabase and Openrouter.ai.
 
-3. Run the development server:
-
-```bash
-npm run dev
-```
-
-4. Build for production:
-
-```bash
-npm run build
-```
+4.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:4321`.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+The following scripts are available in the `package.json`:
 
-## Project Structure
+-   `npm run dev`: Starts the development server with hot-reloading.
+-   `npm run build`: Builds the application for production.
+-   `npm run preview`: Serves the production build locally for previewing.
+-   `npm run lint`: Lints the codebase for errors and style issues.
+-   `npm run lint:fix`: Automatically fixes linting issues.
+-   `npm run format`: Formats the code using Prettier.
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+## Project Scope
 
-## AI Development Support
+The project is being developed in phases. The scope for the Minimum Viable Product (MVP) is defined below.
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+### In Scope (MVP)
+-   User Authentication and Authorization
+-   Client and Invoice Management
+-   Bulk Time Entry and Tracking
+-   PDF Invoice Generation
+-   Basic AI-driven insights from private notes
+-   User Onboarding and In-app Notifications
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+### Out of Scope (Post-MVP)
+-   Advanced analytics dashboards and custom reports.
+-   Direct integrations with third-party time trackers (e.g., Jira, ClickUp).
+-   Team collaboration features (e.g., multi-user accounts, roles).
+-   Advanced invoicing features like recurring invoices, pro-formas, and corrections.
 
-### Cursor IDE
+## Project Status
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+**Current Status:** In Development
 
-### GitHub Copilot
-
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
-
-### Windsurf
-
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+This project is currently in the **MVP development phase**. It is not yet ready for production use. The focus is on implementing the core features outlined in the project scope.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
