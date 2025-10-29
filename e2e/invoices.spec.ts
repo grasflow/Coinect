@@ -26,7 +26,7 @@ test.describe("Zarządzanie fakturami", () => {
     await expect(authenticatedPage).toHaveURL("/invoices/new");
   });
 
-  test("filtruje faktury po statusie", async ({ authenticatedPage, testData }) => {
+  test("filtruje faktury po statusie", async ({ authenticatedPage }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -68,7 +68,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("filtruje faktury po walucie", async ({ authenticatedPage, testData }) => {
+  test("filtruje faktury po walucie", async ({ authenticatedPage }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -107,7 +107,7 @@ test.describe("Zarządzanie fakturami", () => {
     expect(clearedCount).toBeGreaterThanOrEqual(filteredCount);
   });
 
-  test("pobiera PDF faktury", async ({ authenticatedPage, testData }) => {
+  test("pobiera PDF faktury", async ({ authenticatedPage }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -128,7 +128,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("edytuje fakturę", async ({ authenticatedPage, testData }) => {
+  test("edytuje fakturę", async ({ authenticatedPage }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -148,7 +148,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("oznacza fakturę jako zapłaconą/niezapłaconą", async ({ authenticatedPage, testData }) => {
+  test("oznacza fakturę jako zapłaconą/niezapłaconą", async ({ authenticatedPage }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -255,7 +255,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("wyświetla podsumowanie kwot faktur", async ({ authenticatedPage, testData }) => {
+  test("wyświetla podsumowanie kwot faktur", async ({ authenticatedPage }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
