@@ -3,11 +3,23 @@ import type { AstroCookies } from "astro";
 
 import type { Database } from "./database.types";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY || process.env.SUPABASE_KEY;
+function getEnvVar(name: string): string {
+  const value = process.env[name] || import.meta.env[name];
+  if (!value) {
+    throw new Error(`Missing ${name} environment variable`);
+  }
+  return value;
+}
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase environment variables");
+function getSupabaseConfig() {
+  const url = getEnvVar("SUPABASE_URL");
+  const key = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || import.meta.env.SUPABASE_KEY || import.meta.env.SUPABASE_ANON_KEY;
+  
+  if (!key) {
+    throw new Error("Missing SUPABASE_KEY or SUPABASE_ANON_KEY environment variable");
+  }
+  
+  return { url, key };
 }
 
 /**
@@ -15,7 +27,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
  * Zarządza sesjami przez cookies
  */
 export function createSupabaseServerClient(cookies: AstroCookies) {
-  return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+  const config = getSupabaseConfig();
+  return createServerClient<Database>(config.url, config.key, {
     cookies: {
       get(key: string) {
         return cookies.get(key)?.value;

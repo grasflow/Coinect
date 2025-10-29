@@ -104,6 +104,16 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.SUPABASE_URL }}" ] || [ -z "${{ secrets.SUPABASE_ANON_KEY }}" ]; then
+            echo "❌ Error: Missing required Supabase secrets"
+            echo "Please configure SUPABASE_URL and SUPABASE_ANON_KEY in:"
+            echo "GitHub → Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          echo "✅ All required secrets are configured"
+
       - name: Create .env.test file for E2E tests
         run: |
           cat > .env.test << EOF
@@ -114,6 +124,7 @@ jobs:
           TEST_USER_EMAIL=${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD }}
           EOF
+          echo "✅ Created .env.test file (secrets are masked in logs)"
 
       - name: Run E2E tests
         run: npm run test:e2e
