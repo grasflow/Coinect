@@ -26,7 +26,7 @@ test.describe("Zarządzanie fakturami", () => {
     await expect(authenticatedPage).toHaveURL("/invoices/new");
   });
 
-  test("filtruje faktury po statusie", async ({ authenticatedPage, testData: _testData }) => {
+  test("filtruje faktury po statusie", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -41,7 +41,7 @@ test.describe("Zarządzanie fakturami", () => {
     expect(filteredCount).toBeLessThanOrEqual(initialCount);
   });
 
-  test("filtruje faktury po kliencie", async ({ authenticatedPage, testData: _testData }) => {
+  test("filtruje faktury po kliencie", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -68,7 +68,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("filtruje faktury po walucie", async ({ authenticatedPage, testData: _testData }) => {
+  test("filtruje faktury po walucie", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -81,7 +81,7 @@ test.describe("Zarządzanie fakturami", () => {
     expect(typeof filteredCount).toBe("number");
   });
 
-  test("wyczyszcza filtry", async ({ authenticatedPage, testData: _testData }) => {
+  test("wyczyszcza filtry", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -107,7 +107,7 @@ test.describe("Zarządzanie fakturami", () => {
     expect(clearedCount).toBeGreaterThanOrEqual(filteredCount);
   });
 
-  test("pobiera PDF faktury", async ({ authenticatedPage, testData: _testData }) => {
+  test("pobiera PDF faktury", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -128,7 +128,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("edytuje fakturę", async ({ authenticatedPage, testData: _testData }) => {
+  test("edytuje fakturę", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -148,7 +148,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("oznacza fakturę jako zapłaconą/niezapłaconą", async ({ authenticatedPage, testData: _testData }) => {
+  test("oznacza fakturę jako zapłaconą/niezapłaconą", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -255,7 +255,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("wyświetla podsumowanie kwot faktur", async ({ authenticatedPage, testData: _testData }) => {
+  test("wyświetla podsumowanie kwot faktur", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
