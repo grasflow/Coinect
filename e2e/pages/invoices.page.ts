@@ -48,17 +48,20 @@ export class InvoicesPage {
     this.emptyState = page.locator("text=Brak faktur");
 
     // Filters
-    this.clientFilter = page.locator('#filter-client').locator('..').locator('[data-slot="select-trigger"]');
-    this.statusFilter = page.locator('#filter-status').locator('..').locator('[data-slot="select-trigger"]');
-    this.currencyFilter = page.locator('#filter-currency').locator('..').locator('[data-slot="select-trigger"]');
-    this.dateRangeFilter = page.locator('button').filter({ hasText: /Wybierz zakres/ });
+    this.clientFilter = page.locator("#filter-client").locator("..").locator('[data-slot="select-trigger"]');
+    this.statusFilter = page.locator("#filter-status").locator("..").locator('[data-slot="select-trigger"]');
+    this.currencyFilter = page.locator("#filter-currency").locator("..").locator('[data-slot="select-trigger"]');
+    this.dateRangeFilter = page.locator("button").filter({ hasText: /Wybierz zakres/ });
     this.clearFiltersButton = page.locator("button").filter({ hasText: "Wyczyść filtry" }).first();
 
     // Invoice actions
     this.downloadPdfButtons = page.locator('button[title="Pobierz PDF"]');
     this.editButtons = page.locator('button[title="Edytuj fakturę"]');
     this.deleteButtons = page.locator('button[title="Usuń fakturę"]');
-    this.togglePaidButtons = page.locator('button[title*="Oznacz jako"]').or(page.locator('button').locator('svg[class*="text-green"]').locator('..')).or(page.locator('button').locator('svg[class*="text-muted"]').locator('..'));
+    this.togglePaidButtons = page
+      .locator('button[title*="Oznacz jako"]')
+      .or(page.locator("button").locator('svg[class*="text-green"]').locator(".."))
+      .or(page.locator("button").locator('svg[class*="text-muted"]').locator(".."));
 
     // Pagination
     this.previousPageButton = page.locator("button").filter({ hasText: "Poprzednia" });
@@ -83,7 +86,7 @@ export class InvoicesPage {
 
   async filterByClient(clientName: string) {
     // Ensure page is fully loaded and hydrated
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState("domcontentloaded");
     // Wait for filter to be ready
     await this.clientFilter.waitFor({ state: "visible", timeout: 5000 });
     await this.page.waitForTimeout(500);
@@ -100,11 +103,11 @@ export class InvoicesPage {
     const statusText = {
       all: "Wszystkie",
       paid: "Zapłacone",
-      unpaid: "Niezapłacone"
+      unpaid: "Niezapłacone",
     };
 
     // Ensure page is fully loaded and hydrated
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState("domcontentloaded");
     // Wait for filter to be ready
     await this.statusFilter.waitFor({ state: "visible", timeout: 5000 });
     await this.page.waitForTimeout(500);
@@ -122,11 +125,11 @@ export class InvoicesPage {
       all: "Wszystkie",
       PLN: "PLN",
       EUR: "EUR",
-      USD: "USD"
+      USD: "USD",
     };
 
     // Ensure page is fully loaded and hydrated
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState("domcontentloaded");
     // Wait for filter to be ready
     await this.currencyFilter.waitFor({ state: "visible", timeout: 5000 });
     await this.page.waitForTimeout(500);
@@ -149,7 +152,7 @@ export class InvoicesPage {
     const invoiceRow = await this.getInvoiceRow(invoiceNumber);
     const downloadButton = invoiceRow.locator('button[title="Pobierz PDF"]');
 
-    const downloadPromise = this.page.waitForEvent('download');
+    const downloadPromise = this.page.waitForEvent("download");
     await downloadButton.click();
     return downloadPromise;
   }
@@ -175,8 +178,8 @@ export class InvoicesPage {
     this.deleteDialog = this.page.locator('[role="dialog"]').filter({ hasText: "Potwierdź usunięcie" });
     this.deleteDialogTitle = this.deleteDialog.locator('[data-slot="dialog-title"]');
     this.deleteDialogDescription = this.deleteDialog.locator('[data-slot="dialog-description"]');
-    this.deleteConfirmButton = this.deleteDialog.locator('button').filter({ hasText: "Usuń fakturę" });
-    this.deleteCancelButton = this.deleteDialog.locator('button').filter({ hasText: "Anuluj" });
+    this.deleteConfirmButton = this.deleteDialog.locator("button").filter({ hasText: "Usuń fakturę" });
+    this.deleteCancelButton = this.deleteDialog.locator("button").filter({ hasText: "Anuluj" });
 
     await this.deleteConfirmButton.click();
 
@@ -217,14 +220,14 @@ export class InvoicesPage {
       if (match) return parseInt(match[1]);
     } catch {
       // Fallback: search by text content
-      const fallbackLocator = this.page.locator('text=/Lista faktur \\((\\d+)\\)/');
+      const fallbackLocator = this.page.locator("text=/Lista faktur \\((\\d+)\\)/");
       const countText = await fallbackLocator.textContent().catch(() => null);
       const match = countText?.match(/Lista faktur \((\d+)\)/);
       if (match) return parseInt(match[1]);
     }
 
     // If both fail, count table rows directly
-    const rows = this.invoicesTable.locator('tbody tr');
+    const rows = this.invoicesTable.locator("tbody tr");
     return await rows.count().catch(() => 0);
   }
 

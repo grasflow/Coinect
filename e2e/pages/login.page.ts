@@ -21,8 +21,8 @@ export class LoginPage {
 
   async login(email: string, password: string) {
     // Czekaj na załadowanie formularza
-    await this.emailInput.waitFor({ state: 'visible' });
-    await this.passwordInput.waitFor({ state: 'visible' });
+    await this.emailInput.waitFor({ state: "visible" });
+    await this.passwordInput.waitFor({ state: "visible" });
 
     // Wypełnij pola używając .pressSequentially() żeby triggerować onChange events
     // fill() nie triggeruje onChange w React, przez co formData state nie jest updated
@@ -37,10 +37,7 @@ export class LoginPage {
 
     // Kliknij submit i czekaj na odpowiedź API oraz przekierowanie
     const [response] = await Promise.all([
-      this.page.waitForResponse(
-        (resp) => resp.url().includes('/api/auth/login'),
-        { timeout: 30000 }
-      ),
+      this.page.waitForResponse((resp) => resp.url().includes("/api/auth/login"), { timeout: 30000 }),
       this.submitButton.click(),
     ]);
 
@@ -54,7 +51,7 @@ export class LoginPage {
     await this.page.waitForURL("/dashboard", { timeout: 30000 });
 
     // Czekaj na załadowanie strony
-    await this.page.waitForLoadState('load');
+    await this.page.waitForLoadState("load");
   }
 
   async waitForDashboard() {

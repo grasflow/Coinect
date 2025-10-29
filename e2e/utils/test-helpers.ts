@@ -9,7 +9,7 @@ export async function waitForToast(page: Page, expectedText?: string, timeout = 
   if (expectedText) {
     // Sonner używa data-sonner-toast jako głównego selektora
     // Używamy .first() aby obsłużyć wiele widocznych toastów z tym samym tekstem
-    const toast = page.locator('[data-sonner-toast]').filter({ hasText: expectedText }).first();
+    const toast = page.locator("[data-sonner-toast]").filter({ hasText: expectedText }).first();
 
     try {
       await toast.waitFor({ timeout });
@@ -22,7 +22,11 @@ export async function waitForToast(page: Page, expectedText?: string, timeout = 
     }
   } else {
     // Fallback do poprzedniego zachowania - ostatni toast
-    const toast = page.locator('[data-sonner-toast]').or(page.locator('[role="alert"]')).or(page.locator('.toast')).last();
+    const toast = page
+      .locator("[data-sonner-toast]")
+      .or(page.locator('[role="alert"]'))
+      .or(page.locator(".toast"))
+      .last();
 
     try {
       await toast.waitFor({ timeout });
@@ -42,7 +46,7 @@ export async function waitForToast(page: Page, expectedText?: string, timeout = 
  */
 export async function waitForLoadingToComplete(page: Page, timeout = 10000) {
   const spinner = page.locator('[data-loading="true"], .spinner, .loading');
-  await spinner.waitFor({ state: 'hidden', timeout });
+  await spinner.waitFor({ state: "hidden", timeout });
 }
 
 /**
@@ -78,7 +82,7 @@ export async function scrollToElementIfNeeded(locator: Locator) {
 export async function fillFormFields(page: Page, fields: Record<string, string>) {
   for (const [selector, value] of Object.entries(fields)) {
     const field = page.locator(selector);
-    await field.waitFor({ state: 'visible' });
+    await field.waitFor({ state: "visible" });
     await field.fill(value);
   }
 }
@@ -103,21 +107,21 @@ export async function waitForURLChange(page: Page, expectedURL: string | RegExp,
  */
 export async function checkAccessibility(locator: Locator) {
   const isFocusable = await locator.isVisible();
-  const hasAriaLabel = await locator.getAttribute('aria-label').then(attr => !!attr);
-  const hasLabel = await locator.getAttribute('aria-labelledby').then(attr => !!attr);
+  const hasAriaLabel = await locator.getAttribute("aria-label").then((attr) => !!attr);
+  const hasLabel = await locator.getAttribute("aria-labelledby").then((attr) => !!attr);
 
   return {
     isFocusable,
     hasAriaLabel,
     hasLabel,
-    isAccessible: isFocusable && (hasAriaLabel || hasLabel)
+    isAccessible: isFocusable && (hasAriaLabel || hasLabel),
   };
 }
 
 /**
  * Generuje unikalną wartość dla testów (timestamp-based)
  */
-export function generateUniqueValue(prefix = 'test') {
+export function generateUniqueValue(prefix = "test") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
@@ -125,14 +129,14 @@ export function generateUniqueValue(prefix = 'test') {
  * Formatuje datę do formatu YYYY-MM-DD
  */
 export function formatDate(date: Date = new Date()) {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 }
 
 /**
  * Formatuje datę do polskiego formatu
  */
 export function formatDatePL(date: Date = new Date()) {
-  return date.toLocaleDateString('pl-PL');
+  return date.toLocaleDateString("pl-PL");
 }
 
 /**
@@ -164,7 +168,7 @@ export async function countTableRows(tableLocator: Locator) {
  * Sprawdza czy przycisk jest aktywny/wyłączony
  */
 export async function isButtonEnabled(buttonLocator: Locator) {
-  const isDisabled = await buttonLocator.getAttribute('disabled');
+  const isDisabled = await buttonLocator.getAttribute("disabled");
   return !isDisabled;
 }
 
@@ -207,6 +211,5 @@ export async function closeModal(page: Page, modalSelector = '[role="dialog"]') 
     await page.mouse.click(10, 10);
   }
 
-  await modal.waitFor({ state: 'hidden' });
+  await modal.waitFor({ state: "hidden" });
 }
-

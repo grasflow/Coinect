@@ -24,8 +24,7 @@ export function useGUSLookup() {
       toast.success("Dane pobrane z Białej Listy VAT pomyślnie");
       return data;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Nie udało się pobrać danych z Białej Listy VAT";
+      const errorMessage = error instanceof Error ? error.message : "Nie udało się pobrać danych z Białej Listy VAT";
       toast.error(errorMessage);
       return null;
     } finally {

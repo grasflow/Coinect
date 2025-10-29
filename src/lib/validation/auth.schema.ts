@@ -7,7 +7,10 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    full_name: z.string().min(2, "Imię i nazwisko jest wymagane").max(255, "Imię i nazwisko nie może przekraczać 255 znaków"),
+    full_name: z
+      .string()
+      .min(2, "Imię i nazwisko jest wymagane")
+      .max(255, "Imię i nazwisko nie może przekraczać 255 znaków"),
     email: z.string().email("Nieprawidłowy format adresu email").max(255, "Email nie może przekraczać 255 znaków"),
     password: z
       .string()

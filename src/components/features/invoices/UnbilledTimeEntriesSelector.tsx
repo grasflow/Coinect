@@ -162,7 +162,8 @@ export function UnbilledTimeEntriesSelector({
                   <Label htmlFor={`entry-${entry.id}`} className="cursor-pointer font-normal">
                     <div className="font-medium">{entry.description}</div>
                     <div className="text-sm text-muted-foreground">
-                      {new Date(entry.date).toLocaleDateString("pl-PL")} • <HoursDisplay hours={parseFloat(entry.hours)} /> × {entry.hourly_rate}{" "}
+                      {new Date(entry.date).toLocaleDateString("pl-PL")} •{" "}
+                      <HoursDisplay hours={parseFloat(entry.hours)} /> × {entry.hourly_rate}{" "}
                       {entry.client?.currency || "PLN"}/godz.
                     </div>
                   </Label>
@@ -186,7 +187,9 @@ export function UnbilledTimeEntriesSelector({
             </div>
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Suma godzin:</span>
-              <span><HoursDisplay hours={summary.totalHours} /></span>
+              <span>
+                <HoursDisplay hours={summary.totalHours} />
+              </span>
             </div>
             <div className="flex justify-between font-semibold">
               <span>Suma do zafakturowania:</span>

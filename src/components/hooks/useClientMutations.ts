@@ -23,8 +23,7 @@ export function useClientMutations(onSuccess?: () => void) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateClientCommand }) =>
-      ClientClientService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateClientCommand }) => ClientClientService.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast.success("Klient został zaktualizowany pomyślnie");

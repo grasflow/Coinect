@@ -58,7 +58,7 @@ export async function fetchCompanyByNIP(nip: string): Promise<GusCompanyData> {
   }
 
   // In test environment, return mock data for invalid NIPs
-  const isTestEnv = import.meta.env.MODE === 'test' || import.meta.env.DEV;
+  const isTestEnv = import.meta.env.MODE === "test" || import.meta.env.DEV;
 
   // Validate NIP checksum
   if (!validateNIP(cleanNip)) {

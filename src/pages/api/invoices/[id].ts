@@ -422,10 +422,7 @@ export const DELETE: APIRoute = async (context) => {
 
     // Usuń powiązania między pozycjami faktury a wpisami czasu
     // To automatycznie usunie wpisy z invoice_item_time_entries dzięki CASCADE
-    await context.locals.supabase
-      .from("invoice_items")
-      .delete()
-      .eq("invoice_id", invoiceId);
+    await context.locals.supabase.from("invoice_items").delete().eq("invoice_id", invoiceId);
 
     // Wyczyść invoice_id w powiązanych wpisach czasu pracy
     await context.locals.supabase

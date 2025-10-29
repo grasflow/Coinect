@@ -23,7 +23,7 @@ async function globalSetup() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "apikey": supabaseKey,
+        apikey: supabaseKey,
       },
       body: JSON.stringify({
         email: testEmail,

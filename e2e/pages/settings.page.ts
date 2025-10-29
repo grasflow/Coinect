@@ -38,7 +38,9 @@ export class SettingsPage {
 
     // Main elements
     this.pageHeading = page.locator("h1").filter({ hasText: "Ustawienia" });
-    this.pageDescription = page.locator("p").filter({ hasText: "Zarządzaj swoim profilem i preferencjami fakturowania" });
+    this.pageDescription = page
+      .locator("p")
+      .filter({ hasText: "Zarządzaj swoim profilem i preferencjami fakturowania" });
     this.saveButton = page.locator("button").filter({ hasText: "Zapisz ustawienia" });
 
     // Profile form fields
@@ -157,8 +159,8 @@ export class SettingsPage {
       // Color input wymaga specjalnego traktowania
       await this.accentColorInput.evaluate((el: HTMLInputElement, color: string) => {
         el.value = color;
-        el.dispatchEvent(new Event('input', { bubbles: true }));
-        el.dispatchEvent(new Event('change', { bubbles: true }));
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
       }, profileData.accentColor);
       // Nie sprawdzamy toHaveValue dla color input - może powodować problemy z synchronizacją
     }
@@ -173,9 +175,7 @@ export class SettingsPage {
   async saveSettings() {
     // Czekaj na rozpoczęcie i zakończenie network request (akceptuj zarówno sukces jak i błąd)
     const responsePromise = this.page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/profile") &&
-        response.request().method() === "PATCH",
+      (response) => response.url().includes("/api/profile") && response.request().method() === "PATCH",
       { timeout: 10000 }
     );
 
@@ -199,6 +199,6 @@ export class SettingsPage {
   }
 
   async getLogoPreviewSrc(): Promise<string | null> {
-    return await this.logoPreview.getAttribute('src');
+    return await this.logoPreview.getAttribute("src");
   }
 }

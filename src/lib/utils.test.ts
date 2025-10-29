@@ -32,7 +32,7 @@ describe("utils", () => {
 
     it("formatuje pełne minuty", () => {
       expect(formatHoursToHumanReadable(0.5)).toBe("30m");
-      expect(formatHoursToHumanReadable(1/6)).toBe("10m");
+      expect(formatHoursToHumanReadable(1 / 6)).toBe("10m");
     });
 
     it("formatuje godziny i minuty", () => {

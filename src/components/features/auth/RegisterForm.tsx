@@ -98,7 +98,12 @@ export function RegisterForm() {
           />
         </FormField>
 
-        <FormField label="Potwierdź hasło" required errorText={errors.password_confirm?.message} htmlFor="password_confirm">
+        <FormField
+          label="Potwierdź hasło"
+          required
+          errorText={errors.password_confirm?.message}
+          htmlFor="password_confirm"
+        >
           <Input
             id="password_confirm"
             type="password"
@@ -127,34 +132,16 @@ export function RegisterForm() {
         </FormField>
 
         <FormField label="Ulica" errorText={errors.street?.message} htmlFor="street">
-          <Input
-            id="street"
-            type="text"
-            placeholder="ul. Przykładowa 123"
-            {...register("street")}
-            className="h-11"
-          />
+          <Input id="street" type="text" placeholder="ul. Przykładowa 123" {...register("street")} className="h-11" />
         </FormField>
 
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Miasto" errorText={errors.city?.message} htmlFor="city">
-            <Input
-              id="city"
-              type="text"
-              placeholder="Warszawa"
-              {...register("city")}
-              className="h-11"
-            />
+            <Input id="city" type="text" placeholder="Warszawa" {...register("city")} className="h-11" />
           </FormField>
 
           <FormField label="Kod pocztowy" errorText={errors.postal_code?.message} htmlFor="postal_code">
-            <Input
-              id="postal_code"
-              type="text"
-              placeholder="00-000"
-              {...register("postal_code")}
-              className="h-11"
-            />
+            <Input id="postal_code" type="text" placeholder="00-000" {...register("postal_code")} className="h-11" />
           </FormField>
         </div>
       </div>

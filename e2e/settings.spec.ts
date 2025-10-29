@@ -4,7 +4,7 @@ import { waitForToast } from "./utils/test-helpers";
 
 test.describe("Ustawienia profilu", () => {
   // Uruchom testy sekwencyjnie aby uniknąć race conditions przy zapisie danych profilu
-  test.describe.configure({ mode: 'serial' });
+  test.describe.configure({ mode: "serial" });
   test("wyświetla stronę ustawień", async ({ authenticatedPage }) => {
     const settingsPage = new SettingsPage(authenticatedPage);
     await settingsPage.goto();
@@ -92,27 +92,25 @@ test.describe("Ustawienia profilu", () => {
     await settingsPage.goto();
     await settingsPage.waitForPageLoad();
 
-    await settingsPage.logoUploadButton.waitFor({ state: 'visible' });
-    
+    await settingsPage.logoUploadButton.waitFor({ state: "visible" });
+
     // Kliknij przycisk upload - użyj force jeśli overlay blokuje
     await settingsPage.logoUploadButton.click({ force: true });
-    
+
     // Załaduj plik testowy
     await settingsPage.logoFileInput.setInputFiles("e2e/fixtures/test-logo.png");
-    
+
     // Czekaj na network request i kliknij przycisk "Prześlij logo"
     const responsePromise = authenticatedPage.waitForResponse(
-      (response) => 
-        response.url().includes("/api/profile/upload-logo") && 
-        response.request().method() === "POST",
+      (response) => response.url().includes("/api/profile/upload-logo") && response.request().method() === "POST",
       { timeout: 10000 }
     );
-    
+
     await settingsPage.uploadLogoButton.click({ force: true });
-    
+
     // Poczekaj na zakończenie uploadu
     await responsePromise;
-    
+
     // Sprawdź komunikat sukcesu
     await waitForToast(authenticatedPage, "Logo zostało przesłane");
 
@@ -133,7 +131,7 @@ test.describe("Ustawienia profilu", () => {
     await waitForToast(authenticatedPage, "NIP musi składać się z 10 cyfr");
 
     // Czekaj na zniknięcie toast z błędem
-    await expect(authenticatedPage.locator('[data-sonner-toast]')).toHaveCount(0, { timeout: 10000 });
+    await expect(authenticatedPage.locator("[data-sonner-toast]")).toHaveCount(0, { timeout: 10000 });
 
     // Wprowadź prawidłowy NIP
     await settingsPage.updateProfileData({ taxId: "1234567890" });
@@ -185,7 +183,7 @@ test.describe("Ustawienia profilu", () => {
     await waitForToast(authenticatedPage, "Kod pocztowy musi być w formacie XX-XXX", 10000);
 
     // Czekaj na zniknięcie toasta z błędem
-    await expect(authenticatedPage.locator('[data-sonner-toast]')).toHaveCount(0, { timeout: 10000 });
+    await expect(authenticatedPage.locator("[data-sonner-toast]")).toHaveCount(0, { timeout: 10000 });
 
     // Wprowadź prawidłowy kod pocztowy
     await settingsPage.postalCodeInput.clear();
@@ -208,7 +206,7 @@ test.describe("Ustawienia profilu", () => {
     await waitForToast(authenticatedPage, "Ustawienia zostały zapisane");
 
     // Czekaj aż toast zniknie i formularz będzie stabilny
-    await expect(authenticatedPage.locator('[data-sonner-toast]')).toHaveCount(0, { timeout: 10000 });
+    await expect(authenticatedPage.locator("[data-sonner-toast]")).toHaveCount(0, { timeout: 10000 });
     await expect(settingsPage.fullNameInput).toHaveValue("Initial State");
     await expect(settingsPage.cityInput).toHaveValue("Initial City");
 
@@ -220,7 +218,7 @@ test.describe("Ustawienia profilu", () => {
     await waitForToast(authenticatedPage, "Ustawienia zostały zapisane");
 
     // Czekaj aż toast zniknie przed reload
-    await expect(authenticatedPage.locator('[data-sonner-toast]')).toHaveCount(0, { timeout: 10000 });
+    await expect(authenticatedPage.locator("[data-sonner-toast]")).toHaveCount(0, { timeout: 10000 });
 
     // Dodatkowe oczekiwanie aby upewnić się, że dane są zapisane w bazie
     // Sprawdź, że dane są nadal widoczne (weryfikuje że zapis się zakończył)
@@ -251,7 +249,7 @@ test.describe("Ustawienia profilu", () => {
     await waitForToast(authenticatedPage, "Ustawienia zostały zapisane");
 
     // Czekaj aż toast zniknie
-    await expect(authenticatedPage.locator('[data-sonner-toast]')).toHaveCount(0, { timeout: 10000 });
+    await expect(authenticatedPage.locator("[data-sonner-toast]")).toHaveCount(0, { timeout: 10000 });
 
     // Upewnij się że wartość została zapisana
     await expect(settingsPage.fullNameInput).toHaveValue(baselineName);

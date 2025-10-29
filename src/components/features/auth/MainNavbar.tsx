@@ -68,9 +68,7 @@ export function MainNavbar({ userName, userEmail }: MainNavbarProps) {
               <div className="relative w-6 h-6">
                 <svg
                   className={`absolute inset-0 h-6 w-6 transition-all duration-300 ease-in-out ${
-                    isMobileMenuOpen
-                      ? 'rotate-180 opacity-0 scale-75'
-                      : 'rotate-0 opacity-100 scale-100'
+                    isMobileMenuOpen ? "rotate-180 opacity-0 scale-75" : "rotate-0 opacity-100 scale-100"
                   }`}
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -78,18 +76,11 @@ export function MainNavbar({ userName, userEmail }: MainNavbarProps) {
                   stroke="currentColor"
                   aria-hidden="true"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
                 <svg
                   className={`absolute inset-0 h-6 w-6 transition-all duration-300 ease-in-out ${
-                    isMobileMenuOpen
-                      ? 'rotate-0 opacity-100 scale-100'
-                      : '-rotate-180 opacity-0 scale-75'
+                    isMobileMenuOpen ? "rotate-0 opacity-100 scale-100" : "-rotate-180 opacity-0 scale-75"
                   }`}
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -97,12 +88,7 @@ export function MainNavbar({ userName, userEmail }: MainNavbarProps) {
                   stroke="currentColor"
                   aria-hidden="true"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
             </button>
@@ -112,9 +98,7 @@ export function MainNavbar({ userName, userEmail }: MainNavbarProps) {
         {/* Mobile Navigation Menu */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isMobileMenuOpen
-              ? 'max-h-96 opacity-100 border-t shadow-lg'
-              : 'max-h-0 opacity-0'
+            isMobileMenuOpen ? "max-h-96 opacity-100 border-t shadow-lg" : "max-h-0 opacity-0"
           }`}
         >
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">

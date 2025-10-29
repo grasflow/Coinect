@@ -28,9 +28,9 @@ export class APIHelpers {
         // context.request shares cookies with the browser context
         // Playwright API uses 'data' instead of 'body' for request payload
         const playwrightOptions: any = {
-          method: options.method || 'GET',
+          method: options.method || "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             ...options.headers,
           },
         };
@@ -48,8 +48,8 @@ export class APIHelpers {
         }
 
         // Check if response has content before parsing JSON
-        const contentType = response.headers()['content-type'];
-        if (contentType && contentType.includes('application/json')) {
+        const contentType = response.headers()["content-type"];
+        if (contentType && contentType.includes("application/json")) {
           const text = await response.text();
           return text ? JSON.parse(text) : {};
         }
@@ -61,7 +61,7 @@ export class APIHelpers {
         console.error(`Attempt ${attempt + 1}/${retries + 1} failed for ${endpoint}:`, errorMessage);
 
         // If this is the last retry or a non-retryable error, throw
-        if (attempt === retries || !errorMessage.includes('409')) {
+        if (attempt === retries || !errorMessage.includes("409")) {
           throw new Error(`${endpoint} failed after ${attempt + 1} attempts: ${errorMessage}`);
         }
 
@@ -74,77 +74,77 @@ export class APIHelpers {
   }
 
   async createTestClient(clientData: CreateClientCommand) {
-    return this.makeAuthenticatedRequest('/api/clients', {
-      method: 'POST',
+    return this.makeAuthenticatedRequest("/api/clients", {
+      method: "POST",
       body: JSON.stringify(clientData),
     });
   }
 
   async updateClient(clientId: string, clientData: Partial<CreateClientCommand>) {
     return this.makeAuthenticatedRequest(`/api/clients/${clientId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(clientData),
     });
   }
 
   async deleteClient(clientId: string) {
     return this.makeAuthenticatedRequest(`/api/clients/${clientId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async createTestTimeEntry(timeEntryData: CreateTimeEntryCommand) {
-    return this.makeAuthenticatedRequest('/api/time-entries', {
-      method: 'POST',
+    return this.makeAuthenticatedRequest("/api/time-entries", {
+      method: "POST",
       body: JSON.stringify(timeEntryData),
     });
   }
 
   async updateTimeEntry(entryId: string, data: Partial<CreateTimeEntryCommand>) {
     return this.makeAuthenticatedRequest(`/api/time-entries/${entryId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteTimeEntry(entryId: string) {
     return this.makeAuthenticatedRequest(`/api/time-entries/${entryId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async generateInvoice(invoiceData: GenerateInvoiceCommand) {
-    return this.makeAuthenticatedRequest('/api/invoices/generate', {
-      method: 'POST',
+    return this.makeAuthenticatedRequest("/api/invoices/generate", {
+      method: "POST",
       body: JSON.stringify(invoiceData),
     });
   }
 
   async updateInvoice(invoiceId: string, data: any) {
     return this.makeAuthenticatedRequest(`/api/invoices/${invoiceId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteInvoice(invoiceId: string) {
     return this.makeAuthenticatedRequest(`/api/invoices/${invoiceId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   async markInvoiceAsPaid(invoiceId: string, isPaid: boolean) {
     return this.makeAuthenticatedRequest(`/api/invoices/${invoiceId}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({ is_paid: isPaid }),
     });
   }
 
   async exportTimeEntries(filters?: any) {
-    const queryParams = filters ? new URLSearchParams(filters).toString() : '';
-    const endpoint = `/api/time-entries/export${queryParams ? `?${queryParams}` : ''}`;
+    const queryParams = filters ? new URLSearchParams(filters).toString() : "";
+    const endpoint = `/api/time-entries/export${queryParams ? `?${queryParams}` : ""}`;
     return this.makeAuthenticatedRequest(endpoint, {
-      method: 'GET',
+      method: "GET",
     });
   }
 
@@ -154,7 +154,7 @@ export class APIHelpers {
 
     // Use context.request which shares cookies with the browser context
     const response = await this.page.context().request.fetch(url, {
-      method: 'GET',
+      method: "GET",
     });
 
     if (!response.ok()) {
@@ -166,13 +166,13 @@ export class APIHelpers {
 
   async lookupNIP(nip: string) {
     return this.makeAuthenticatedRequest(`/api/clients/lookup-nip?nip=${nip}`, {
-      method: 'GET',
+      method: "GET",
     });
   }
 
   async updateProfile(profileData: any) {
-    return this.makeAuthenticatedRequest('/api/profile', {
-      method: 'PUT',
+    return this.makeAuthenticatedRequest("/api/profile", {
+      method: "PUT",
       body: JSON.stringify(profileData),
     });
   }
@@ -183,7 +183,7 @@ export class APIHelpers {
    * @param clientId Client ID to associate invoices with
    * @returns Array of created invoice IDs
    */
-  async createMultipleTestInvoices(count: number = 25, clientId?: string): Promise<string[]> {
+  async createMultipleTestInvoices(count = 25, clientId?: string): Promise<string[]> {
     const invoiceIds: string[] = [];
 
     // If no client provided, create one
@@ -200,7 +200,7 @@ export class APIHelpers {
         street: "Test Street 123",
         city: "Warsaw",
         postal_code: "00-001",
-        country: "Poland"
+        country: "Poland",
       });
       testClientId = client.id;
     }
@@ -215,9 +215,9 @@ export class APIHelpers {
         const invoiceNumber = i + j + 1;
         const invoiceData = {
           client_id: testClientId!,
-          invoice_number: `TEST/${new Date().getFullYear()}/${String(invoiceNumber).padStart(4, '0')}`,
-          issue_date: new Date().toISOString().split('T')[0],
-          due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          invoice_number: `TEST/${new Date().getFullYear()}/${String(invoiceNumber).padStart(4, "0")}`,
+          issue_date: new Date().toISOString().split("T")[0],
+          due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
           currency: "PLN",
           is_manual: true,
           items: [
@@ -226,18 +226,18 @@ export class APIHelpers {
               quantity: 1,
               unit_price: 100 + invoiceNumber,
               vat_rate: 23,
-            }
+            },
           ],
           notes: `Test invoice ${invoiceNumber} for pagination testing`,
         };
 
         batchPromises.push(
           this.generateInvoice(invoiceData)
-            .then(invoice => {
+            .then((invoice) => {
               invoiceIds.push(invoice.id);
               return invoice.id;
             })
-            .catch(error => {
+            .catch((error) => {
               console.warn(`Failed to create invoice ${invoiceNumber}:`, error);
               return null;
             })
@@ -252,7 +252,7 @@ export class APIHelpers {
       }
     }
 
-    return invoiceIds.filter(id => id !== null);
+    return invoiceIds.filter((id) => id !== null);
   }
 
   async uploadLogo(formData: FormData) {
@@ -265,7 +265,7 @@ export class APIHelpers {
 
     // Use context.request which shares cookies with the browser context
     const response = await this.page.context().request.fetch(url, {
-      method: 'POST',
+      method: "POST",
       multipart: formData as any, // Playwright expects multipart option for FormData
     });
 

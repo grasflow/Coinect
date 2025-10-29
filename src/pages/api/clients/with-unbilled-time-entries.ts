@@ -74,7 +74,7 @@ export const GET: APIRoute = async (context) => {
       data?.reduce((acc, client) => {
         if (!acc.some((c) => c.id === client.id)) {
           // Usuń pole time_entries z odpowiedzi
-          const { time_entries, ...clientWithoutTimeEntries } = client;
+          const { time_entries: _time_entries, ...clientWithoutTimeEntries } = client;
           acc.push(clientWithoutTimeEntries);
         }
         return acc;

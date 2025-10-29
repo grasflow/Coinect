@@ -23,7 +23,10 @@ export const updateProfileSchema = z.object({
   bank_account: z.string().max(255, "Numer konta nie może przekraczać 255 znaków").optional(),
   bank_name: z.string().max(255, "Nazwa banku nie może przekraczać 255 znaków").optional(),
   bank_swift: z.string().max(50, "Kod SWIFT nie może przekraczać 50 znaków").optional(),
-  accent_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Nieprawidłowy format koloru").optional(),
+  accent_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Nieprawidłowy format koloru")
+    .optional(),
 });
 
 export type UpdateProfileSchema = z.infer<typeof updateProfileSchema>;

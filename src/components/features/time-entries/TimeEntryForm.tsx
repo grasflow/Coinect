@@ -84,7 +84,7 @@ export function TimeEntryForm({
     formState: { errors, isValid },
   } = useForm<TimeEntryFormViewModel>({
     resolver: zodResolver(timeEntrySchema),
-    mode: 'all',
+    mode: "all",
     defaultValues: {
       client_id: "",
       date: new Date(),
@@ -228,13 +228,13 @@ export function TimeEntryForm({
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          console.log('Calendar onSelect called with:', date);
+                          console.log("Calendar onSelect called with:", date);
                           if (date) {
                             field.onChange(date);
-                            console.log('field.onChange called, closing popover');
+                            console.log("field.onChange called, closing popover");
                             setDatePickerOpen(false);
                           } else {
-                            console.log('Date is undefined, ignoring deselection');
+                            console.log("Date is undefined, ignoring deselection");
                           }
                         }}
                         locale={pl}

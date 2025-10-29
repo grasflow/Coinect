@@ -56,11 +56,76 @@ const reactConfig = tseslint.config({
   },
 });
 
+// Test files configuration - allow mocks and test utilities
+const testConfig = tseslint.config({
+  files: ["test/**/*.{js,ts}", "e2e/**/*.{js,ts}", "**/*.spec.{js,ts}", "**/*.test.{js,ts}"],
+  rules: {
+    // Allow console in tests
+    "no-console": "off",
+    // Allow any type in test mocks
+    "@typescript-eslint/no-explicit-any": "off",
+    // Allow empty functions in mocks
+    "@typescript-eslint/no-empty-function": "off",
+    // Allow empty constructors in mocks
+    "@typescript-eslint/no-useless-constructor": "off",
+    // Allow unused vars if prefixed with _
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      },
+    ],
+    // Disable React hooks rules for Playwright fixtures
+    "react-hooks/rules-of-hooks": "off",
+  },
+});
+
+// Node.js script files configuration
+const nodeScriptConfig = tseslint.config({
+  files: ["*.js", "scripts/**/*.js", "scripts/**/*.ts"],
+  languageOptions: {
+    globals: {
+      console: "readonly",
+      process: "readonly",
+      fetch: "readonly",
+      __dirname: "readonly",
+      __filename: "readonly",
+    },
+  },
+  rules: {
+    "no-console": "off",
+    "no-undef": "off",
+  },
+});
+
+// API routes configuration - allow console for logging
+const apiConfig = tseslint.config({
+  files: ["src/pages/api/**/*.ts"],
+  rules: {
+    "no-console": "off", // Allow console.log in API routes for server-side logging
+  },
+});
+
+// Playwright config - allow console and unused vars
+const playwrightConfig = tseslint.config({
+  files: ["playwright.config.ts", "playwright-*.config.ts"],
+  rules: {
+    "no-console": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+  },
+});
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   baseConfig,
   jsxA11yConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],
+  testConfig,
+  nodeScriptConfig,
+  apiConfig,
+  playwrightConfig,
   eslintPluginPrettier
 );

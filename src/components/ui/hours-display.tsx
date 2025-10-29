@@ -8,15 +8,13 @@ interface HoursDisplayProps {
 }
 
 export function HoursDisplay({ hours, className = "" }: HoursDisplayProps) {
-  const numericHours = typeof hours === 'string' ? parseFloat(hours) : hours;
+  const numericHours = typeof hours === "string" ? parseFloat(hours) : hours;
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className={`cursor-help ${className}`}>
-            {formatHoursToHumanReadable(numericHours)}
-          </span>
+          <span className={`cursor-help ${className}`}>{formatHoursToHumanReadable(numericHours)}</span>
         </TooltipTrigger>
         <TooltipContent>
           <p>{numericHours.toFixed(2)}h</p>

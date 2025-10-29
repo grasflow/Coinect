@@ -59,23 +59,29 @@ export class TimeEntriesPage {
 
     // Filters
     this.clientFilter = page.locator('[data-slot="select-trigger"]').first();
-    this.dateRangeFilter = page.locator('button').filter({ hasText: /Wybierz zakres/ });
+    this.dateRangeFilter = page.locator("button").filter({ hasText: /Wybierz zakres/ });
     this.statusFilter = page.locator('[data-slot="select-trigger"]').nth(1);
     this.clearFiltersButton = page.locator("button").filter({ hasText: "Wyczyść" });
 
     // Time entry form dialog elements
     this.timeEntryFormDialog = page.locator('[role="dialog"]');
     this.timeEntryFormTitle = this.timeEntryFormDialog.locator('[data-slot="dialog-title"]');
-    this.clientSelect = this.timeEntryFormDialog.locator('#client_id').locator('..').locator('[data-slot="select-trigger"]');
-    this.datePicker = this.timeEntryFormDialog.getByRole('button', { name: /Data/ });
-    this.hoursInput = this.timeEntryFormDialog.locator('#hours');
-    this.minutesInput = this.timeEntryFormDialog.locator('#minutes');
-    this.hourlyRateInput = this.timeEntryFormDialog.locator('#hourly_rate');
-    this.currencySelect = this.timeEntryFormDialog.locator('#currency').locator('..').locator('[data-slot="select-trigger"]');
-    this.publicDescriptionTextarea = this.timeEntryFormDialog.locator('textarea').first();
-    this.privateNoteTextarea = this.timeEntryFormDialog.locator('textarea').last();
+    this.clientSelect = this.timeEntryFormDialog
+      .locator("#client_id")
+      .locator("..")
+      .locator('[data-slot="select-trigger"]');
+    this.datePicker = this.timeEntryFormDialog.getByRole("button", { name: /Data/ });
+    this.hoursInput = this.timeEntryFormDialog.locator("#hours");
+    this.minutesInput = this.timeEntryFormDialog.locator("#minutes");
+    this.hourlyRateInput = this.timeEntryFormDialog.locator("#hourly_rate");
+    this.currencySelect = this.timeEntryFormDialog
+      .locator("#currency")
+      .locator("..")
+      .locator('[data-slot="select-trigger"]');
+    this.publicDescriptionTextarea = this.timeEntryFormDialog.locator("textarea").first();
+    this.privateNoteTextarea = this.timeEntryFormDialog.locator("textarea").last();
     this.timeEntryFormSubmitButton = this.timeEntryFormDialog.locator('button[type="submit"]');
-    this.timeEntryFormCancelButton = this.timeEntryFormDialog.locator('button').filter({ hasText: "Anuluj" });
+    this.timeEntryFormCancelButton = this.timeEntryFormDialog.locator("button").filter({ hasText: "Anuluj" });
 
     // Pagination
     this.previousPageButton = page.locator("button").filter({ hasText: "Poprzednia" });
@@ -102,8 +108,8 @@ export class TimeEntriesPage {
     privateNote?: string;
   }) {
     // Ensure page is fully loaded and React is hydrated
-    await this.page.waitForLoadState('domcontentloaded');
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {
+    await this.page.waitForLoadState("domcontentloaded");
+    await this.page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {
       // Continue if network doesn't go idle
     });
 
@@ -127,7 +133,9 @@ export class TimeEntriesPage {
     await this.datePicker.click();
 
     // Wait for calendar popover to appear
-    const calendarPopover = this.page.locator('[data-slot="popover-content"]').filter({ has: this.page.locator('[data-slot="calendar"]') });
+    const calendarPopover = this.page
+      .locator('[data-slot="popover-content"]')
+      .filter({ has: this.page.locator('[data-slot="calendar"]') });
     await calendarPopover.waitFor({ state: "visible", timeout: 10000 });
 
     // Wait a bit for calendar to fully render
@@ -152,7 +160,10 @@ export class TimeEntriesPage {
     } else {
       // Fallback: find by text content
       const day = dateToSelect.getDate().toString();
-      const dayButtonFallback = calendarPopover.locator('button').filter({ hasText: new RegExp(`^${day}$`) }).first();
+      const dayButtonFallback = calendarPopover
+        .locator("button")
+        .filter({ hasText: new RegExp(`^${day}$`) })
+        .first();
       try {
         await dayButtonFallback.click({ timeout: 2000 });
       } catch {
@@ -161,7 +172,7 @@ export class TimeEntriesPage {
     }
 
     // Wait for the calendar popover to close after date selection
-    await calendarPopover.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
+    await calendarPopover.waitFor({ state: "hidden", timeout: 5000 }).catch(() => {
       // Popover might close quickly
     });
 
@@ -200,7 +211,7 @@ export class TimeEntriesPage {
 
     // Wait for form validation to complete and submit button to become enabled
     // The form uses react-hook-form with mode: 'all', so validation should update after all fields are filled
-    await this.timeEntryFormSubmitButton.waitFor({ state: 'visible', timeout: 5000 });
+    await this.timeEntryFormSubmitButton.waitFor({ state: "visible", timeout: 5000 });
 
     // Try to wait for the button to become enabled, with a fallback if it doesn't
     try {
@@ -210,12 +221,12 @@ export class TimeEntriesPage {
       const dateValue = await this.datePicker.textContent();
       const clientValue = await this.clientSelect.textContent();
       const hoursValue = await this.hoursInput.inputValue();
-      const errorMessages = await this.page.locator('.text-destructive').allTextContents();
+      const errorMessages = await this.page.locator(".text-destructive").allTextContents();
 
       throw new Error(
         `Submit button is still disabled after filling form. ` +
-        `Date: ${dateValue}, Client: ${clientValue}, Hours: ${hoursValue}, ` +
-        `Validation errors: ${errorMessages.join(', ')}`
+          `Date: ${dateValue}, Client: ${clientValue}, Hours: ${hoursValue}, ` +
+          `Validation errors: ${errorMessages.join(", ")}`
       );
     }
 
@@ -239,39 +250,46 @@ export class TimeEntriesPage {
 
     // Wait for React Query to refetch and update the table
     // We wait for network idle to ensure the refetch request has completed
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {
+    await this.page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {
       // If network doesn't go idle, that's ok - continue anyway
     });
   }
 
-  async editTimeEntry(date: string, clientName: string, updatedData: Partial<{
-    date: string;
-    hours: number;
-    minutes: number;
-    hourlyRate: number;
-    currency: string;
-    publicDescription: string;
-    privateNote: string;
-  }>) {
+  async editTimeEntry(
+    date: string,
+    clientName: string,
+    updatedData: Partial<{
+      date: string;
+      hours: number;
+      minutes: number;
+      hourlyRate: number;
+      currency: string;
+      publicDescription: string;
+      privateNote: string;
+    }>
+  ) {
     // Convert date from YYYY-MM-DD to Polish format (dd MMM yyyy)
     const dateObj = new Date(date);
-    const displayDate = dateObj.toLocaleDateString('pl-PL', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    const displayDate = dateObj.toLocaleDateString("pl-PL", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
 
-    const timeEntryRow = this.timeEntriesTable.locator("tbody tr").filter({
-      hasText: displayDate
-    }).filter({ hasText: clientName });
+    const timeEntryRow = this.timeEntriesTable
+      .locator("tbody tr")
+      .filter({
+        hasText: displayDate,
+      })
+      .filter({ hasText: clientName });
 
     // Wait for the row to be visible
     await timeEntryRow.waitFor({ state: "visible", timeout: 10000 });
 
     // Find edit button - it has title="Edytuj" or is the first button in actions cell
-    const editButton = timeEntryRow.getByRole('button', { name: /Edytuj/i }).or(
-      timeEntryRow.locator('td').last().locator('button').first()
-    );
+    const editButton = timeEntryRow
+      .getByRole("button", { name: /Edytuj/i })
+      .or(timeEntryRow.locator("td").last().locator("button").first());
     await editButton.click();
 
     await this.timeEntryFormDialog.waitFor({ state: "visible" });
@@ -281,7 +299,9 @@ export class TimeEntriesPage {
       await this.datePicker.click();
 
       // Wait for calendar popover to appear
-      const calendarPopover = this.page.locator('[data-slot="popover-content"]').filter({ has: this.page.locator('[data-slot="calendar"]') });
+      const calendarPopover = this.page
+        .locator('[data-slot="popover-content"]')
+        .filter({ has: this.page.locator('[data-slot="calendar"]') });
       await calendarPopover.waitFor({ state: "visible", timeout: 10000 });
 
       // Wait a bit for calendar to fully render
@@ -301,13 +321,20 @@ export class TimeEntriesPage {
       } else {
         // Fallback: find by text content
         const day = dateToSelect.getDate().toString();
-        await calendarPopover.locator('button').filter({ hasText: new RegExp(`^${day}$`) }).first().click({ force: true });
+        await calendarPopover
+          .locator("button")
+          .filter({ hasText: new RegExp(`^${day}$`) })
+          .first()
+          .click({ force: true });
       }
 
       // Wait for the date validation error to disappear (if it exists)
-      await this.page.locator('text=Data jest wymagana').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {
-        // If error text doesn't exist or is already hidden, that's fine
-      });
+      await this.page
+        .locator("text=Data jest wymagana")
+        .waitFor({ state: "hidden", timeout: 5000 })
+        .catch(() => {
+          // If error text doesn't exist or is already hidden, that's fine
+        });
     }
 
     // Update hours if provided
@@ -362,7 +389,7 @@ export class TimeEntriesPage {
 
     // Wait for React Query to refetch and update the table
     // We wait for network idle to ensure the refetch request has completed
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {
+    await this.page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {
       // If network doesn't go idle, that's ok - continue anyway
     });
   }
@@ -370,15 +397,18 @@ export class TimeEntriesPage {
   async deleteTimeEntry(date: string, clientName: string, description?: string) {
     // Convert date from YYYY-MM-DD to Polish format (dd MMM yyyy)
     const dateObj = new Date(date);
-    const displayDate = dateObj.toLocaleDateString('pl-PL', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    const displayDate = dateObj.toLocaleDateString("pl-PL", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
 
-    let timeEntryRow = this.timeEntriesTable.locator("tbody tr").filter({
-      hasText: displayDate
-    }).filter({ hasText: clientName });
+    let timeEntryRow = this.timeEntriesTable
+      .locator("tbody tr")
+      .filter({
+        hasText: displayDate,
+      })
+      .filter({ hasText: clientName });
 
     // If description provided, use it to uniquely identify the row
     if (description) {
@@ -389,9 +419,9 @@ export class TimeEntriesPage {
     await timeEntryRow.waitFor({ state: "visible", timeout: 10000 });
 
     // Find delete button - it has title="Usuń" or is the second button in actions cell
-    const deleteButton = timeEntryRow.getByRole('button', { name: /Usuń/i }).or(
-      timeEntryRow.locator('td').last().locator('button').last()
-    );
+    const deleteButton = timeEntryRow
+      .getByRole("button", { name: /Usuń/i })
+      .or(timeEntryRow.locator("td").last().locator("button").last());
     await deleteButton.click();
 
     // Wait for delete dialog and confirm
@@ -400,8 +430,8 @@ export class TimeEntriesPage {
 
     this.deleteDialogTitle = this.deleteDialog.locator('[data-slot="dialog-title"]');
     this.deleteDialogDescription = this.deleteDialog.locator('[data-slot="dialog-description"]');
-    this.deleteConfirmButton = this.deleteDialog.locator('button').filter({ hasText: "Usuń" });
-    this.deleteCancelButton = this.deleteDialog.locator('button').filter({ hasText: "Anuluj" });
+    this.deleteConfirmButton = this.deleteDialog.locator("button").filter({ hasText: "Usuń" });
+    this.deleteCancelButton = this.deleteDialog.locator("button").filter({ hasText: "Anuluj" });
 
     await this.deleteConfirmButton.click();
 
@@ -409,14 +439,17 @@ export class TimeEntriesPage {
     await this.page.locator('[data-sonner-toast][data-type="success"]').waitFor({ state: "visible", timeout: 5000 });
 
     // Wait for dialog to close
-    await this.page.waitForFunction(() => {
-      const dialog = document.querySelector('[role="dialog"]');
-      return !dialog || getComputedStyle(dialog).display === 'none' || !dialog.isConnected;
-    }, { timeout: 20000 });
+    await this.page.waitForFunction(
+      () => {
+        const dialog = document.querySelector('[role="dialog"]');
+        return !dialog || getComputedStyle(dialog).display === "none" || !dialog.isConnected;
+      },
+      { timeout: 20000 }
+    );
 
     // Wait for React Query to refetch and update the table
     // We wait for network idle to ensure the refetch request has completed
-    await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {
+    await this.page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {
       // If network doesn't go idle, that's ok - continue anyway
     });
 
@@ -426,7 +459,7 @@ export class TimeEntriesPage {
 
   async filterByClient(clientName: string) {
     // Ensure page is fully loaded and hydrated
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState("domcontentloaded");
     // Wait for filter to be ready
     await this.clientFilter.waitFor({ state: "visible", timeout: 5000 });
     await this.page.waitForTimeout(500);
@@ -443,11 +476,11 @@ export class TimeEntriesPage {
     const statusText = {
       all: "Wszystkie",
       billed: "Zafakturowane",
-      unbilled: "Niezafakturowane"
+      unbilled: "Niezafakturowane",
     };
 
     // Ensure page is fully loaded and hydrated
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState("domcontentloaded");
     // Wait for filter to be ready
     await this.statusFilter.waitFor({ state: "visible", timeout: 5000 });
     await this.page.waitForTimeout(500);
@@ -466,20 +499,17 @@ export class TimeEntriesPage {
 
   async exportToCsv() {
     // Wait for the page to be fully loaded and React to hydrate
-    await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {
+    await this.page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => {
       // Continue if network doesn't go idle
     });
 
     // Ensure button is visible and clickable
-    await this.exportCsvButton.waitFor({ state: 'visible', timeout: 5000 });
+    await this.exportCsvButton.waitFor({ state: "visible", timeout: 5000 });
 
     // Set up response listener BEFORE clicking to avoid race condition
     const [response] = await Promise.all([
-      this.page.waitForResponse(
-        response => response.url().includes('/api/time-entries/export'),
-        { timeout: 30000 }
-      ),
-      this.exportCsvButton.click()
+      this.page.waitForResponse((response) => response.url().includes("/api/time-entries/export"), { timeout: 30000 }),
+      this.exportCsvButton.click(),
     ]);
 
     if (!response.ok()) {
@@ -494,15 +524,15 @@ export class TimeEntriesPage {
     return {
       suggestedFilename: () => {
         // Extract filename from Content-Disposition header or use default
-        const contentDisposition = response.headers()['content-disposition'];
+        const contentDisposition = response.headers()["content-disposition"];
         if (contentDisposition) {
           const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
           if (match && match[1]) {
-            return match[1].replace(/['"]/g, '');
+            return match[1].replace(/['"]/g, "");
           }
         }
         return `wpisy-czasu_${new Date().toISOString().split("T")[0]}.csv`;
-      }
+      },
     };
   }
 
@@ -528,15 +558,18 @@ export class TimeEntriesPage {
     // Convert date from YYYY-MM-DD to Polish format (dd MMM yyyy)
     // The table displays dates using date-fns format with Polish locale
     const dateObj = new Date(date);
-    const displayDate = dateObj.toLocaleDateString('pl-PL', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    const displayDate = dateObj.toLocaleDateString("pl-PL", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
 
-    let timeEntryRow = this.timeEntriesTable.locator("tbody tr").filter({
-      hasText: displayDate
-    }).filter({ hasText: clientName });
+    let timeEntryRow = this.timeEntriesTable
+      .locator("tbody tr")
+      .filter({
+        hasText: displayDate,
+      })
+      .filter({ hasText: clientName });
 
     // If description provided, use it to uniquely identify the row
     if (description) {
@@ -556,15 +589,18 @@ export class TimeEntriesPage {
   async getTimeEntryStatus(date: string, clientName: string): Promise<string> {
     // Convert date from YYYY-MM-DD to Polish format (dd MMM yyyy)
     const dateObj = new Date(date);
-    const displayDate = dateObj.toLocaleDateString('pl-PL', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    const displayDate = dateObj.toLocaleDateString("pl-PL", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
 
-    const timeEntryRow = this.timeEntriesTable.locator("tbody tr").filter({
-      hasText: displayDate
-    }).filter({ hasText: clientName });
+    const timeEntryRow = this.timeEntriesTable
+      .locator("tbody tr")
+      .filter({
+        hasText: displayDate,
+      })
+      .filter({ hasText: clientName });
 
     const statusCell = timeEntryRow.locator("td").nth(6); // Status column
     return (await statusCell.textContent())?.trim() || "";

@@ -17,7 +17,7 @@ export const test = base.extend<AuthFixtures>({
     await loginPage.goto();
 
     // Poczekaj na pełne załadowanie strony przed logowaniem
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
 
     await loginPage.login(testEmail, testPassword);
 

@@ -67,7 +67,7 @@ async function checkAndCreateTestUser() {
         console.log("\n💡 Possible issues:");
         console.log("   - Password might be incorrect");
         console.log("   - Email might not be confirmed");
-        
+
         // Try to update password
         console.log("\n🔄 Attempting to reset password...");
         const { error: updateError } = await supabase.auth.admin.updateUserById(existingUser.id, {
@@ -114,4 +114,3 @@ async function checkAndCreateTestUser() {
 }
 
 checkAndCreateTestUser();
-

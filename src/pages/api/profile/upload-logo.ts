@@ -86,7 +86,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Upload file to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage.from("logos").upload(fileName, buffer, {
+    const { error: uploadError } = await supabase.storage.from("logos").upload(fileName, buffer, {
       contentType: file.type,
       upsert: true,
     });

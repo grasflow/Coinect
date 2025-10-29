@@ -38,7 +38,7 @@ test.describe("Zarządzanie klientami", () => {
     await waitForToast(authenticatedPage, "Klient został dodany pomyślnie");
 
     // Weryfikacja przez API - bardziej niezawodne niż czekanie na UI
-    const response = await authenticatedPage.request.get('/api/clients');
+    const response = await authenticatedPage.request.get("/api/clients");
     expect(response.ok()).toBeTruthy();
     const clients = await response.json();
 
@@ -73,7 +73,7 @@ test.describe("Zarządzanie klientami", () => {
     await waitForToast(authenticatedPage, "Klient został dodany pomyślnie");
 
     // Poczekaj na odświeżenie listy klientów (React Query refetch)
-    await authenticatedPage.waitForLoadState('networkidle');
+    await authenticatedPage.waitForLoadState("networkidle");
 
     // Wyszukaj nowo dodanego klienta aby był widoczny w tabeli
     await clientsPage.searchClients(originalClientData.name);
@@ -98,7 +98,7 @@ test.describe("Zarządzanie klientami", () => {
     // Reload strony aby upewnić się że dane są świeże
     await clientsPage.goto();
     await clientsPage.waitForPageLoad();
-    await authenticatedPage.waitForLoadState('networkidle');
+    await authenticatedPage.waitForLoadState("networkidle");
 
     // Wyszukaj klienta ponownie po przeładowaniu strony
     await clientsPage.searchClients(originalClientData.name);
@@ -131,7 +131,7 @@ test.describe("Zarządzanie klientami", () => {
     await waitForToast(authenticatedPage, "Klient został dodany pomyślnie");
 
     // Poczekaj na odświeżenie listy klientów (React Query refetch)
-    await authenticatedPage.waitForLoadState('networkidle');
+    await authenticatedPage.waitForLoadState("networkidle");
 
     // Wyszukaj klienta aby był widoczny w tabeli
     await clientsPage.searchClients(clientData.name);

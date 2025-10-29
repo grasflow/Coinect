@@ -238,7 +238,7 @@ function InvoiceGeneratorContent() {
     <div className="space-y-6">
       {/* Nagłówek strony */}
       <h1 className="text-3xl font-bold">Nowa Faktura</h1>
-      
+
       {/* Stepper */}
       <Card data-step-indicator>
         <CardContent className="pt-6">

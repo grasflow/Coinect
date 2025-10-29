@@ -11,7 +11,7 @@ export const prerender = false;
 export const GET: APIRoute = async (context) => {
   try {
     const invoiceId = context.params.id;
-    // eslint-disable-next-line no-console
+
     console.log("PDF endpoint wywołany dla faktury:", invoiceId);
 
     if (!invoiceId) {
@@ -128,7 +128,6 @@ export const GET: APIRoute = async (context) => {
       },
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error("Błąd generowania PDF:", error);
 
     return new Response(

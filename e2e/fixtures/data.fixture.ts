@@ -20,7 +20,7 @@ export const test = base.extend<DataFixtures>({
   authenticatedPage: async ({ page }: PlaywrightTestArgs & PlaywrightTestOptions, use: (r: Page) => Promise<void>) => {
     // Przejdź do strony logowania i poczekaj aż się w pełni załaduje
     await page.goto("/login");
-    await page.waitForLoadState('networkidle'); // Czekaj aż network się uspokoi
+    await page.waitForLoadState("networkidle"); // Czekaj aż network się uspokoi
 
     // Pobierz dane logowania ze zmiennych środowiskowych
     const testEmail = process.env.TEST_USER_EMAIL || "test@test.pl";
@@ -31,7 +31,7 @@ export const test = base.extend<DataFixtures>({
     // Poczekaj na gotowość formularza (oznacza że auth service działa)
     const emailInput = page.locator('input[type="email"]');
     const passwordInput = page.locator('input[type="password"]');
-    await emailInput.waitFor({ state: 'visible' });
+    await emailInput.waitFor({ state: "visible" });
 
     // Wypełnij formularz używając fill() - lepsze dla React state
     await emailInput.fill(testEmail);
@@ -48,7 +48,7 @@ export const test = base.extend<DataFixtures>({
       // Czekaj na przekierowanie do dashboard lub time-entries
       await Promise.race([
         page.waitForURL("/dashboard", { timeout: 30000 }),
-        page.waitForURL("/time-entries", { timeout: 30000 })
+        page.waitForURL("/time-entries", { timeout: 30000 }),
       ]);
 
       console.log("Login successful, redirected to:", page.url());
@@ -63,7 +63,7 @@ export const test = base.extend<DataFixtures>({
 
     await use(page);
   },
-  
+
   apiHelpers: async ({ authenticatedPage }: { authenticatedPage: Page }, use: (r: APIHelpers) => Promise<void>) => {
     const helpers = new APIHelpers();
     helpers.setPage(authenticatedPage);
@@ -89,14 +89,14 @@ export const test = base.extend<DataFixtures>({
         street: "Testowa 123",
         city: "Warszawa",
         postal_code: "00-001",
-        country: "Polska"
+        country: "Polska",
       });
       data.clientId = client.id;
       data.clientName = clientName;
 
       // Stwórz kilka testowych wpisów czasu
       const timeEntryIds: string[] = [];
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
 
       const timeEntry1 = await apiHelpers.createTestTimeEntry({
         client_id: client.id,
@@ -105,11 +105,11 @@ export const test = base.extend<DataFixtures>({
         hourly_rate: 150,
         currency: "PLN",
         public_description: "Rozwój aplikacji webowej",
-        private_note: "Implementacja funkcjonalności logowania"
+        private_note: "Implementacja funkcjonalności logowania",
       });
       timeEntryIds.push(timeEntry1.id);
 
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
       const timeEntry2 = await apiHelpers.createTestTimeEntry({
         client_id: client.id,
         date: yesterday,
@@ -117,14 +117,14 @@ export const test = base.extend<DataFixtures>({
         hourly_rate: 150,
         currency: "PLN",
         public_description: "Refaktoryzacja kodu",
-        private_note: "Optymalizacja wydajności"
+        private_note: "Optymalizacja wydajności",
       });
       timeEntryIds.push(timeEntry2.id);
 
       data.timeEntryIds = timeEntryIds;
       data.timeEntries = [timeEntry1, timeEntry2];
     } catch (error) {
-      console.warn('Failed to create test data via API, using mock data for test resilience:', error);
+      console.warn("Failed to create test data via API, using mock data for test resilience:", error);
 
       // Provide mock data when API fails to ensure test can still run
       const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
@@ -135,27 +135,27 @@ export const test = base.extend<DataFixtures>({
         {
           id: `mock-entry-1-${uniqueId}`,
           client_id: data.clientId,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split("T")[0],
           hours: 8,
           hourly_rate: 150,
           currency: "PLN",
           public_description: "Rozwój aplikacji webowej",
           private_note: "Implementacja funkcjonalności logowania",
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         },
         {
           id: `mock-entry-2-${uniqueId}`,
           client_id: data.clientId,
-          date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+          date: new Date(Date.now() - 86400000).toISOString().split("T")[0],
           hours: 6,
           hourly_rate: 150,
           currency: "PLN",
           public_description: "Refaktoryzacja kodu",
           private_note: "Optymalizacja wydajności",
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
+          updated_at: new Date().toISOString(),
+        },
       ];
     }
 
@@ -164,11 +164,10 @@ export const test = base.extend<DataFixtures>({
     // Cleanup - usuń testowe dane (pomijaj mock dane)
     try {
       // Skip cleanup for mock data (it doesn't exist in the database)
-      const isMockData = data.clientId?.startsWith('mock-') ||
-                         data.timeEntryIds?.some(id => id.startsWith('mock-'));
+      const isMockData = data.clientId?.startsWith("mock-") || data.timeEntryIds?.some((id) => id.startsWith("mock-"));
 
       if (isMockData) {
-        console.log('Skipping cleanup for mock data');
+        console.log("Skipping cleanup for mock data");
         return;
       }
 

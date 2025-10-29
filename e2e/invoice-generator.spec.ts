@@ -18,7 +18,7 @@ test.describe("Generator faktur", () => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
 
     await invoiceGeneratorPage.goto();
-        await invoiceGeneratorPage.waitForPageLoad();
+    await invoiceGeneratorPage.waitForPageLoad();
 
     // Krok 1: Wybór klienta
     await invoiceGeneratorPage.selectClient("Test Client Sp. z o.o.");
@@ -54,7 +54,7 @@ test.describe("Generator faktur", () => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
 
     await invoiceGeneratorPage.goto();
-        await invoiceGeneratorPage.waitForPageLoad();
+    await invoiceGeneratorPage.waitForPageLoad();
 
     // Krok 1: Wybór klienta
     await invoiceGeneratorPage.selectClient("Test Client Sp. z o.o.");
@@ -89,7 +89,7 @@ test.describe("Generator faktur", () => {
   test("nawiguje między krokami kreatora", async ({ authenticatedPage }) => {
     const invoiceGeneratorPage = new InvoiceGeneratorPage(authenticatedPage);
     await invoiceGeneratorPage.goto();
-        await invoiceGeneratorPage.waitForPageLoad();
+    await invoiceGeneratorPage.waitForPageLoad();
 
     // Sprawdź krok 1
     let currentStep = await invoiceGeneratorPage.getCurrentStep();
@@ -124,7 +124,7 @@ test.describe("Generator faktur", () => {
   test("zachowuje dane przy nawigacji między krokami", async ({ authenticatedPage, testData }) => {
     const invoiceGeneratorPage = new InvoiceGeneratorPage(authenticatedPage);
     await invoiceGeneratorPage.goto();
-        await invoiceGeneratorPage.waitForPageLoad();
+    await invoiceGeneratorPage.waitForPageLoad();
 
     // Krok 1: Wybór klienta i trybu manualnego (nie zależy od istniejących danych)
     await invoiceGeneratorPage.selectClient();

@@ -266,7 +266,6 @@ describe("RulesBuilderService", () => {
   describe("generateRulesContent - Validation Errors", () => {
     it("rzuca błąd gdy brak profilu", () => {
       const context = {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         profile: null as any,
       };
 

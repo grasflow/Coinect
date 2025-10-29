@@ -29,7 +29,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("filtruje faktury po statusie", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     const initialCount = await invoicesPage.getInvoicesCount();
 
@@ -44,7 +44,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("filtruje faktury po kliencie", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Filtruj po kliencie - use partial match since client name is dynamic
     if (testData.clientName) {
@@ -71,7 +71,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("filtruje faktury po walucie", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Filtruj po walucie PLN
     await invoicesPage.filterByCurrency("PLN");
@@ -84,7 +84,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("wyczyszcza filtry", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Ustaw filtry
     await invoicesPage.filterByStatus("unpaid");
@@ -110,7 +110,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("pobiera PDF faktury", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Znajdź pierwszą fakturę na liście
     const invoices = authenticatedPage.locator("tbody tr");
@@ -131,7 +131,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("edytuje fakturę", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Znajdź pierwszą fakturę
     const invoices = authenticatedPage.locator("tbody tr");
@@ -151,7 +151,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("oznacza fakturę jako zapłaconą/niezapłaconą", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Znajdź pierwszą niezapłaconą fakturę
     const invoices = authenticatedPage.locator("tbody tr");
@@ -166,11 +166,11 @@ test.describe("Zarządzanie fakturami", () => {
 
         // Oznacz jako zapłaconą - czekaj na odpowiedź API i refetch
         const patchPromise1 = authenticatedPage.waitForResponse(
-          response => response.url().includes('/api/invoices/') && response.request().method() === 'PATCH',
+          (response) => response.url().includes("/api/invoices/") && response.request().method() === "PATCH",
           { timeout: 10000 }
         );
         const refetchPromise1 = authenticatedPage.waitForResponse(
-          response => response.url().includes('/api/invoices?') && response.request().method() === 'GET',
+          (response) => response.url().includes("/api/invoices?") && response.request().method() === "GET",
           { timeout: 10000 }
         );
         await invoicesPage.toggleInvoicePaidStatus(invoiceNumber);
@@ -189,11 +189,11 @@ test.describe("Zarządzanie fakturami", () => {
 
         // Oznacz z powrotem jako niezapłaconą - czekaj na odpowiedź API i refetch
         const patchPromise2 = authenticatedPage.waitForResponse(
-          response => response.url().includes('/api/invoices/') && response.request().method() === 'PATCH',
+          (response) => response.url().includes("/api/invoices/") && response.request().method() === "PATCH",
           { timeout: 10000 }
         );
         const refetchPromise2 = authenticatedPage.waitForResponse(
-          response => response.url().includes('/api/invoices?') && response.request().method() === 'GET',
+          (response) => response.url().includes("/api/invoices?") && response.request().method() === "GET",
           { timeout: 10000 }
         );
         await invoicesPage.toggleInvoicePaidStatus(invoiceNumber);
@@ -231,7 +231,7 @@ test.describe("Zarządzanie fakturami", () => {
 
     // Po wygenerowaniu faktury, aplikacja przekierowuje do /invoices
     await authenticatedPage.waitForURL(/\/invoices/, { timeout: 10000 });
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Znajdź najnowszą fakturę (zakładamy że to ta którą właśnie stworzyliśmy)
     const invoices = authenticatedPage.locator("tbody tr");
@@ -254,7 +254,7 @@ test.describe("Zarządzanie fakturami", () => {
   test("wyświetla podsumowanie kwot faktur", async ({ authenticatedPage, testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
-        await invoicesPage.waitForPageLoad();
+    await invoicesPage.waitForPageLoad();
 
     // Sprawdź czy podsumowanie jest wyświetlane (może być ukryte jeśli nie ma faktur)
     const summaryElement = authenticatedPage.locator('[data-testid="invoice-summary"], .invoice-summary');

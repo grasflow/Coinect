@@ -28,14 +28,16 @@ test.describe("Wpisy czasu pracy", () => {
       hourlyRate: 150,
       currency: "PLN",
       publicDescription: uniqueDesc,
-      privateNote: "Implementacja funkcji logowania"
+      privateNote: "Implementacja funkcji logowania",
     };
 
     await timeEntriesPage.addTimeEntry(timeEntryData);
 
     // Sprawdź czy wpis został dodany
     // Note: addTimeEntry() already waits for the toast internally, so we don't wait here
-    await expect(await timeEntriesPage.isTimeEntryVisible(today, timeEntryData.clientName, timeEntryData.publicDescription)).toBe(true);
+    await expect(
+      await timeEntriesPage.isTimeEntryVisible(today, timeEntryData.clientName, timeEntryData.publicDescription)
+    ).toBe(true);
   });
 
   test("edytuje istniejący wpis czasu", async ({ authenticatedPage, testData }) => {
@@ -49,7 +51,7 @@ test.describe("Wpisy czasu pracy", () => {
       hours: 6,
       minutes: 45,
       publicDescription: "Zaktualizowany opis publiczny",
-      privateNote: "Zaktualizowana notatka prywatna"
+      privateNote: "Zaktualizowana notatka prywatna",
     };
 
     await timeEntriesPage.editTimeEntry(yesterday, clientName, updatedData);
@@ -70,7 +72,7 @@ test.describe("Wpisy czasu pracy", () => {
       clientName: testData.clientName!,
       date: today,
       hours: 4,
-      publicDescription: uniqueDesc
+      publicDescription: uniqueDesc,
     };
 
     await timeEntriesPage.addTimeEntry(timeEntryData);
@@ -81,7 +83,9 @@ test.describe("Wpisy czasu pracy", () => {
 
     // Sprawdź czy wpis został usunięty
     // Note: deleteTimeEntry() already waits for the toast internally
-    await expect(await timeEntriesPage.isTimeEntryVisible(today, timeEntryData.clientName, timeEntryData.publicDescription)).toBe(false);
+    await expect(
+      await timeEntriesPage.isTimeEntryVisible(today, timeEntryData.clientName, timeEntryData.publicDescription)
+    ).toBe(false);
   });
 
   test("filtruje wpisy czasu po kliencie", async ({ authenticatedPage, testData }) => {
@@ -113,8 +117,8 @@ test.describe("Wpisy czasu pracy", () => {
 
     for (let i = 0; i < count; i++) {
       const status = await timeEntriesPage.getTimeEntryStatus(
-        await timeEntries.nth(i).locator("td").nth(0).textContent() || "",
-        await timeEntries.nth(i).locator("td").nth(1).textContent() || ""
+        (await timeEntries.nth(i).locator("td").nth(0).textContent()) || "",
+        (await timeEntries.nth(i).locator("td").nth(1).textContent()) || ""
       );
       expect(status).toBe("Niezafakturowane");
     }
@@ -157,7 +161,7 @@ test.describe("Wpisy czasu pracy", () => {
     await timeEntriesPage.waitForPageLoad();
 
     // Ensure page is fully loaded and hydrated before clicking
-    await authenticatedPage.waitForLoadState('domcontentloaded');
+    await authenticatedPage.waitForLoadState("domcontentloaded");
     await timeEntriesPage.addTimeEntryButton.waitFor({ state: "visible", timeout: 5000 });
     await authenticatedPage.waitForTimeout(500);
 
@@ -169,7 +173,7 @@ test.describe("Wpisy czasu pracy", () => {
 
     // Wypełnij pole godziny i sprawdź czy przycisk nadal jest wyłączony (brakuje klienta)
     const hoursInput = authenticatedPage.locator('input[type="number"]').first();
-    await hoursInput.fill('8');
+    await hoursInput.fill("8");
     await expect(timeEntriesPage.timeEntryFormSubmitButton).toBeDisabled();
   });
 
@@ -188,7 +192,10 @@ test.describe("Wpisy czasu pracy", () => {
 
       if (status?.includes("Zafakturowane")) {
         // Sprawdź czy przycisk edycji jest wyłączony
-        const editButton = row.locator('button').filter({ has: authenticatedPage.locator('svg') }).first();
+        const editButton = row
+          .locator("button")
+          .filter({ has: authenticatedPage.locator("svg") })
+          .first();
         await expect(editButton).toBeDisabled();
         break;
       }

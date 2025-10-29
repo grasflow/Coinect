@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Plus, Edit, Search } from "lucide-react";
 import type { ClientDTO } from "@/types";
 import { createClientSchema, updateClientSchema } from "@/lib/validation/client.schema";
@@ -38,7 +45,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
     formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(isEditMode ? updateClientSchema : createClientSchema),
-    mode: 'all',
+    mode: "all",
     defaultValues: {
       name: "",
       tax_id: "",
@@ -137,12 +144,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nazwa klienta *</Label>
-              <Input
-                id="name"
-                {...register("name")}
-                placeholder="np. Acme Sp. z o.o."
-                aria-invalid={!!errors.name}
-              />
+              <Input id="name" {...register("name")} placeholder="np. Acme Sp. z o.o." aria-invalid={!!errors.name} />
               {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
 
@@ -192,12 +194,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="phone">Telefon</Label>
-              <Input
-                id="phone"
-                {...register("phone")}
-                placeholder="+48111222333"
-                aria-invalid={!!errors.phone}
-              />
+              <Input id="phone" {...register("phone")} placeholder="+48111222333" aria-invalid={!!errors.phone} />
               {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
             </div>
 
@@ -214,12 +211,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="city">Miasto</Label>
-              <Input
-                id="city"
-                {...register("city")}
-                placeholder="Warszawa"
-                aria-invalid={!!errors.city}
-              />
+              <Input id="city" {...register("city")} placeholder="Warszawa" aria-invalid={!!errors.city} />
               {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
             </div>
 
@@ -236,12 +228,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="country">Kraj</Label>
-              <Input
-                id="country"
-                {...register("country")}
-                placeholder="Polska"
-                aria-invalid={!!errors.country}
-              />
+              <Input id="country" {...register("country")} placeholder="Polska" aria-invalid={!!errors.country} />
               {errors.country && <p className="text-sm text-destructive">{errors.country.message}</p>}
             </div>
 
@@ -278,7 +265,9 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
                 placeholder="150.00"
                 aria-invalid={!!errors.default_hourly_rate}
               />
-              {errors.default_hourly_rate && <p className="text-sm text-destructive">{errors.default_hourly_rate.message}</p>}
+              {errors.default_hourly_rate && (
+                <p className="text-sm text-destructive">{errors.default_hourly_rate.message}</p>
+              )}
             </div>
           </div>
 

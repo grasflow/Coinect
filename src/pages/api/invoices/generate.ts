@@ -70,7 +70,6 @@ export const POST: APIRoute = async (context) => {
     // Walidacja z lepszym error handlingiem
     const validationResult = generateInvoiceSchema.safeParse(body);
     if (!validationResult.success) {
-      // eslint-disable-next-line no-console
       console.error("Validation error:", validationResult.error);
       return new Response(
         JSON.stringify({
@@ -384,7 +383,6 @@ export const POST: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error("Invoice generation error:", error);
 
     if (error instanceof z.ZodError) {

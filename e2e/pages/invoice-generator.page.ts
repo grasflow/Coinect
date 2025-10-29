@@ -38,13 +38,15 @@ export class InvoiceGeneratorPage {
 
     // Main elements
     this.pageTitle = page.locator("h1").filter({ hasText: "Nowa Faktura" });
-    this.stepIndicator = page.locator('[data-step-indicator]');
+    this.stepIndicator = page.locator("[data-step-indicator]");
     this.nextButton = page.locator("button").filter({ hasText: "Dalej" });
     this.previousButton = page.locator("button").filter({ hasText: "Wstecz" });
     this.generateInvoiceButton = page.locator("button").filter({ hasText: "Wygeneruj fakturę" });
 
     // Step 1: Client Selection
-    this.clientSelect = page.locator('[data-testid="client-select"]').or(page.locator('select, [role="combobox"]').first());
+    this.clientSelect = page
+      .locator('[data-testid="client-select"]')
+      .or(page.locator('select, [role="combobox"]').first());
     this.invoiceModeTabs = page.locator('[role="tablist"]');
     this.timeEntriesModeTab = page.locator('[role="tab"]').filter({ hasText: "Z wpisów czasu" });
     this.manualModeTab = page.locator('[role="tab"]').filter({ hasText: "Faktura manualna" });
@@ -58,8 +60,8 @@ export class InvoiceGeneratorPage {
     // Step 3: Settings and Summary
     this.issueDateInput = page.locator('input[type="date"]').first();
     this.saleDateInput = page.locator('input[type="date"]').last();
-    this.vatRateInput = page.getByRole('combobox', { name: /Stawka VAT/i });
-    this.summaryPanel = page.locator('text=Podsumowanie').first();
+    this.vatRateInput = page.getByRole("combobox", { name: /Stawka VAT/i });
+    this.summaryPanel = page.locator("text=Podsumowanie").first();
 
     // Navigation
     this.backToInvoicesLink = page.locator('a[href="/invoices"]');
@@ -78,7 +80,7 @@ export class InvoiceGeneratorPage {
 
   async selectClient(clientName?: string) {
     // Ensure page is fully loaded and hydrated
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState("domcontentloaded");
 
     const clientSelect = this.page.locator('[role="combobox"]').first();
 
@@ -87,10 +89,13 @@ export class InvoiceGeneratorPage {
     await this.page.waitForTimeout(500);
 
     // Wait until combobox is enabled (not disabled)
-    await this.page.waitForFunction(() => {
-      const combobox = document.querySelector('[role="combobox"]');
-      return combobox && !combobox.hasAttribute('disabled');
-    }, { timeout: 15000 });
+    await this.page.waitForFunction(
+      () => {
+        const combobox = document.querySelector('[role="combobox"]');
+        return combobox && !combobox.hasAttribute("disabled");
+      },
+      { timeout: 15000 }
+    );
 
     await clientSelect.click();
 
@@ -102,46 +107,44 @@ export class InvoiceGeneratorPage {
     let option;
     if (clientName) {
       // Try partial text match (case insensitive)
-      option = this.page.getByRole('option', { name: new RegExp(clientName, 'i') });
+      option = this.page.getByRole("option", { name: new RegExp(clientName, "i") });
 
       // Fallback: if exact match not found, use first option
       const matchCount = await option.count();
       if (matchCount === 0) {
         console.warn(`Client "${clientName}" not found, selecting first available option`);
-        option = this.page.getByRole('option').first();
+        option = this.page.getByRole("option").first();
       }
     } else {
-      option = this.page.getByRole('option').first();
+      option = this.page.getByRole("option").first();
     }
 
     await option.click();
   }
 
   async selectInvoiceMode(mode: "time-entries" | "manual") {
-    const tab = mode === "time-entries"
-      ? this.timeEntriesModeTab
-      : this.manualModeTab;
+    const tab = mode === "time-entries" ? this.timeEntriesModeTab : this.manualModeTab;
 
     // Ensure tabs container is loaded and tab is visible
     await this.invoiceModeTabs.waitFor({ state: "visible" });
     await tab.waitFor({ state: "visible" });
 
     // Click only if not already selected (Radix UI uses data-state instead of aria-selected)
-    const isActive = await tab.getAttribute('data-state');
-    if (isActive !== 'active') {
+    const isActive = await tab.getAttribute("data-state");
+    if (isActive !== "active") {
       await tab.click();
     }
   }
 
   async selectTimeEntries(entryIds: string[]) {
-    await this.page.locator('text=Wpisy czasu do zafakturowania').waitFor({ state: "visible" });
+    await this.page.locator("text=Wpisy czasu do zafakturowania").waitFor({ state: "visible" });
 
     // Check if there's an alert about no time entries
-    const noEntriesAlert = this.page.locator('text=Brak niezafakturowanych wpisów czasu');
+    const noEntriesAlert = this.page.locator("text=Brak niezafakturowanych wpisów czasu");
     const hasNoEntries = await noEntriesAlert.isVisible().catch(() => false);
 
     if (hasNoEntries) {
-      throw new Error('Selected client has no unbilled time entries. Cannot proceed with time-entries mode.');
+      throw new Error("Selected client has no unbilled time entries. Cannot proceed with time-entries mode.");
     }
 
     const allCheckboxes = this.page.locator('[role="checkbox"]');
@@ -199,7 +202,7 @@ export class InvoiceGeneratorPage {
     await this.page.locator('[role="listbox"]').waitFor({ state: "visible" });
 
     // Select the option with the vat rate value
-    const option = this.page.getByRole('option', { name: `${vatRate}%` });
+    const option = this.page.getByRole("option", { name: `${vatRate}%` });
     await option.click();
   }
 
@@ -243,8 +246,8 @@ export class InvoiceGeneratorPage {
     }
 
     // Step 2: Check for step 2 specific visible text
-    const timeEntriesText = this.page.locator('text=Wpisy czasu do zafakturowania');
-    const addItemButton = this.page.locator('button', { hasText: 'Dodaj pozycję' });
+    const timeEntriesText = this.page.locator("text=Wpisy czasu do zafakturowania");
+    const addItemButton = this.page.locator("button", { hasText: "Dodaj pozycję" });
 
     const isTimeEntriesVisible = await timeEntriesText.isVisible().catch(() => false);
     const isAddItemVisible = await addItemButton.isVisible().catch(() => false);
@@ -267,10 +270,10 @@ export class InvoiceGeneratorPage {
         // Wait for step 2 content - either time entries section OR manual items editor
         // Use waitFor with OR logic - at least one should be visible
         try {
-          await this.page.locator('text=Wpisy czasu do zafakturowania').waitFor({ state: "visible", timeout: 5000 });
+          await this.page.locator("text=Wpisy czasu do zafakturowania").waitFor({ state: "visible", timeout: 5000 });
         } catch {
           // If time entries text not found, wait for manual items section
-          await this.page.locator('text=Pozycje faktury').first().waitFor({ state: "visible" });
+          await this.page.locator("text=Pozycje faktury").first().waitFor({ state: "visible" });
         }
         break;
       case 3:

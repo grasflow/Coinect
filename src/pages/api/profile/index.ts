@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import type { ProfileDTO, UpdateProfileCommand } from "@/types";
+import type { ProfileDTO } from "@/types";
 import { updateProfileSchema } from "@/lib/validation/profile.schema";
 import { ZodError } from "zod";
 

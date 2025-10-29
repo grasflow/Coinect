@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { createClientSchema } from "@/lib/validation/client.schema";
-import { NotFoundError, ForbiddenError } from "@/lib/errors";
 
 export const prerender = false;
 

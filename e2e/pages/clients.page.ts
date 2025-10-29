@@ -51,18 +51,18 @@ export class ClientsPage {
     // Client form dialog elements
     this.clientFormDialog = page.locator('[role="dialog"]');
     this.clientFormTitle = this.clientFormDialog.locator('[data-slot="dialog-title"]');
-    this.clientNameInput = this.clientFormDialog.locator('#name');
-    this.clientTaxIdInput = this.clientFormDialog.locator('#tax_id');
-    this.clientEmailInput = this.clientFormDialog.locator('#email');
-    this.clientPhoneInput = this.clientFormDialog.locator('#phone');
-    this.clientStreetInput = this.clientFormDialog.locator('#street');
-    this.clientCityInput = this.clientFormDialog.locator('#city');
-    this.clientPostalCodeInput = this.clientFormDialog.locator('#postal_code');
-    this.clientCountryInput = this.clientFormDialog.locator('#country');
+    this.clientNameInput = this.clientFormDialog.locator("#name");
+    this.clientTaxIdInput = this.clientFormDialog.locator("#tax_id");
+    this.clientEmailInput = this.clientFormDialog.locator("#email");
+    this.clientPhoneInput = this.clientFormDialog.locator("#phone");
+    this.clientStreetInput = this.clientFormDialog.locator("#street");
+    this.clientCityInput = this.clientFormDialog.locator("#city");
+    this.clientPostalCodeInput = this.clientFormDialog.locator("#postal_code");
+    this.clientCountryInput = this.clientFormDialog.locator("#country");
     this.clientCurrencySelect = this.clientFormDialog.locator('[data-slot="select-trigger"]').first();
-    this.clientHourlyRateInput = this.clientFormDialog.locator('#default_hourly_rate');
+    this.clientHourlyRateInput = this.clientFormDialog.locator("#default_hourly_rate");
     this.clientFormSubmitButton = this.clientFormDialog.locator('button[type="submit"]');
-    this.clientFormCancelButton = this.clientFormDialog.locator('button').filter({ hasText: "Anuluj" });
+    this.clientFormCancelButton = this.clientFormDialog.locator("button").filter({ hasText: "Anuluj" });
     this.gusLookupButton = this.clientFormDialog.locator('button[title="Pobierz dane z Białej Listy VAT"]');
   }
 
@@ -132,12 +132,14 @@ export class ClientsPage {
 
     // Wait for either success (dialog closes) or error (error message appears)
     await Promise.race([
-      this.clientFormDialog.waitFor({ state: 'hidden', timeout: 10000 }),
-      this.page.locator('[role="alert"], .text-destructive').waitFor({ state: 'visible', timeout: 10000 })
+      this.clientFormDialog.waitFor({ state: "hidden", timeout: 10000 }),
+      this.page
+        .locator('[role="alert"], .text-destructive')
+        .waitFor({ state: "visible", timeout: 10000 })
         .then(async () => {
           const errorText = await this.page.locator('[role="alert"], .text-destructive').textContent();
           throw new Error(`Form submission failed: ${errorText}`);
-        })
+        }),
     ]);
   }
 
@@ -149,24 +151,30 @@ export class ClientsPage {
     return this.clientsTable.locator("tbody tr").filter({ hasText: clientName });
   }
 
-  async editClient(clientName: string, updatedData: Partial<{
-    name: string;
-    taxId?: string;
-    email?: string;
-    phone?: string;
-    street?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-    currency?: string;
-    hourlyRate?: number;
-  }>) {
+  async editClient(
+    clientName: string,
+    updatedData: Partial<{
+      name: string;
+      taxId?: string;
+      email?: string;
+      phone?: string;
+      street?: string;
+      city?: string;
+      postalCode?: string;
+      country?: string;
+      currency?: string;
+      hourlyRate?: number;
+    }>
+  ) {
     const clientRow = await this.getClientRow(clientName);
 
     // Upewnij się że wiersz klienta jest widoczny przed próbą kliknięcia
-    await clientRow.waitFor({ state: 'visible', timeout: 10000 });
+    await clientRow.waitFor({ state: "visible", timeout: 10000 });
 
-    const editButton = clientRow.locator('button').filter({ has: this.page.locator('svg') }).first();
+    const editButton = clientRow
+      .locator("button")
+      .filter({ has: this.page.locator("svg") })
+      .first();
     await editButton.click();
 
     await this.clientFormDialog.waitFor({ state: "visible" });
@@ -216,18 +224,23 @@ export class ClientsPage {
 
     // Wait for either success (dialog closes) or error (error message appears)
     await Promise.race([
-      this.clientFormDialog.waitFor({ state: 'hidden', timeout: 10000 }),
-      this.page.locator('[role="alert"], .text-destructive').waitFor({ state: 'visible', timeout: 10000 })
+      this.clientFormDialog.waitFor({ state: "hidden", timeout: 10000 }),
+      this.page
+        .locator('[role="alert"], .text-destructive')
+        .waitFor({ state: "visible", timeout: 10000 })
         .then(async () => {
           const errorText = await this.page.locator('[role="alert"], .text-destructive').textContent();
           throw new Error(`Edit form submission failed: ${errorText}`);
-        })
+        }),
     ]);
   }
 
   async deleteClient(clientName: string) {
     const clientRow = await this.getClientRow(clientName);
-    const deleteButton = clientRow.locator('button').filter({ has: this.page.locator('svg') }).last();
+    const deleteButton = clientRow
+      .locator("button")
+      .filter({ has: this.page.locator("svg") })
+      .last();
     await deleteButton.click();
 
     // Wait for delete dialog and confirm
@@ -235,37 +248,42 @@ export class ClientsPage {
     this.deleteDialogTitle = this.deleteDialog.locator('[data-slot="dialog-title"]');
     this.deleteDialogDescription = this.deleteDialog.locator('[data-slot="dialog-description"]');
     // Find delete button by text (variant destructive, last button with "Usuń" text)
-    this.deleteConfirmButton = this.deleteDialog.getByRole('button', { name: /^Usuń/ }).last();
-    this.deleteCancelButton = this.deleteDialog.getByRole('button', { name: "Anuluj" }).last();
+    this.deleteConfirmButton = this.deleteDialog.getByRole("button", { name: /^Usuń/ }).last();
+    this.deleteCancelButton = this.deleteDialog.getByRole("button", { name: "Anuluj" }).last();
 
     // Wait for button to be visible and enabled
-    await this.deleteConfirmButton.waitFor({ state: 'visible', timeout: 5000 });
-    
+    await this.deleteConfirmButton.waitFor({ state: "visible", timeout: 5000 });
+
     // Debug: get all buttons in dialog
-    const allButtons = await this.deleteDialog.locator('button').all();
-    console.log('All buttons in dialog:', await Promise.all(allButtons.map(b => b.textContent())));
-    
+    const allButtons = await this.deleteDialog.locator("button").all();
+    console.log("All buttons in dialog:", await Promise.all(allButtons.map((b) => b.textContent())));
+
     // Find the destructive button (red button with "Usuń" text)
-    const destructiveButton = this.deleteDialog.locator('button').filter({ hasText: 'Usuń' });
-    
+    const destructiveButton = this.deleteDialog.locator("button").filter({ hasText: "Usuń" });
+
     // Click delete button with click options
-    await destructiveButton.click({ 
-      delay: 100
+    await destructiveButton.click({
+      delay: 100,
     });
-    
+
     // Wait for the client row to disappear from the table
     await Promise.race([
-      clientRow.waitFor({ state: 'detached', timeout: 15000 }),
-      this.page.locator('[role="alert"], .text-destructive').waitFor({ state: 'visible', timeout: 15000 })
+      clientRow.waitFor({ state: "detached", timeout: 15000 }),
+      this.page
+        .locator('[role="alert"], .text-destructive')
+        .waitFor({ state: "visible", timeout: 15000 })
         .then(async () => {
           const errorText = await this.page.locator('[role="alert"], .text-destructive').textContent();
           throw new Error(`Delete failed: ${errorText}`);
-        })
+        }),
     ]).catch(async (error) => {
       // If timeout, check if row still exists in DOM
       const stillExists = await clientRow.count();
       if (stillExists > 0) {
-        console.log('Client row still exists after timeout. Dialog state:', await this.deleteDialog.getAttribute('data-state'));
+        console.log(
+          "Client row still exists after timeout. Dialog state:",
+          await this.deleteDialog.getAttribute("data-state")
+        );
         throw error;
       }
       throw error;
