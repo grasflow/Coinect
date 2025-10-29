@@ -94,6 +94,15 @@ export function AutocompleteInput({
             <li
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleSuggestionClick(suggestion);
+                }
+              }}
+              role="option"
+              tabIndex={0}
+              aria-selected={index === highlightedIndex}
               className={cn(
                 "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-hidden hover:bg-accent hover:text-accent-foreground",
                 index === highlightedIndex && "bg-accent text-accent-foreground"

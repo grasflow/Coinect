@@ -68,22 +68,23 @@ export const POST: APIRoute = async (context) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (e: any) {
-    console.error("Error in /api/ai/summarize:", e);
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e : new Error("Unknown error");
+    console.error("Error in /api/ai/summarize:", error);
     console.error("Error details:", {
-      name: e?.name,
-      message: e?.message,
-      stack: e?.stack,
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
     });
 
-    const statusCode = e.name === "OpenRouterAuthError" ? 401 : 500;
-    const errorMessage = e?.message ?? "Unknown error occurred";
+    const statusCode = error.name === "OpenRouterAuthError" ? 401 : 500;
+    const errorMessage = error.message ?? "Unknown error occurred";
 
     return new Response(
       JSON.stringify({
         error: errorMessage,
-        errorType: e?.name,
-        details: e?.stack?.split("\n")[0],
+        errorType: error.name,
+        details: error.stack?.split("\n")[0],
       }),
       { status: statusCode, headers: { "Content-Type": "application/json" } }
     );

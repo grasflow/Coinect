@@ -157,7 +157,15 @@ export const PUT: APIRoute = async (context) => {
     }
 
     // Aktualizacja podstawowych danych faktury
-    const updateData: any = {
+    const updateData: {
+      is_edited: boolean;
+      edited_at: string;
+      issue_date?: string;
+      sale_date?: string;
+      vat_rate?: number;
+      exchange_rate?: number | null;
+      is_custom_exchange_rate?: boolean;
+    } = {
       is_edited: true,
       edited_at: new Date().toISOString(),
     };

@@ -148,8 +148,7 @@ export function TimeEntryForm({
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, reset]);
 
   const handleSubmit = (data: TimeEntryFormViewModel) => {
     // Konwertuj godziny i minuty na całkowite godziny
@@ -228,13 +227,9 @@ export function TimeEntryForm({
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          console.log("Calendar onSelect called with:", date);
                           if (date) {
                             field.onChange(date);
-                            console.log("field.onChange called, closing popover");
                             setDatePickerOpen(false);
-                          } else {
-                            console.log("Date is undefined, ignoring deselection");
                           }
                         }}
                         locale={pl}

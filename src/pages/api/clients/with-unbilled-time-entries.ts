@@ -71,14 +71,18 @@ export const GET: APIRoute = async (context) => {
 
     // Usuń duplikaty klientów (mogą pojawić się jeśli klient ma wiele niewyfakturowanych wpisów)
     const uniqueClients =
-      data?.reduce((acc, client) => {
-        if (!acc.some((c) => c.id === client.id)) {
-          // Usuń pole time_entries z odpowiedzi
-          const { time_entries: _time_entries, ...clientWithoutTimeEntries } = client;
-          acc.push(clientWithoutTimeEntries);
-        }
-        return acc;
-      }, [] as any[]) || [];
+      data?.reduce(
+        (acc, client) => {
+          if (!acc.some((c) => c.id === client.id)) {
+            // Usuń pole time_entries z odpowiedzi
+            const { time_entries: _timeEntries, ...clientWithoutTimeEntries } = client;
+            void _timeEntries;
+            acc.push(clientWithoutTimeEntries);
+          }
+          return acc;
+        },
+        [] as typeof data
+      ) || [];
 
     return new Response(JSON.stringify(uniqueClients), {
       status: 200,

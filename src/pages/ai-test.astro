@@ -13,12 +13,8 @@ import Layout from "@/layouts/Layout.astro";
         <textarea
           id="summarize-input"
           class="w-full p-3 border rounded mb-4 min-h-[150px]"
-          placeholder="Wpisz tekst do podsumowania..."
-        ></textarea>
-        <button
-          id="summarize-btn"
-          class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-        >
+          placeholder="Wpisz tekst do podsumowania..."></textarea>
+        <button id="summarize-btn" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
           Podsumuj
         </button>
         <div id="summarize-result" class="mt-4 p-4 bg-gray-50 rounded hidden">
@@ -37,12 +33,8 @@ import Layout from "@/layouts/Layout.astro";
         <textarea
           id="analyze-input"
           class="w-full p-3 border rounded mb-4 min-h-[150px]"
-          placeholder="Wpisz tekst do analizy..."
-        ></textarea>
-        <button
-          id="analyze-btn"
-          class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
-        >
+          placeholder="Wpisz tekst do analizy..."></textarea>
+        <button id="analyze-btn" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
           Analizuj
         </button>
         <div id="analyze-result" class="mt-4 p-4 bg-gray-50 rounded hidden">
@@ -56,88 +48,103 @@ import Layout from "@/layouts/Layout.astro";
       </div>
     </div>
   </div>
-</Layout>
 
-<script>
-  const summarizeBtn = document.getElementById("summarize-btn") as HTMLButtonElement;
-  const summarizeInput = document.getElementById("summarize-input") as HTMLTextAreaElement;
-  const summarizeResult = document.getElementById("summarize-result") as HTMLDivElement;
-  const summarizeOutput = document.getElementById("summarize-output") as HTMLPreElement;
-  const summarizeError = document.getElementById("summarize-error") as HTMLDivElement;
-  const summarizeErrorOutput = document.getElementById("summarize-error-output") as HTMLPreElement;
+  <script is:inline>
+    const summarizeBtn = document.getElementById("summarize-btn");
+    const summarizeInput = document.getElementById("summarize-input");
+    const summarizeResult = document.getElementById("summarize-result");
+    const summarizeOutput = document.getElementById("summarize-output");
+    const summarizeError = document.getElementById("summarize-error");
+    const summarizeErrorOutput = document.getElementById("summarize-error-output");
 
-  const analyzeBtn = document.getElementById("analyze-btn") as HTMLButtonElement;
-  const analyzeInput = document.getElementById("analyze-input") as HTMLTextAreaElement;
-  const analyzeResult = document.getElementById("analyze-result") as HTMLDivElement;
-  const analyzeOutput = document.getElementById("analyze-output") as HTMLPreElement;
-  const analyzeError = document.getElementById("analyze-error") as HTMLDivElement;
-  const analyzeErrorOutput = document.getElementById("analyze-error-output") as HTMLPreElement;
+    const analyzeBtn = document.getElementById("analyze-btn");
+    const analyzeInput = document.getElementById("analyze-input");
+    const analyzeResult = document.getElementById("analyze-result");
+    const analyzeOutput = document.getElementById("analyze-output");
+    const analyzeError = document.getElementById("analyze-error");
+    const analyzeErrorOutput = document.getElementById("analyze-error-output");
 
-  summarizeBtn.addEventListener("click", async () => {
-    const text = summarizeInput.value.trim();
-    if (!text) return;
-
-    summarizeBtn.disabled = true;
-    summarizeBtn.textContent = "Przetwarzanie...";
-    summarizeResult.classList.add("hidden");
-    summarizeError.classList.add("hidden");
-
-    try {
-      const response = await fetch("/api/ai/summarize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Unknown error");
-      }
-
-      summarizeOutput.textContent = JSON.stringify(data, null, 2);
-      summarizeResult.classList.remove("hidden");
-    } catch (error: any) {
-      summarizeErrorOutput.textContent = error.message;
-      summarizeError.classList.remove("hidden");
-    } finally {
-      summarizeBtn.disabled = false;
-      summarizeBtn.textContent = "Podsumuj";
+    if (
+      !summarizeBtn ||
+      !summarizeInput ||
+      !summarizeResult ||
+      !summarizeOutput ||
+      !summarizeError ||
+      !summarizeErrorOutput
+    ) {
+      throw new Error("Required elements not found");
     }
-  });
 
-  analyzeBtn.addEventListener("click", async () => {
-    const text = analyzeInput.value.trim();
-    if (!text) return;
-
-    analyzeBtn.disabled = true;
-    analyzeBtn.textContent = "Przetwarzanie...";
-    analyzeResult.classList.add("hidden");
-    analyzeError.classList.add("hidden");
-
-    try {
-      const response = await fetch("/api/ai/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Unknown error");
-      }
-
-      analyzeOutput.textContent = JSON.stringify(data, null, 2);
-      analyzeResult.classList.remove("hidden");
-    } catch (error: any) {
-      analyzeErrorOutput.textContent = error.message;
-      analyzeError.classList.remove("hidden");
-    } finally {
-      analyzeBtn.disabled = false;
-      analyzeBtn.textContent = "Analizuj";
+    if (!analyzeBtn || !analyzeInput || !analyzeResult || !analyzeOutput || !analyzeError || !analyzeErrorOutput) {
+      throw new Error("Required elements not found");
     }
-  });
-</script>
-</Layout>
 
+    summarizeBtn.addEventListener("click", async () => {
+      const text = summarizeInput.value.trim();
+      if (!text) return;
+
+      summarizeBtn.disabled = true;
+      summarizeBtn.textContent = "Przetwarzanie...";
+      summarizeResult.classList.add("hidden");
+      summarizeError.classList.add("hidden");
+
+      try {
+        const response = await fetch("/api/ai/summarize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Unknown error");
+        }
+
+        summarizeOutput.textContent = JSON.stringify(data, null, 2);
+        summarizeResult.classList.remove("hidden");
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd";
+        summarizeErrorOutput.textContent = errorMessage;
+        summarizeError.classList.remove("hidden");
+      } finally {
+        summarizeBtn.disabled = false;
+        summarizeBtn.textContent = "Podsumuj";
+      }
+    });
+
+    analyzeBtn.addEventListener("click", async () => {
+      const text = analyzeInput.value.trim();
+      if (!text) return;
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "Przetwarzanie...";
+      analyzeResult.classList.add("hidden");
+      analyzeError.classList.add("hidden");
+
+      try {
+        const response = await fetch("/api/ai/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Unknown error");
+        }
+
+        analyzeOutput.textContent = JSON.stringify(data, null, 2);
+        analyzeResult.classList.remove("hidden");
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd";
+        analyzeErrorOutput.textContent = errorMessage;
+        analyzeError.classList.remove("hidden");
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Analizuj";
+      }
+    });
+  </script>
+</Layout>

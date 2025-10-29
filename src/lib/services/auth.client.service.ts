@@ -21,12 +21,12 @@ interface AuthErrorResponse {
   };
 }
 
-export class AuthClientService {
+export const AuthClientService = {
   /**
    * Loguje użytkownika
    * @throws Error z komunikatem błędu
    */
-  static async login(credentials: LoginInput): Promise<AuthResponse> {
+  async login(credentials: LoginInput): Promise<AuthResponse> {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -41,13 +41,13 @@ export class AuthClientService {
     }
 
     return response.json();
-  }
+  },
 
   /**
    * Rejestruje nowego użytkownika
    * @throws Error z komunikatem błędu
    */
-  static async register(data: RegisterInput): Promise<AuthResponse> {
+  async register(data: RegisterInput): Promise<AuthResponse> {
     const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: {
@@ -62,13 +62,13 @@ export class AuthClientService {
     }
 
     return response.json();
-  }
+  },
 
   /**
    * Wysyła żądanie resetu hasła
    * @throws Error z komunikatem błędu
    */
-  static async forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
+  async forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
     const response = await fetch("/api/auth/forgot-password", {
       method: "POST",
       headers: {
@@ -83,13 +83,13 @@ export class AuthClientService {
     }
 
     return response.json();
-  }
+  },
 
   /**
    * Resetuje hasło użytkownika
    * @throws Error z komunikatem błędu
    */
-  static async resetPassword(password: string, passwordConfirm: string): Promise<{ success: boolean }> {
+  async resetPassword(password: string, passwordConfirm: string): Promise<{ success: boolean }> {
     const response = await fetch("/api/auth/reset-password", {
       method: "POST",
       headers: {
@@ -104,5 +104,5 @@ export class AuthClientService {
     }
 
     return response.json();
-  }
-}
+  },
+};

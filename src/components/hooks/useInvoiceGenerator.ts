@@ -98,7 +98,7 @@ export function useInvoiceGenerator() {
         setState((prev) => ({ ...prev, items: convertedItems }));
       }
     }
-  }, [state.step, state.invoiceMode, state.manualItems]);
+  }, [state.step, state.invoiceMode, state.manualItems, state.items]);
 
   // Automatyczne przeliczanie podsumowania
   useEffect(() => {

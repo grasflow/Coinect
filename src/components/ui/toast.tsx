@@ -20,15 +20,18 @@ function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<Toast[]>([]);
   const idRef = React.useRef(1);
 
-  const show = React.useCallback((t: Omit<Toast, "id">) => {
-    const id = idRef.current++;
-    setToasts((s) => [...s, { id, ...t }]);
-    setTimeout(() => dismiss(id), 4000);
-  }, []);
-
   const dismiss = React.useCallback((id: number) => {
     setToasts((s) => s.filter((x) => x.id !== id));
   }, []);
+
+  const show = React.useCallback(
+    (t: Omit<Toast, "id">) => {
+      const id = idRef.current++;
+      setToasts((s) => [...s, { id, ...t }]);
+      setTimeout(() => dismiss(id), 4000);
+    },
+    [dismiss]
+  );
 
   return (
     <ToastContext.Provider value={{ toasts, show, dismiss }}>

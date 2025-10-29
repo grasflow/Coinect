@@ -25,11 +25,11 @@ interface GUSLookupResponse {
   data: GUSCompanyData;
 }
 
-export class ClientClientService {
+export const ClientClientService = {
   /**
    * Pobiera wszystkich klientów użytkownika
    */
-  static async getAll(): Promise<ClientDTO[]> {
+  async getAll(): Promise<ClientDTO[]> {
     const response = await fetch("/api/clients");
 
     if (!response.ok) {
@@ -39,12 +39,12 @@ export class ClientClientService {
 
     const data = await response.json();
     return data.clients;
-  }
+  },
 
   /**
    * Tworzy nowego klienta
    */
-  static async create(data: CreateClientCommand): Promise<ClientDTO> {
+  async create(data: CreateClientCommand): Promise<ClientDTO> {
     const response = await fetch("/api/clients", {
       method: "POST",
       headers: {
@@ -60,12 +60,12 @@ export class ClientClientService {
 
     const result = await response.json();
     return result.client;
-  }
+  },
 
   /**
    * Aktualizuje klienta
    */
-  static async update(id: string, data: UpdateClientCommand): Promise<ClientDTO> {
+  async update(id: string, data: UpdateClientCommand): Promise<ClientDTO> {
     const response = await fetch(`/api/clients/${id}`, {
       method: "PUT",
       headers: {
@@ -81,12 +81,12 @@ export class ClientClientService {
 
     const result = await response.json();
     return result.client;
-  }
+  },
 
   /**
    * Usuwa klienta (soft delete)
    */
-  static async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     const response = await fetch(`/api/clients/${id}`, {
       method: "DELETE",
     });
@@ -95,12 +95,12 @@ export class ClientClientService {
       const errorData: ErrorResponse = await response.json();
       throw new Error(errorData.error.message || "Nie udało się usunąć klienta");
     }
-  }
+  },
 
   /**
    * Pobiera dane firmy z Białej Listy VAT (GUS)
    */
-  static async lookupNIP(nip: string): Promise<GUSCompanyData> {
+  async lookupNIP(nip: string): Promise<GUSCompanyData> {
     const response = await fetch(`/api/clients/lookup-nip?nip=${nip}`);
 
     if (!response.ok) {
@@ -110,5 +110,5 @@ export class ClientClientService {
 
     const result: GUSLookupResponse = await response.json();
     return result.data;
-  }
-}
+  },
+};

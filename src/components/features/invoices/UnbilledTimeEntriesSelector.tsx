@@ -7,9 +7,8 @@ import { HoursDisplay } from "@/components/ui/hours-display";
 import { InfoIcon } from "lucide-react";
 import type { UnbilledTimeEntriesSelectorProps } from "./types";
 import { useTimeEntries } from "@/components/hooks/useTimeEntries";
-import type { Currency } from "@/types";
 
-function formatCurrency(amount: number, _currency: Currency): string {
+function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("pl-PL", {
     style: "decimal",
     minimumFractionDigits: 2,
@@ -29,7 +28,7 @@ export function UnbilledTimeEntriesSelector({
     pageSize: 1000,
   });
 
-  const entries = data?.data || [];
+  const entries = useMemo(() => data?.data || [], [data?.data]);
 
   // Sprawdzenie czy wszystkie wpisy mają tę samą walutę
   const currencies = useMemo(() => {
@@ -170,7 +169,7 @@ export function UnbilledTimeEntriesSelector({
                 </div>
                 <div className="text-right">
                   <div className="font-semibold">
-                    {formatCurrency(amount, entry.client?.currency || "PLN")} {entry.client?.currency || "PLN"}
+                    {formatCurrency(amount)} {entry.client?.currency || "PLN"}
                   </div>
                 </div>
               </div>
@@ -194,7 +193,7 @@ export function UnbilledTimeEntriesSelector({
             <div className="flex justify-between font-semibold">
               <span>Suma do zafakturowania:</span>
               <span>
-                {formatCurrency(summary.totalAmount, summary.currency)} {summary.currency}
+                {formatCurrency(summary.totalAmount)} {summary.currency}
               </span>
             </div>
           </div>

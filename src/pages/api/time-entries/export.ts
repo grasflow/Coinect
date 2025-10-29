@@ -94,7 +94,7 @@ export const GET: APIRoute = async (context) => {
     csvRows.push("Data,Klient,Opis,Godziny,Stawka,Waluta,Wartość,Zafakturowane,Notatka prywatna");
 
     // Data rows
-    timeEntries.forEach((entry: any) => {
+    timeEntries.forEach((entry) => {
       const hours = parseFloat(entry.hours || "0");
       const rate = parseFloat(entry.hourly_rate || "0");
       const value = (hours * rate).toFixed(2);

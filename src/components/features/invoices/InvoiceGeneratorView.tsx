@@ -118,7 +118,7 @@ function InvoiceGeneratorContent() {
     if (clientCurrency !== state.summary.currency) {
       updateSettings({ exchangeRate: null, isCustomExchangeRate: false });
     }
-  }, [clientCurrency]);
+  }, [clientCurrency, state.summary.currency, updateSettings]);
 
   // Automatyczne grupowanie wpisów po wyborze
   useEffect(() => {
@@ -130,7 +130,7 @@ function InvoiceGeneratorContent() {
         setItems(grouped);
       }
     }
-  }, [state.selectedTimeEntryIds, timeEntriesData]);
+  }, [state.selectedTimeEntryIds, state.step, timeEntriesData, setItems]);
 
   const handleNextStep = () => {
     if (state.step === 1 && !state.clientId) {

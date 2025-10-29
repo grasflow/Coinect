@@ -45,7 +45,9 @@ export function TimeEntryFilters({ filters, onFilterChange, clients, isLoadingCl
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Klient</label>
+              <label htmlFor="client-filter" className="text-sm font-medium">
+                Klient
+              </label>
               <Select
                 value={filters.clientId}
                 onValueChange={(value) =>
@@ -56,7 +58,7 @@ export function TimeEntryFilters({ filters, onFilterChange, clients, isLoadingCl
                 }
                 disabled={isLoadingClients}
               >
-                <SelectTrigger className="w-full" aria-label="Wybierz klienta">
+                <SelectTrigger id="client-filter" className="w-full" aria-label="Wybierz klienta">
                   <SelectValue placeholder="Wszyscy klienci" />
                 </SelectTrigger>
                 <SelectContent>
@@ -71,8 +73,11 @@ export function TimeEntryFilters({ filters, onFilterChange, clients, isLoadingCl
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Zakres dat</label>
+              <label htmlFor="date-range-filter" className="text-sm font-medium">
+                Zakres dat
+              </label>
               <DateRangePicker
+                id="date-range-filter"
                 value={filters.dateRange}
                 onChange={(range) =>
                   onFilterChange({
@@ -84,7 +89,9 @@ export function TimeEntryFilters({ filters, onFilterChange, clients, isLoadingCl
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Status</label>
+              <label htmlFor="status-filter" className="text-sm font-medium">
+                Status
+              </label>
               <Select
                 value={filters.status}
                 onValueChange={(value) =>
@@ -94,7 +101,7 @@ export function TimeEntryFilters({ filters, onFilterChange, clients, isLoadingCl
                   })
                 }
               >
-                <SelectTrigger className="w-full" aria-label="Wybierz status">
+                <SelectTrigger id="status-filter" className="w-full" aria-label="Wybierz status">
                   <SelectValue placeholder="Wszystkie" />
                 </SelectTrigger>
                 <SelectContent>

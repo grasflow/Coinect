@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { InvoiceSummaryPanelProps } from "./types";
 
-function formatCurrency(amount: number, _currency: string): string {
+function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("pl-PL", {
     style: "decimal",
     minimumFractionDigits: 2,
@@ -28,21 +28,21 @@ export const InvoiceSummaryPanel = memo(function InvoiceSummaryPanel({
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Suma netto:</span>
             <span>
-              {formatCurrency(summary.netAmount, summary.currency)} {summary.currency}
+              {formatCurrency(summary.netAmount)} {summary.currency}
             </span>
           </div>
 
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">VAT ({summary.vatRate}%):</span>
             <span>
-              {formatCurrency(summary.vatAmount, summary.currency)} {summary.currency}
+              {formatCurrency(summary.vatAmount)} {summary.currency}
             </span>
           </div>
 
           <div className="flex justify-between border-t pt-2 font-semibold">
             <span>Suma brutto:</span>
             <span>
-              {formatCurrency(summary.grossAmount, summary.currency)} {summary.currency}
+              {formatCurrency(summary.grossAmount)} {summary.currency}
             </span>
           </div>
 
@@ -50,12 +50,12 @@ export const InvoiceSummaryPanel = memo(function InvoiceSummaryPanel({
             <>
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Kurs waluty:</span>
-                <span>{formatCurrency(summary.exchangeRate, "PLN")}</span>
+                <span>{formatCurrency(summary.exchangeRate)}</span>
               </div>
 
               <div className="flex justify-between border-t pt-2 text-sm font-medium">
                 <span>Suma brutto w PLN:</span>
-                <span>{formatCurrency(summary.grossAmountPLN, "PLN")} PLN</span>
+                <span>{formatCurrency(summary.grossAmountPLN)} PLN</span>
               </div>
             </>
           )}

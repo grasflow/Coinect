@@ -13,7 +13,7 @@ import {
 import { Download, Edit, Trash2, CheckCircle, Circle } from "lucide-react";
 import type { InvoiceRowProps } from "./types";
 
-function formatCurrency(amount: string, _currency: string): string {
+function formatCurrency(amount: string): string {
   const num = parseFloat(amount);
   return new Intl.NumberFormat("pl-PL", {
     style: "decimal",
@@ -58,10 +58,10 @@ export function InvoiceRow({ invoice, onDownloadPDF, onEdit, onTogglePaid, onDel
         {/* Kwota brutto */}
         <TableCell className="text-right">
           <div className="font-semibold">
-            {formatCurrency(invoice.gross_amount, invoice.currency)} {invoice.currency}
+            {formatCurrency(invoice.gross_amount)} {invoice.currency}
           </div>
           {invoice.currency !== "PLN" && invoice.gross_amount_pln && (
-            <div className="text-xs text-muted-foreground">({formatCurrency(invoice.gross_amount_pln, "PLN")} PLN)</div>
+            <div className="text-xs text-muted-foreground">({formatCurrency(invoice.gross_amount_pln)} PLN)</div>
           )}
         </TableCell>
 

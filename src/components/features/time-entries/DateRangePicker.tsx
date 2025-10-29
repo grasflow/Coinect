@@ -19,13 +19,15 @@ interface DateRangePickerProps {
   value?: DateRange;
   onChange: (range: DateRange) => void;
   placeholder?: string;
+  id?: string;
 }
 
-export function DateRangePicker({ value, onChange, placeholder = "Wybierz zakres dat" }: DateRangePickerProps) {
+export function DateRangePicker({ value, onChange, placeholder = "Wybierz zakres dat", id }: DateRangePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          id={id}
           variant="outline"
           className={cn("w-[280px] justify-start text-left font-normal", !value && "text-muted-foreground")}
         >
