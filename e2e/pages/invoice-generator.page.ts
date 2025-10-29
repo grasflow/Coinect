@@ -79,22 +79,41 @@ export class InvoiceGeneratorPage {
   }
 
   async selectClient(clientName?: string) {
-    // Ensure page is fully loaded and hydrated
+    // Wait for page to be fully loaded and hydrated
     await this.page.waitForLoadState("domcontentloaded");
+    await this.page.waitForLoadState("networkidle");
 
-    const clientSelect = this.page.locator('[role="combobox"]').first();
+    // Wait for loading skeleton to disappear - SelectTrigger appears when loading is done
+    await this.page.waitForSelector('#client-select', { state: "attached", timeout: 15000 });
 
-    // Wait for combobox to be visible and enabled
+    // Wait for SelectTrigger with client-select id to be visible (more reliable than role="combobox")
+    const clientSelect = this.page.locator('#client-select').first();
     await clientSelect.waitFor({ state: "visible", timeout: 10000 });
-    await this.page.waitForTimeout(500);
 
-    // Wait until combobox is enabled (not disabled)
+    // Wait until combobox is enabled - check multiple conditions
     await this.page.waitForFunction(
       () => {
-        const combobox = document.querySelector('[role="combobox"]');
-        return combobox && !combobox.hasAttribute("disabled");
+        const trigger = document.querySelector('#client-select');
+        if (!trigger) return false;
+        
+        // Check if disabled via attribute
+        if (trigger.hasAttribute("disabled")) return false;
+        
+        // Check if disabled via aria-disabled
+        const ariaDisabled = trigger.getAttribute("aria-disabled");
+        if (ariaDisabled === "true") return false;
+        
+        // Check if disabled via data-disabled (Radix UI)
+        if (trigger.hasAttribute("data-disabled")) return false;
+        
+        // Check if disabled via pointer-events or opacity (Radix UI adds these when disabled)
+        const computedStyle = window.getComputedStyle(trigger);
+        if (computedStyle.pointerEvents === "none") return false;
+        if (computedStyle.opacity === "0.5" && computedStyle.cursor === "not-allowed") return false;
+        
+        return true;
       },
-      { timeout: 15000 }
+      { timeout: 20000 }
     );
 
     await clientSelect.click();
@@ -102,6 +121,22 @@ export class InvoiceGeneratorPage {
     // Wait for the dropdown to appear
     const listbox = this.page.locator('[role="listbox"]');
     await listbox.waitFor({ state: "visible" });
+
+    // Wait for at least one option to be rendered (check both inside listbox and in portals)
+    const optionLocator = this.page.getByRole("option");
+
+    try {
+      await optionLocator.first().waitFor({ state: "visible", timeout: 10000 });
+    } catch (error) {
+      // Check if there are any options at all (even if not visible)
+      const optionCount = await optionLocator.count();
+
+      throw new Error(
+        `No client options found in dropdown. ` +
+        `Options count: ${optionCount}. ` +
+        `Ensure test data includes at least one client before running this test.`
+      );
+    }
 
     // If specific client provided, search for it; otherwise pick first
     let option;

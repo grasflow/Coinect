@@ -86,7 +86,7 @@ test.describe("Generator faktur", () => {
     await expect(invoicesPage.pageHeading).toBeVisible();
   });
 
-  test("nawiguje między krokami kreatora", async ({ authenticatedPage }) => {
+  test("nawiguje między krokami kreatora", async ({ authenticatedPage, testData: _testData }) => {
     const invoiceGeneratorPage = new InvoiceGeneratorPage(authenticatedPage);
     await invoiceGeneratorPage.goto();
     await invoiceGeneratorPage.waitForPageLoad();
@@ -95,9 +95,11 @@ test.describe("Generator faktur", () => {
     let currentStep = await invoiceGeneratorPage.getCurrentStep();
     expect(currentStep).toBe(1);
 
-    // Wybierz klienta i tryb manualny (nie zależy od istniejących danych)
-    await invoiceGeneratorPage.selectClient();
+    // Najpierw przełącz na tryb manualny (bo domyślnie wybrany jest "time-entries"
+    // który może być disabled jeśli brak klientów z unbilled entries)
     await invoiceGeneratorPage.selectInvoiceMode("manual");
+    // Teraz wybierz klienta (w trybie manual select jest enabled dla wszystkich klientów)
+    await invoiceGeneratorPage.selectClient();
 
     // Przejdź do kroku 2
     await invoiceGeneratorPage.goToNextStep();
@@ -126,9 +128,10 @@ test.describe("Generator faktur", () => {
     await invoiceGeneratorPage.goto();
     await invoiceGeneratorPage.waitForPageLoad();
 
-    // Krok 1: Wybór klienta i trybu manualnego (nie zależy od istniejących danych)
-    await invoiceGeneratorPage.selectClient();
+    // Krok 1: Najpierw przełącz tryb na manual, potem wybierz klienta
+    // (w trybie time-entries select może być disabled jeśli brak klientów z unbilled entries)
     await invoiceGeneratorPage.selectInvoiceMode("manual");
+    await invoiceGeneratorPage.selectClient();
     await invoiceGeneratorPage.goToNextStep();
 
     // Krok 2: Dodanie pozycji manualnej

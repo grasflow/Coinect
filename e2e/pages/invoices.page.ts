@@ -1,4 +1,5 @@
 import type { Page, Locator } from "@playwright/test";
+import { expect } from "@playwright/test";
 
 export class InvoicesPage {
   readonly page: Page;
@@ -78,10 +79,17 @@ export class InvoicesPage {
   }
 
   async createNewInvoice() {
+    // Wait for button to be visible and enabled
+    await this.newInvoiceButton.waitFor({ state: "visible", timeout: 10000 });
+    await expect(this.newInvoiceButton).toBeEnabled({ timeout: 5000 });
+
+    // Start waiting for navigation BEFORE clicking (prevents race conditions)
+    const navigationPromise = this.page.waitForURL("/invoices/new", { timeout: 30000 });
+
     await this.newInvoiceButton.click();
 
-    // Czekaj na nawigację do kreatora faktur
-    await this.page.waitForURL("/invoices/new", { timeout: 30000 });
+    // Wait for navigation to complete
+    await navigationPromise;
   }
 
   async filterByClient(clientName: string) {
