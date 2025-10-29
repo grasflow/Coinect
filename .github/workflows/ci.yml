@@ -81,8 +81,6 @@ jobs:
 
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
@@ -105,21 +103,34 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Validate required secrets
+        env:
+          SUPABASE_KEY_SECRET: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY_SECRET: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          if [ -z "${{ secrets.SUPABASE_URL }}" ] || [ -z "${{ secrets.SUPABASE_ANON_KEY }}" ]; then
-            echo "❌ Error: Missing required Supabase secrets"
-            echo "Please configure SUPABASE_URL and SUPABASE_ANON_KEY in:"
+          if [ -z "${{ secrets.SUPABASE_URL }}" ]; then
+            echo "❌ Error: Missing SUPABASE_URL secret"
+            echo "Please configure SUPABASE_URL in: GitHub → Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          SUPABASE_KEY_VALUE="${SUPABASE_KEY_SECRET:-${SUPABASE_ANON_KEY_SECRET}}"
+          if [ -z "$SUPABASE_KEY_VALUE" ]; then
+            echo "❌ Error: Missing Supabase key secret"
+            echo "Please configure SUPABASE_KEY (or SUPABASE_ANON_KEY) in:"
             echo "GitHub → Settings → Secrets and variables → Actions"
             exit 1
           fi
           echo "✅ All required secrets are configured"
 
       - name: Create .env.test file for E2E tests
+        env:
+          SUPABASE_KEY_SECRET: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY_SECRET: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
+          SUPABASE_KEY_VALUE="${SUPABASE_KEY_SECRET:-${SUPABASE_ANON_KEY_SECRET}}"
           cat > .env.test << EOF
           SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_KEY=$SUPABASE_KEY_VALUE
+          SUPABASE_ANON_KEY=$SUPABASE_KEY_VALUE
           SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           TEST_USER_EMAIL=${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD }}
@@ -127,7 +138,14 @@ jobs:
           echo "✅ Created .env.test file (secrets are masked in logs)"
 
       - name: Run E2E tests
-        run: npm run test:e2e
+        env:
+          SUPABASE_KEY_SECRET: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY_SECRET: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          SUPABASE_KEY_VALUE="${SUPABASE_KEY_SECRET:-${SUPABASE_ANON_KEY_SECRET}}"
+          export SUPABASE_KEY="$SUPABASE_KEY_VALUE"
+          export SUPABASE_ANON_KEY="$SUPABASE_KEY_VALUE"
+          npm run test:e2e
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v5
@@ -147,8 +165,6 @@ jobs:
 
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
     steps:
       - name: Checkout code
@@ -164,7 +180,14 @@ jobs:
         run: npm ci
 
       - name: Build production
-        run: npm run build
+        env:
+          SUPABASE_KEY_SECRET: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY_SECRET: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          SUPABASE_KEY_VALUE="${SUPABASE_KEY_SECRET:-${SUPABASE_ANON_KEY_SECRET}}"
+          export SUPABASE_KEY="$SUPABASE_KEY_VALUE"
+          export SUPABASE_ANON_KEY="$SUPABASE_KEY_VALUE"
+          npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
