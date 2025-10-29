@@ -84,33 +84,33 @@ export class InvoiceGeneratorPage {
     await this.page.waitForLoadState("networkidle");
 
     // Wait for loading skeleton to disappear - SelectTrigger appears when loading is done
-    await this.page.waitForSelector('#client-select', { state: "attached", timeout: 15000 });
+    await this.page.waitForSelector("#client-select", { state: "attached", timeout: 15000 });
 
     // Wait for SelectTrigger with client-select id to be visible (more reliable than role="combobox")
-    const clientSelect = this.page.locator('#client-select').first();
+    const clientSelect = this.page.locator("#client-select").first();
     await clientSelect.waitFor({ state: "visible", timeout: 10000 });
 
     // Wait until combobox is enabled - check multiple conditions
     await this.page.waitForFunction(
       () => {
-        const trigger = document.querySelector('#client-select');
+        const trigger = document.querySelector("#client-select");
         if (!trigger) return false;
-        
+
         // Check if disabled via attribute
         if (trigger.hasAttribute("disabled")) return false;
-        
+
         // Check if disabled via aria-disabled
         const ariaDisabled = trigger.getAttribute("aria-disabled");
         if (ariaDisabled === "true") return false;
-        
+
         // Check if disabled via data-disabled (Radix UI)
         if (trigger.hasAttribute("data-disabled")) return false;
-        
+
         // Check if disabled via pointer-events or opacity (Radix UI adds these when disabled)
         const computedStyle = window.getComputedStyle(trigger);
         if (computedStyle.pointerEvents === "none") return false;
         if (computedStyle.opacity === "0.5" && computedStyle.cursor === "not-allowed") return false;
-        
+
         return true;
       },
       { timeout: 20000 }
@@ -127,14 +127,14 @@ export class InvoiceGeneratorPage {
 
     try {
       await optionLocator.first().waitFor({ state: "visible", timeout: 10000 });
-    } catch (error) {
+    } catch (_error) {
       // Check if there are any options at all (even if not visible)
       const optionCount = await optionLocator.count();
 
       throw new Error(
         `No client options found in dropdown. ` +
-        `Options count: ${optionCount}. ` +
-        `Ensure test data includes at least one client before running this test.`
+          `Options count: ${optionCount}. ` +
+          `Ensure test data includes at least one client before running this test.`
       );
     }
 
