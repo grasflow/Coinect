@@ -13,12 +13,16 @@ function getEnvVar(name: string): string {
 
 function getSupabaseConfig() {
   const url = getEnvVar("SUPABASE_URL");
-  const key = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || import.meta.env.SUPABASE_KEY || import.meta.env.SUPABASE_ANON_KEY;
-  
+  const key =
+    process.env.SUPABASE_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    import.meta.env.SUPABASE_KEY ||
+    import.meta.env.SUPABASE_ANON_KEY;
+
   if (!key) {
     throw new Error("Missing SUPABASE_KEY or SUPABASE_ANON_KEY environment variable");
   }
-  
+
   return { url, key };
 }
 

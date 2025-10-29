@@ -84,7 +84,7 @@ const testConfig = tseslint.config({
 
 // Node.js script files configuration
 const nodeScriptConfig = tseslint.config({
-  files: ["*.js", "scripts/**/*.js", "scripts/**/*.ts"],
+  files: ["*.js", "*.mjs", "scripts/**/*.js", "scripts/**/*.ts"],
   languageOptions: {
     globals: {
       console: "readonly",
