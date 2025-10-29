@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,7 +62,7 @@ export function ManualItemsEditor({ items, onChange }: ManualItemsEditorProps) {
       <CardContent className="space-y-4">
         {items.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            Brak pozycji. Kliknij "Dodaj pozycję", aby rozpocząć.
+            Brak pozycji. Kliknij &quot;Dodaj pozycję&quot;, aby rozpocząć.
           </div>
         ) : (
           items.map((item, index) => (

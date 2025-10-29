@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
 import type { InvoiceSettingsPanelProps } from "./types";
-import type { Currency } from "@/types";
 import { useExchangeRate } from "@/components/hooks/useExchangeRate";
 
 const VAT_RATES = [

@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Edit, Search } from "lucide-react";
 import type { ClientDTO } from "@/types";
-import { createClientSchema, updateClientSchema } from "@/lib/validation/client.schema";
+import {
+  createClientSchema,
+  updateClientSchema,
+  type CreateClientSchema,
+  type UpdateClientSchema,
+} from "@/lib/validation/client.schema";
 import { useClientMutations } from "@/components/hooks/useClientMutations";
 import { useGUSLookup } from "@/components/hooks/useGUSLookup";
 
@@ -108,7 +113,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
     }
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: CreateClientSchema | UpdateClientSchema) => {
     if (isEditMode && client) {
       updateMutation.mutate({ id: client.id, data });
     } else {

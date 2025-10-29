@@ -77,7 +77,7 @@ export class OpenRouterService {
     return messages;
   }
 
-  private async _request(path: string, payload: Record<string, unknown>): Promise<any> {
+  private async _request(path: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> {
     const url = `${this.baseUrl}${path}`;
 
     const doFetch = () =>
@@ -125,7 +125,7 @@ export class OpenRouterService {
     }
   }
 
-  private _parse<T>(apiResponse: any, expectsJson: boolean): GenerateResult<T> {
+  private _parse<T>(apiResponse: Record<string, unknown>, expectsJson: boolean): GenerateResult<T> {
     const choice = apiResponse?.choices?.[0];
     const usage = apiResponse?.usage;
     const model = apiResponse?.model;

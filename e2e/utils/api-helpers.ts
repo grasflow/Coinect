@@ -211,10 +211,14 @@ export class APIHelpers {
       const batchPromises = [];
       const remaining = Math.min(batchSize, count - i);
 
+      if (!testClientId) {
+        throw new Error("Client ID is required but not provided");
+      }
+
       for (let j = 0; j < remaining; j++) {
         const invoiceNumber = i + j + 1;
         const invoiceData = {
-          client_id: testClientId!,
+          client_id: testClientId,
           invoice_number: `TEST/${new Date().getFullYear()}/${String(invoiceNumber).padStart(4, "0")}`,
           issue_date: new Date().toISOString().split("T")[0],
           due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],

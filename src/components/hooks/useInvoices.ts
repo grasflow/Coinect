@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InvoicesFilterState } from "@/components/features/invoices/types";
+import type { InvoiceListItemDTO } from "@/types";
 
 interface PaginatedResponse<T> {
   data: T[];
@@ -8,7 +9,7 @@ interface PaginatedResponse<T> {
   pageSize: number;
 }
 
-async function fetchInvoices(filters: InvoicesFilterState): Promise<PaginatedResponse<any>> {
+async function fetchInvoices(filters: InvoicesFilterState): Promise<PaginatedResponse<InvoiceListItemDTO>> {
   const params = new URLSearchParams();
 
   if (filters.clientId && filters.clientId !== "all") {

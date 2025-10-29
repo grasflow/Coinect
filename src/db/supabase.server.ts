@@ -20,10 +20,10 @@ export function createSupabaseServerClient(cookies: AstroCookies) {
       get(key: string) {
         return cookies.get(key)?.value;
       },
-      set(key: string, value: string, options: any) {
+      set(key: string, value: string, options?: Parameters<typeof cookies.set>[1]) {
         cookies.set(key, value, options);
       },
-      remove(key: string, options: any) {
+      remove(key: string, options?: Parameters<typeof cookies.delete>[1]) {
         cookies.delete(key, options);
       },
     },

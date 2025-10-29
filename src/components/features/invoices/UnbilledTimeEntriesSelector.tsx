@@ -9,7 +9,7 @@ import type { UnbilledTimeEntriesSelectorProps } from "./types";
 import { useTimeEntries } from "@/components/hooks/useTimeEntries";
 import type { Currency } from "@/types";
 
-function formatCurrency(amount: number, currency: Currency): string {
+function formatCurrency(amount: number, _currency: Currency): string {
   return new Intl.NumberFormat("pl-PL", {
     style: "decimal",
     minimumFractionDigits: 2,

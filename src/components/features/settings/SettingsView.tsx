@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { H1, H2, Muted } from "@/components/ui/typography";
+import { H1, Muted } from "@/components/ui/typography";
 import { Stack } from "@/components/ui/container";
 import { useProfile, useUpdateProfile, useUploadLogo } from "@/components/hooks/useProfile";
 import QueryProvider from "@/components/QueryProvider";
@@ -95,7 +95,7 @@ function SettingsViewContent() {
     if (!logoFile) return;
 
     try {
-      const response = await uploadLogoMutation.mutateAsync(logoFile);
+      await uploadLogoMutation.mutateAsync(logoFile);
       toast.success("Logo zostało przesłane");
       setLogoFile(null);
     } catch (error) {

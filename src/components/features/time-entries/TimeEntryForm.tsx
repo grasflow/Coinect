@@ -132,7 +132,7 @@ export function TimeEntryForm({
           currency: initialData.currency || "PLN",
           public_description: initialData.public_description || "",
           private_note: initialData.private_note || "",
-          tag_ids: initialData.tags?.map((t) => (t.tag as any).id) || [],
+          tag_ids: initialData.tags?.map((t) => t.tag.id) || [],
         });
       } else {
         reset({

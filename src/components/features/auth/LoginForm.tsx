@@ -5,7 +5,6 @@ import { loginSchema, type LoginInput } from "@/lib/validation/auth.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
-import { PasswordInput } from "./PasswordInput";
 import { AuthClientService } from "@/lib/services/auth.client.service";
 
 export function LoginForm() {
@@ -41,7 +40,7 @@ export function LoginForm() {
       await AuthClientService.login(data);
       // Sukces - backend ustawił cookies
       // Reload strony, aby middleware załadował nową sesję i przekierował na /dashboard
-      window.location.href = "/dashboard";
+      window.location.assign("/dashboard");
     } catch (error) {
       if (error instanceof Error) {
         setApiError(error.message);

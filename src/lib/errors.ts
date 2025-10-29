@@ -15,7 +15,7 @@ export class ForbiddenError extends Error {
 export class ValidationError extends Error {
   constructor(
     message: string,
-    public details?: any
+    public details?: Record<string, unknown>
   ) {
     super(message);
     this.name = "ValidationError";

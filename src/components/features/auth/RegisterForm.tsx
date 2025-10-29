@@ -14,7 +14,7 @@ export function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       full_name: "",
@@ -28,13 +28,13 @@ export function RegisterForm() {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RegisterInput) => {
     setApiError("");
 
     try {
       await AuthClientService.register(data);
       // Przekierowanie po udanej rejestracji
-      window.location.href = "/dashboard";
+      window.location.assign("/dashboard");
     } catch (error) {
       if (error instanceof Error) {
         setApiError(error.message);

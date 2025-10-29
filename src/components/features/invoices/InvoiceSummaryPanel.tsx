@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { InvoiceSummaryPanelProps } from "./types";
 
-function formatCurrency(amount: number, currency: string): string {
+function formatCurrency(amount: number, _currency: string): string {
   return new Intl.NumberFormat("pl-PL", {
     style: "decimal",
     minimumFractionDigits: 2,

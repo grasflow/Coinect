@@ -13,7 +13,7 @@ test.describe("Generator faktur", () => {
     await expect(invoiceGeneratorPage.stepIndicator).toBeVisible();
   });
 
-  test("generuje fakturę z wpisów czasu (Happy Path)", async ({ authenticatedPage, testData }) => {
+  test("generuje fakturę z wpisów czasu (Happy Path)", async ({ authenticatedPage, testData: _testData }) => {
     const invoiceGeneratorPage = new InvoiceGeneratorPage(authenticatedPage);
     const invoicesPage = new InvoicesPage(authenticatedPage);
 
@@ -49,7 +49,7 @@ test.describe("Generator faktur", () => {
     await expect(invoicesPage.pageHeading).toBeVisible();
   });
 
-  test("generuje fakturę manualną", async ({ authenticatedPage, testData }) => {
+  test("generuje fakturę manualną", async ({ authenticatedPage, testData: _testData }) => {
     const invoiceGeneratorPage = new InvoiceGeneratorPage(authenticatedPage);
     const invoicesPage = new InvoicesPage(authenticatedPage);
 
@@ -121,7 +121,7 @@ test.describe("Generator faktur", () => {
     expect(currentStep).toBe(2);
   });
 
-  test("zachowuje dane przy nawigacji między krokami", async ({ authenticatedPage, testData }) => {
+  test("zachowuje dane przy nawigacji między krokami", async ({ authenticatedPage, testData: _testData }) => {
     const invoiceGeneratorPage = new InvoiceGeneratorPage(authenticatedPage);
     await invoiceGeneratorPage.goto();
     await invoiceGeneratorPage.waitForPageLoad();

@@ -78,12 +78,12 @@ export function useInvoiceEditState(invoiceId: string): {
   }
 
   // Konwersja pozycji faktury na InvoiceItemViewModel
-  const items: InvoiceItemViewModel[] = (invoice.items || []).map((item: any) => ({
+  const items: InvoiceItemViewModel[] = (invoice.items || []).map((item) => ({
     id: item.id,
     position: item.position,
     description: item.description,
-    timeEntryIds: item.time_entries?.map((te: any) => te.time_entry.id) || [],
-    timeEntries: item.time_entries?.map((te: any) => te.time_entry) || [],
+    timeEntryIds: item.time_entries?.map((te) => te.time_entry.id) || [],
+    timeEntries: item.time_entries?.map((te) => te.time_entry) || [],
     quantity: parseFloat(item.quantity),
     unitPrice: parseFloat(item.unit_price),
     netAmount: parseFloat(item.net_amount),

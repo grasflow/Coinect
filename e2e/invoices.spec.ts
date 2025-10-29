@@ -26,7 +26,7 @@ test.describe("Zarządzanie fakturami", () => {
     await expect(authenticatedPage).toHaveURL("/invoices/new");
   });
 
-  test("filtruje faktury po statusie", async ({ authenticatedPage, testData }) => {
+  test("filtruje faktury po statusie", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -41,7 +41,7 @@ test.describe("Zarządzanie fakturami", () => {
     expect(filteredCount).toBeLessThanOrEqual(initialCount);
   });
 
-  test("filtruje faktury po kliencie", async ({ authenticatedPage, testData }) => {
+  test("filtruje faktury po kliencie", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -68,7 +68,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("filtruje faktury po walucie", async ({ authenticatedPage, testData }) => {
+  test("filtruje faktury po walucie", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -81,7 +81,7 @@ test.describe("Zarządzanie fakturami", () => {
     expect(typeof filteredCount).toBe("number");
   });
 
-  test("wyczyszcza filtry", async ({ authenticatedPage, testData }) => {
+  test("wyczyszcza filtry", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -107,7 +107,7 @@ test.describe("Zarządzanie fakturami", () => {
     expect(clearedCount).toBeGreaterThanOrEqual(filteredCount);
   });
 
-  test("pobiera PDF faktury", async ({ authenticatedPage, testData }) => {
+  test("pobiera PDF faktury", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -128,7 +128,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("edytuje fakturę", async ({ authenticatedPage, testData }) => {
+  test("edytuje fakturę", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -148,7 +148,7 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("oznacza fakturę jako zapłaconą/niezapłaconą", async ({ authenticatedPage, testData }) => {
+  test("oznacza fakturę jako zapłaconą/niezapłaconą", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
@@ -222,7 +222,11 @@ test.describe("Zarządzanie fakturami", () => {
     // Stwórz prostą fakturę manualną
     await invoiceGeneratorPage.goto();
     await invoiceGeneratorPage.waitForPageLoad();
-    await invoiceGeneratorPage.selectClient(testData.clientName!);
+    const clientName = testData.clientName;
+    if (!clientName) {
+      return;
+    }
+    await invoiceGeneratorPage.selectClient(clientName);
     await invoiceGeneratorPage.selectInvoiceMode("manual");
     await invoiceGeneratorPage.goToNextStep();
     await invoiceGeneratorPage.addManualItem("Usługa testowa", 1, 100);
@@ -251,13 +255,13 @@ test.describe("Zarządzanie fakturami", () => {
     }
   });
 
-  test("wyświetla podsumowanie kwot faktur", async ({ authenticatedPage, testData }) => {
+  test("wyświetla podsumowanie kwot faktur", async ({ authenticatedPage, testData: _testData }) => {
     const invoicesPage = new InvoicesPage(authenticatedPage);
     await invoicesPage.goto();
     await invoicesPage.waitForPageLoad();
 
     // Sprawdź czy podsumowanie jest wyświetlane (może być ukryte jeśli nie ma faktur)
-    const summaryElement = authenticatedPage.locator('[data-testid="invoice-summary"], .invoice-summary');
+    const _summaryElement = authenticatedPage.locator('[data-testid="invoice-summary"], .invoice-summary');
     // Summary może nie być widoczne jeśli nie ma faktur, więc nie sprawdzamy widoczności
   });
 });

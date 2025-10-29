@@ -27,10 +27,13 @@ export class AuthService {
       throw new AuthError("LOGIN_ERROR", "Nie udało się zalogować");
     }
 
+    if (!data.user.email) {
+      throw new Error("User email is missing");
+    }
     return {
       user: {
         id: data.user.id,
-        email: data.user.email!,
+        email: data.user.email,
       },
       session: data.session,
     };
@@ -88,15 +91,17 @@ export class AuthService {
         .eq("id", authData.user.id);
 
       if (updateError) {
-        console.error("Failed to update profile:", updateError);
         // Nie rzucamy błędu - użytkownik został utworzony, tylko profil nie został w pełni zaktualizowany
       }
     }
 
+    if (!authData.user.email) {
+      throw new Error("User email is missing");
+    }
     return {
       user: {
         id: authData.user.id,
-        email: authData.user.email!,
+        email: authData.user.email,
         full_name: data.full_name,
       },
       session: authData.session,

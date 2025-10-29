@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { H1, H2, Text, Muted } from "@/components/ui/typography";
+import { H1, Text, Muted } from "@/components/ui/typography";
 import { ClientForm } from "./ClientForm";
 import { DeleteClientDialog } from "./DeleteClientDialog";
 import { Search, Building2, Mail, Phone, MapPin, LoaderIcon } from "lucide-react";

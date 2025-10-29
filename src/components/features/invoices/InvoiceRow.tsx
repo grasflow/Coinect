@@ -13,7 +13,7 @@ import {
 import { Download, Edit, Trash2, CheckCircle, Circle } from "lucide-react";
 import type { InvoiceRowProps } from "./types";
 
-function formatCurrency(amount: string, currency: string): string {
+function formatCurrency(amount: string, _currency: string): string {
   const num = parseFloat(amount);
   return new Intl.NumberFormat("pl-PL", {
     style: "decimal",

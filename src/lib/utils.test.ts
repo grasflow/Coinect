@@ -14,7 +14,8 @@ describe("utils", () => {
     });
 
     it("obsługuje klasy warunkowe", () => {
-      const result = cn("base-class", false && "hidden", "visible");
+      const condition = false;
+      const result = cn("base-class", condition && "hidden", "visible");
       expect(result).toBe("base-class visible");
     });
 

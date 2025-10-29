@@ -1,4 +1,4 @@
-import type { Currency, TimeEntryWithRelationsDTO } from "@/types";
+import type { Currency, TimeEntryWithRelationsDTO, InvoiceDetailDTO, InvoiceListItemDTO, ClientDTO } from "@/types";
 
 // ===================================
 // INVOICE GENERATOR VIEW MODELS
@@ -112,7 +112,7 @@ export interface InvoiceListViewModel {
  * Stan widoku edycji faktury
  */
 export interface InvoiceEditState {
-  invoice: any; // InvoiceDetailDTO - oryginalne dane faktury
+  invoice: InvoiceDetailDTO; // InvoiceDetailDTO - oryginalne dane faktury
   items: InvoiceItemViewModel[]; // Edytowalne pozycje
   settings: InvoiceSettingsViewModel; // Edytowalne ustawienia
   summary: InvoiceSummaryViewModel; // Przeliczone podsumowanie
@@ -209,11 +209,11 @@ export interface InvoiceSummaryPanelProps {
 export interface InvoicesFiltersProps {
   filters: InvoicesFilterState;
   onChange: (filters: InvoicesFilterState) => void;
-  clients: any[]; // ClientDTO[]
+  clients: ClientDTO[];
 }
 
 export interface InvoiceRowProps {
-  invoice: any; // InvoiceListItemDTO
+  invoice: InvoiceListItemDTO;
   onDownloadPDF: (invoiceId: string) => void;
   onEdit: (invoiceId: string) => void;
   onTogglePaid: (invoiceId: string, isPaid: boolean) => void;

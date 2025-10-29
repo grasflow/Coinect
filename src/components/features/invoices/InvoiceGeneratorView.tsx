@@ -38,7 +38,10 @@ function groupTimeEntriesByDescription(entries: TimeEntryWithRelationsDTO[]): In
     if (!groups.has(description)) {
       groups.set(description, []);
     }
-    groups.get(description)!.push(entry);
+    const groupEntries = groups.get(description);
+    if (groupEntries) {
+      groupEntries.push(entry);
+    }
   });
 
   return Array.from(groups.entries()).map(([description, groupEntries], index) => {
@@ -213,8 +216,9 @@ function InvoiceGeneratorContent() {
 
       // Reset formularza po sukcesie
       window.location.href = "/invoices"; // Przekierowanie do listy faktur
-    } catch (error: any) {
-      toast.error(error.message || "Nie udało się wygenerować faktury");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Nie udało się wygenerować faktury";
+      toast.error(message);
     }
   };
 

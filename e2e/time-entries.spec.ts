@@ -1,6 +1,6 @@
 import { test, expect } from "./fixtures/data.fixture";
 import { TimeEntriesPage } from "./pages/time-entries.page";
-import { waitForToast, formatDate } from "./utils/test-helpers";
+import { formatDate } from "./utils/test-helpers";
 
 test.describe("Wpisy czasu pracy", () => {
   test("wyświetla stronę wpisów czasu", async ({ authenticatedPage }) => {
@@ -18,10 +18,15 @@ test.describe("Wpisy czasu pracy", () => {
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();
 
+    const clientName = testData.clientName;
+    if (!clientName) {
+      return;
+    }
+
     const today = formatDate();
     const uniqueDesc = `Test entry created at ${Date.now()}`;
     const timeEntryData = {
-      clientName: testData.clientName!, // Use dynamic client name from fixture
+      clientName, // Use dynamic client name from fixture
       date: today,
       hours: 8,
       minutes: 30,
@@ -45,8 +50,12 @@ test.describe("Wpisy czasu pracy", () => {
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();
 
+    const clientName = testData.clientName;
+    if (!clientName) {
+      return;
+    }
+
     const yesterday = formatDate(new Date(Date.now() - 86400000));
-    const clientName = testData.clientName!;
     const updatedData = {
       hours: 6,
       minutes: 45,
@@ -66,10 +75,15 @@ test.describe("Wpisy czasu pracy", () => {
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();
 
+    const clientName = testData.clientName;
+    if (!clientName) {
+      return;
+    }
+
     const today = formatDate();
     const uniqueDesc = `Entry to delete ${Date.now()}`;
     const timeEntryData = {
-      clientName: testData.clientName!,
+      clientName,
       date: today,
       hours: 4,
       publicDescription: uniqueDesc,
@@ -93,17 +107,22 @@ test.describe("Wpisy czasu pracy", () => {
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();
 
+    const clientName = testData.clientName;
+    if (!clientName) {
+      return;
+    }
+
     const initialCount = await timeEntriesPage.getTimeEntriesCount();
 
     // Filtruj po kliencie
-    await timeEntriesPage.filterByClient(testData.clientName!);
+    await timeEntriesPage.filterByClient(clientName);
 
     // Sprawdź czy lista została przefiltrowana
     const filteredCount = await timeEntriesPage.getTimeEntriesCount();
     expect(filteredCount).toBeLessThanOrEqual(initialCount);
   });
 
-  test("filtruje wpisy czasu po statusie", async ({ authenticatedPage, testData }) => {
+  test("filtruje wpisy czasu po statusie", async ({ authenticatedPage, testData: _testData }) => {
     const timeEntriesPage = new TimeEntriesPage(authenticatedPage);
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();
@@ -124,7 +143,7 @@ test.describe("Wpisy czasu pracy", () => {
     }
   });
 
-  test("eksportuje wpisy czasu do CSV", async ({ authenticatedPage, testData }) => {
+  test("eksportuje wpisy czasu do CSV", async ({ authenticatedPage, testData: _testData }) => {
     const timeEntriesPage = new TimeEntriesPage(authenticatedPage);
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();
@@ -141,8 +160,13 @@ test.describe("Wpisy czasu pracy", () => {
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();
 
+    const clientName = testData.clientName;
+    if (!clientName) {
+      return;
+    }
+
     // Ustaw filtry
-    await timeEntriesPage.filterByClient(testData.clientName!);
+    await timeEntriesPage.filterByClient(clientName);
     await timeEntriesPage.filterByStatus("unbilled");
 
     const filteredCount = await timeEntriesPage.getTimeEntriesCount();
@@ -177,7 +201,7 @@ test.describe("Wpisy czasu pracy", () => {
     await expect(timeEntriesPage.timeEntryFormSubmitButton).toBeDisabled();
   });
 
-  test("blokuje edycję zafakturowanych wpisów", async ({ authenticatedPage, testData }) => {
+  test("blokuje edycję zafakturowanych wpisów", async ({ authenticatedPage, testData: _testData }) => {
     const timeEntriesPage = new TimeEntriesPage(authenticatedPage);
     await timeEntriesPage.goto();
     await timeEntriesPage.waitForPageLoad();

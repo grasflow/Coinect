@@ -1,6 +1,6 @@
 # Architektura CI/CD Pipeline
 
-## Przepływ pracy
+## Przepływ prac
 
 ```mermaid
 graph TB

@@ -216,7 +216,7 @@ export class TimeEntriesPage {
     // Try to wait for the button to become enabled, with a fallback if it doesn't
     try {
       await expect(this.timeEntryFormSubmitButton).toBeEnabled({ timeout: 10000 });
-    } catch (error) {
+    } catch (_error) {
       // If button is still disabled, log the form state for debugging
       const dateValue = await this.datePicker.textContent();
       const clientValue = await this.clientSelect.textContent();
