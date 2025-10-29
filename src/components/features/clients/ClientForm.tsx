@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Edit } from "lucide-react";
-import type { CreateClientCommand, ClientDTO, UpdateClientCommand } from "@/types";
-import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Plus, Edit, Search } from "lucide-react";
+import type { ClientDTO } from "@/types";
+import { createClientSchema, updateClientSchema } from "@/lib/validation/client.schema";
+import { useClientMutations } from "@/components/hooks/useClientMutations";
+import { useGUSLookup } from "@/components/hooks/useGUSLookup";
 
 interface ClientFormProps {
   client?: ClientDTO;
@@ -19,118 +20,92 @@ interface ClientFormProps {
 export function ClientForm({ client, onSuccess }: ClientFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const isEditMode = !!client;
-  
-  const [formData, setFormData] = useState<Partial<CreateClientCommand>>({
-    name: "",
-    country: "Polska",
-    default_currency: "PLN",
+
+  const { createMutation, updateMutation } = useClientMutations(() => {
+    setIsOpen(false);
+    onSuccess?.();
   });
 
-  const queryClient = useQueryClient();
+  const { lookupNIP, isLoading: isLoadingNIP } = useGUSLookup();
 
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    control,
+    watch,
+    setValue,
+    reset,
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: zodResolver(isEditMode ? updateClientSchema : createClientSchema),
+    mode: 'all',
+    defaultValues: {
+      name: "",
+      tax_id: "",
+      street: "",
+      city: "",
+      postal_code: "",
+      country: "Polska",
+      email: "",
+      phone: "",
+      default_currency: "PLN" as const,
+      default_hourly_rate: undefined,
+    },
+  });
+
+  // Watch tax_id for GUS lookup button state
+  const taxId = watch("tax_id");
+
+  // Reset form when client prop changes or dialog opens
   useEffect(() => {
-    if (client) {
-      setFormData({
-        name: client.name,
-        tax_id: client.tax_id || "",
-        street: client.street || "",
-        city: client.city || "",
-        postal_code: client.postal_code || "",
-        country: client.country,
-        email: client.email || "",
-        phone: client.phone || "",
-        default_currency: client.default_currency,
-        default_hourly_rate: client.default_hourly_rate || undefined,
-      });
-    }
-  }, [client]);
-
-  const createMutation = useMutation({
-    mutationFn: async (data: CreateClientCommand) => {
-      const response = await fetch("/api/clients", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || "Nie udało się dodać klienta");
+    if (isOpen) {
+      if (client) {
+        reset({
+          name: client.name,
+          tax_id: client.tax_id || "",
+          street: client.street || "",
+          city: client.city || "",
+          postal_code: client.postal_code || "",
+          country: client.country || "Polska",
+          email: client.email || "",
+          phone: client.phone || "",
+          default_currency: client.default_currency || "PLN",
+          default_hourly_rate: client.default_hourly_rate || undefined,
+        });
+      } else {
+        reset({
+          name: "",
+          tax_id: "",
+          street: "",
+          city: "",
+          postal_code: "",
+          country: "Polska",
+          email: "",
+          phone: "",
+          default_currency: "PLN" as const,
+          default_hourly_rate: undefined,
+        });
       }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Klient został dodany pomyślnie");
-      setIsOpen(false);
-      setFormData({
-        name: "",
-        country: "Polska",
-        default_currency: "PLN",
-      });
-      onSuccess?.();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: UpdateClientCommand }) => {
-      const response = await fetch(`/api/clients/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || "Nie udało się zaktualizować klienta");
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Klient został zaktualizowany pomyślnie");
-      setIsOpen(false);
-      onSuccess?.();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.name?.trim()) {
-      toast.error("Nazwa klienta jest wymagana");
-      return;
     }
+  }, [isOpen, client, reset]);
 
-    const clientData = {
-      name: formData.name.trim(),
-      tax_id: formData.tax_id || undefined,
-      street: formData.street || undefined,
-      city: formData.city || undefined,
-      postal_code: formData.postal_code || undefined,
-      country: formData.country || "Polska",
-      email: formData.email || undefined,
-      phone: formData.phone || undefined,
-      default_currency: formData.default_currency || "PLN",
-      default_hourly_rate: formData.default_hourly_rate || undefined,
-    };
+  const handleFetchFromGUS = async () => {
+    const data = await lookupNIP(taxId || "");
+    if (data) {
+      // Update form with fetched data, but preserve existing values if API didn't return them
+      if (data.name) setValue("name", data.name);
+      if (data.street) setValue("street", data.street);
+      if (data.city) setValue("city", data.city);
+      if (data.postalCode) setValue("postal_code", data.postalCode);
+      if (data.country) setValue("country", data.country);
+    }
+  };
 
+  const onSubmit = (data: any) => {
     if (isEditMode && client) {
-      updateMutation.mutate({ id: client.id, data: clientData });
+      updateMutation.mutate({ id: client.id, data });
     } else {
-      createMutation.mutate(clientData as CreateClientCommand);
+      createMutation.mutate(data);
     }
   };
 
@@ -140,7 +115,7 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {isEditMode ? (
-          <Button variant="ghost" size="sm">
+          <Button variant="plain" size="sm">
             <Edit className="h-4 w-4" />
           </Button>
         ) : (
@@ -152,33 +127,55 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {isEditMode ? "Edytuj klienta" : "Dodaj nowego klienta"}
-          </DialogTitle>
+          <DialogTitle>{isEditMode ? "Edytuj klienta" : "Dodaj nowego klienta"}</DialogTitle>
+          <DialogDescription>
+            {isEditMode ? "Wprowadź zmiany w danych klienta." : "Wypełnij formularz, aby dodać nowego klienta."}
+          </DialogDescription>
         </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
+
+        <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nazwa klienta *</Label>
               <Input
                 id="name"
-                value={formData.name || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                {...register("name")}
                 placeholder="np. Acme Sp. z o.o."
-                required
+                aria-invalid={!!errors.name}
               />
+              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="tax_id">NIP</Label>
-              <Input
-                id="tax_id"
-                value={formData.tax_id || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, tax_id: e.target.value }))}
-                placeholder="1234567890"
-                maxLength={10}
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="tax_id"
+                  {...register("tax_id")}
+                  placeholder="1234567890"
+                  maxLength={10}
+                  className="flex-1"
+                  aria-invalid={!!errors.tax_id}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={handleFetchFromGUS}
+                  disabled={isLoadingNIP || isPending || !taxId || taxId.length !== 10}
+                  title="Pobierz dane z Białej Listy VAT"
+                  className="shrink-0"
+                >
+                  <Search className={`h-4 w-4 ${isLoadingNIP ? "animate-spin" : ""}`} />
+                </Button>
+              </div>
+              {errors.tax_id ? (
+                <p className="text-sm text-destructive">{errors.tax_id.message}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Wprowadź 10-cyfrowy NIP i kliknij ikonę lupy, aby pobrać dane z Białej Listy VAT
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -186,77 +183,86 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
               <Input
                 id="email"
                 type="email"
-                value={formData.email || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                {...register("email")}
                 placeholder="biuro@acme.pl"
+                aria-invalid={!!errors.email}
               />
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="phone">Telefon</Label>
               <Input
                 id="phone"
-                value={formData.phone || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                {...register("phone")}
                 placeholder="+48111222333"
+                aria-invalid={!!errors.phone}
               />
+              {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="street">Ulica</Label>
               <Input
                 id="street"
-                value={formData.street || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, street: e.target.value }))}
+                {...register("street")}
                 placeholder="ul. Biznesowa 10"
+                aria-invalid={!!errors.street}
               />
+              {errors.street && <p className="text-sm text-destructive">{errors.street.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="city">Miasto</Label>
               <Input
                 id="city"
-                value={formData.city || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                {...register("city")}
                 placeholder="Warszawa"
+                aria-invalid={!!errors.city}
               />
+              {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="postal_code">Kod pocztowy</Label>
               <Input
                 id="postal_code"
-                value={formData.postal_code || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, postal_code: e.target.value }))}
+                {...register("postal_code")}
                 placeholder="00-001"
+                aria-invalid={!!errors.postal_code}
               />
+              {errors.postal_code && <p className="text-sm text-destructive">{errors.postal_code.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="country">Kraj</Label>
               <Input
                 id="country"
-                value={formData.country || "Polska"}
-                onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                {...register("country")}
                 placeholder="Polska"
+                aria-invalid={!!errors.country}
               />
+              {errors.country && <p className="text-sm text-destructive">{errors.country.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="default_currency">Domyślna waluta</Label>
-              <Select
-                value={formData.default_currency || "PLN"}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, default_currency: value as "PLN" | "EUR" | "USD" }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PLN">PLN</SelectItem>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="USD">USD</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                control={control}
+                name="default_currency"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="default_currency">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PLN">PLN</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="USD">USD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
             <div className="space-y-2">
@@ -266,30 +272,28 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
                 type="number"
                 step="0.01"
                 min="0"
-                value={formData.default_hourly_rate || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, default_hourly_rate: e.target.value ? parseFloat(e.target.value) : undefined }))}
+                {...register("default_hourly_rate", {
+                  setValueAs: (v) => (v === "" ? undefined : parseFloat(v)),
+                })}
                 placeholder="150.00"
+                aria-invalid={!!errors.default_hourly_rate}
               />
+              {errors.default_hourly_rate && <p className="text-sm text-destructive">{errors.default_hourly_rate.message}</p>}
             </div>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsOpen(false)}
-              disabled={isPending}
-            >
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isPending}>
               Anuluj
             </Button>
-            <Button
-              type="submit"
-              disabled={isPending || !formData.name?.trim()}
-            >
-              {isPending 
-                ? (isEditMode ? "Zapisywanie..." : "Dodawanie...") 
-                : (isEditMode ? "Zapisz zmiany" : "Dodaj klienta")
-              }
+            <Button type="submit" disabled={isPending || !isValid}>
+              {isPending
+                ? isEditMode
+                  ? "Zapisywanie..."
+                  : "Dodawanie..."
+                : isEditMode
+                  ? "Zapisz zmiany"
+                  : "Dodaj klienta"}
             </Button>
           </div>
         </form>

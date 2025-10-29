@@ -1,0 +1,43 @@
+---
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import { LoginForm } from "@/components/features/auth/LoginForm";
+
+// Bezpieczna weryfikacja użytkownika przez serwer Supabase
+// Middleware już obsługuje przekierowania, ale double-check dla pewności
+const {
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
+
+if (user) {
+  return Astro.redirect("/time-entries");
+}
+
+// Sprawdzenie parametru sukcesu resetowania hasła
+const resetSuccess = Astro.url.searchParams.get("reset") === "success";
+---
+
+<AuthLayout title="Coinect - Logowanie">
+  {
+    resetSuccess && (
+      <div class="mb-6 rounded-xl bg-green-50/80 p-4 border border-green-200/50 backdrop-blur-sm" role="alert">
+        <div class="flex items-center">
+          <svg class="h-5 w-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <p class="text-sm font-medium text-green-800">Hasło zostało zmienione. Możesz się teraz zalogować.</p>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Witaj ponownie</h2>
+    <p class="mt-2 text-sm text-gray-600">Zaloguj się, aby kontynuować</p>
+  </div>
+
+  <LoginForm client:load />
+</AuthLayout>

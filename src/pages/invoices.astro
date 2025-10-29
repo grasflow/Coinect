@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { InvoicesListView } from "@/components/features/invoices";
+
+const title = "Faktury - Coinect";
+---
+
+<Layout title={title}>
+  <InvoicesListView client:load />
+</Layout>

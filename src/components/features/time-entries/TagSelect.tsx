@@ -1,31 +1,18 @@
-"use client"
+import * as React from "react";
+import { XIcon } from "lucide-react";
+import type { TagDTO } from "@/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-import * as React from "react"
-import { XIcon } from "lucide-react"
-import type { TagDTO } from "@/types"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-
-type TagSelectProps = {
+interface TagSelectProps {
   value: string[];
   onChange: (value: string[]) => void;
   tags: TagDTO[];
   placeholder?: string;
-};
+}
 
-export function TagSelect({
-  value,
-  onChange,
-  tags,
-  placeholder = "Wybierz tagi",
-}: TagSelectProps) {
+export function TagSelect({ value, onChange, tags, placeholder = "Wybierz tagi" }: TagSelectProps) {
   const [selectedTags, setSelectedTags] = React.useState<string[]>(value);
 
   React.useEffect(() => {
@@ -63,9 +50,7 @@ export function TagSelect({
               </SelectItem>
             ))
           ) : (
-            <div className="px-2 py-1.5 text-sm text-muted-foreground">
-              Brak dostępnych tagów
-            </div>
+            <div className="px-2 py-1.5 text-sm text-muted-foreground">Brak dostępnych tagów</div>
           )}
         </SelectContent>
       </Select>
@@ -97,4 +82,3 @@ export function TagSelect({
     </div>
   );
 }
-

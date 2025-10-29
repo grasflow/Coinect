@@ -36,6 +36,19 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  /* HIG tokens */
+  --hig-corner-small: 0.5rem; /* 8px */
+  --hig-corner-medium: 0.75rem; /* 12px */
+  --hig-corner-large: 1rem; /* 16px */
+  --hig-control-height-sm: 2.25rem; /* 36px */
+  --hig-control-height-md: 2.5rem; /* 40px */
+  --hig-control-height-lg: 2.75rem; /* 44px */
+  --hig-focus-ring-width: 3px;
+  --hig-state-hover: 0.08; /* state layer opacity */
+  --hig-state-pressed: 0.12;
+  --hig-elevation-0: 0 0 0 1px oklch(0.922 0 0) inset;
+  --hig-elevation-1: 0 1px 2px 0 oklch(0 0 0 / 0.06);
+  --hig-elevation-2: 0 2px 6px 0 oklch(0 0 0 / 0.08);
 }
 
 .dark {
@@ -114,7 +127,32 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-y: scroll;
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Apply pointer cursor to all clickable elements */
+  [onclick],
+  [onClick],
+  button,
+  [role="button"],
+  a[href] {
+    cursor: pointer;
+  }
+
+  /* Override for disabled elements */
+  button:disabled,
+  [aria-disabled="true"],
+  [disabled] {
+    cursor: not-allowed;
   }
 }

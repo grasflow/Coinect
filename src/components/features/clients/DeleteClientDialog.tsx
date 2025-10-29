@@ -39,7 +39,7 @@ export function DeleteClientDialog({ clientId, clientName }: DeleteClientDialogP
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"], refetchType: "active" });
       toast.success("Klient został usunięty");
       setIsOpen(false);
     },
@@ -51,11 +51,7 @@ export function DeleteClientDialog({ clientId, clientName }: DeleteClientDialogP
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm"
-          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-        >
+        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
           <Trash2 className="h-4 w-4" />
         </Button>
       </DialogTrigger>
@@ -63,23 +59,14 @@ export function DeleteClientDialog({ clientId, clientName }: DeleteClientDialogP
         <DialogHeader>
           <DialogTitle>Usunąć klienta?</DialogTitle>
           <DialogDescription>
-            Czy na pewno chcesz usunąć klienta <strong>{clientName}</strong>?
-            Ta operacja jest nieodwracalna.
+            Czy na pewno chcesz usunąć klienta <strong>{clientName}</strong>? Ta operacja jest nieodwracalna.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setIsOpen(false)}
-            disabled={deleteMutation.isPending}
-          >
+          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={deleteMutation.isPending}>
             Anuluj
           </Button>
-          <Button
-            variant="destructive"
-            onClick={() => deleteMutation.mutate()}
-            disabled={deleteMutation.isPending}
-          >
+          <Button variant="destructive" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending}>
             {deleteMutation.isPending ? "Usuwanie..." : "Usuń"}
           </Button>
         </DialogFooter>
@@ -87,4 +74,3 @@ export function DeleteClientDialog({ clientId, clientName }: DeleteClientDialogP
     </Dialog>
   );
 }
-

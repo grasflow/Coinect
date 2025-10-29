@@ -16,7 +16,7 @@ async function fetchTimeEntries(
 ): Promise<PaginatedResponse<TimeEntryWithRelationsDTO>> {
   const params = new URLSearchParams();
 
-  if (filters.clientId) {
+  if (filters.clientId && filters.clientId !== "all") {
     params.append("client_id", filters.clientId);
   }
 
@@ -25,7 +25,7 @@ async function fetchTimeEntries(
     params.append("date_to", filters.dateRange.to.toISOString().split("T")[0]);
   }
 
-  if (filters.status) {
+  if (filters.status && filters.status !== "all") {
     params.append("status", filters.status);
   }
 
@@ -106,6 +106,7 @@ export function useCreateTimeEntry() {
     mutationFn: createTimeEntry,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time-entries"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-insights"] });
     },
   });
 }
@@ -118,6 +119,7 @@ export function useUpdateTimeEntry() {
       updateTimeEntry(entryId, command),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time-entries"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-insights"] });
     },
   });
 }
@@ -129,6 +131,7 @@ export function useDeleteTimeEntry() {
     mutationFn: deleteTimeEntry,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time-entries"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-insights"] });
     },
   });
 }

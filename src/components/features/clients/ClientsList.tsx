@@ -1,16 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { H1, H2, Text, Muted } from "@/components/ui/typography";
 import { ClientForm } from "./ClientForm";
 import { DeleteClientDialog } from "./DeleteClientDialog";
-import { Search, Building2, Mail, Phone, MapPin } from "lucide-react";
+import { Search, Building2, Mail, Phone, MapPin, LoaderIcon } from "lucide-react";
 import { useState } from "react";
 import type { ClientDTO } from "@/types";
-import { toast } from "sonner";
 import QueryProvider from "@/components/QueryProvider";
-import { Toaster } from "@/components/ui/sonner";
 
 async function fetchClients(): Promise<ClientDTO[]> {
   const response = await fetch("/api/clients", {
@@ -30,23 +29,28 @@ function ClientsListContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
 
-  const { data: clients = [], isLoading, error } = useQuery({
+  const {
+    data: clients = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["clients"],
     queryFn: fetchClients,
   });
 
-  const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.city?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredClients = clients.filter(
+    (client) =>
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.city?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Ładowanie klientów...</p>
+          <LoaderIcon className="h-8 w-8 animate-spin text-muted-foreground mx-auto" />
+          <Muted className="mt-2">Ładowanie klientów...</Muted>
         </div>
       </div>
     );
@@ -56,11 +60,8 @@ function ClientsListContent() {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
-          <p className="text-red-600">Wystąpił błąd podczas ładowania klientów</p>
-          <Button 
-            onClick={() => queryClient.invalidateQueries({ queryKey: ["clients"] })}
-            className="mt-2"
-          >
+          <Text className="text-destructive">Wystąpił błąd podczas ładowania klientów</Text>
+          <Button onClick={() => queryClient.invalidateQueries({ queryKey: ["clients"] })} className="mt-2">
             Spróbuj ponownie
           </Button>
         </div>
@@ -70,18 +71,18 @@ function ClientsListContent() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Klienci</h1>
-          <p className="text-gray-600">Zarządzaj swoimi klientami</p>
+          <H1>Klienci</H1>
+          <Muted>Zarządzaj swoimi klientami</Muted>
         </div>
         <ClientForm />
-      </header>
+      </div>
 
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <h2 className="leading-none font-semibold flex items-center gap-2">
+            <h2 className="flex items-center gap-2 leading-none font-semibold">
               <Building2 className="h-5 w-5" />
               Lista klientów ({filteredClients.length})
             </h2>
@@ -99,16 +100,11 @@ function ClientsListContent() {
         <CardContent>
           {filteredClients.length === 0 ? (
             <div className="text-center py-8">
-              <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" aria-hidden="true" />
-              <p className="text-lg font-medium text-gray-900 mb-2">
-                {searchTerm ? "Nie znaleziono klientów" : "Brak klientów"}
-              </p>
-              <p className="text-gray-600 mb-4">
-                {searchTerm 
-                  ? "Spróbuj zmienić kryteria wyszukiwania"
-                  : "Dodaj pierwszego klienta, aby rozpocząć pracę"
-                }
-              </p>
+              <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
+              <Text className="font-medium mb-2">{searchTerm ? "Nie znaleziono klientów" : "Brak klientów"}</Text>
+              <Muted className="mb-4">
+                {searchTerm ? "Spróbuj zmienić kryteria wyszukiwania" : "Dodaj pierwszego klienta, aby rozpocząć pracę"}
+              </Muted>
               {!searchTerm && <ClientForm />}
             </div>
           ) : (
@@ -163,9 +159,7 @@ function ClientsListContent() {
                             </div>
                           )}
                           {client.country && client.country !== "Polska" && (
-                            <div className="text-sm text-gray-600">
-                              {client.country}
-                            </div>
+                            <div className="text-sm text-gray-600">{client.country}</div>
                           )}
                         </div>
                       </TableCell>
@@ -188,10 +182,7 @@ function ClientsListContent() {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <ClientForm client={client} />
-                          <DeleteClientDialog 
-                            clientId={client.id} 
-                            clientName={client.name}
-                          />
+                          <DeleteClientDialog clientId={client.id} clientName={client.name} />
                         </div>
                       </TableCell>
                     </TableRow>
@@ -210,7 +201,6 @@ export default function ClientsList() {
   return (
     <QueryProvider>
       <ClientsListContent />
-      <Toaster />
     </QueryProvider>
   );
 }

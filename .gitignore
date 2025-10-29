@@ -1,7 +1,5 @@
 # build output
 dist/
-
-# generated types
 .astro/
 
 # dependencies
@@ -13,12 +11,31 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variables
+# environment variables - NEVER COMMIT REAL CREDENTIALS
 .env
+.env.test
 .env.production
+.env.local
+.env*.local
 
 # macOS-specific files
 .DS_Store
 
-# jetbrains setting folder
+# testing
+coverage/
+.vitest/
+playwright-report/
+test-results/
+/playwright/.cache/
+
+# Supabase
+supabase/.branches
+supabase/.temp
+supabase/.env
+
+# editor
+.vscode/
 .idea/
+*.swp
+*.swo
+*~

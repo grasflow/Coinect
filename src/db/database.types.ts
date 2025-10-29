@@ -257,6 +257,7 @@ export type Database = {
           created_at: string | null
           currency: Database["public"]["Enums"]["currency_enum"]
           deleted_at: string | null
+          due_date: string | null
           edited_at: string | null
           exchange_rate: number | null
           exchange_rate_date: string | null
@@ -268,10 +269,13 @@ export type Database = {
           is_custom_exchange_rate: boolean | null
           is_edited: boolean | null
           is_imported: boolean | null
+          is_manual: boolean
           is_paid: boolean | null
           issue_date: string
           net_amount: number
           net_amount_pln: number | null
+          notes: string | null
+          payment_status: string | null
           pdf_url: string | null
           sale_date: string
           status: Database["public"]["Enums"]["invoice_status_enum"] | null
@@ -286,6 +290,7 @@ export type Database = {
           created_at?: string | null
           currency: Database["public"]["Enums"]["currency_enum"]
           deleted_at?: string | null
+          due_date?: string | null
           edited_at?: string | null
           exchange_rate?: number | null
           exchange_rate_date?: string | null
@@ -297,10 +302,13 @@ export type Database = {
           is_custom_exchange_rate?: boolean | null
           is_edited?: boolean | null
           is_imported?: boolean | null
+          is_manual?: boolean
           is_paid?: boolean | null
           issue_date: string
           net_amount: number
           net_amount_pln?: number | null
+          notes?: string | null
+          payment_status?: string | null
           pdf_url?: string | null
           sale_date: string
           status?: Database["public"]["Enums"]["invoice_status_enum"] | null
@@ -315,6 +323,7 @@ export type Database = {
           created_at?: string | null
           currency?: Database["public"]["Enums"]["currency_enum"]
           deleted_at?: string | null
+          due_date?: string | null
           edited_at?: string | null
           exchange_rate?: number | null
           exchange_rate_date?: string | null
@@ -326,10 +335,13 @@ export type Database = {
           is_custom_exchange_rate?: boolean | null
           is_edited?: boolean | null
           is_imported?: boolean | null
+          is_manual?: boolean
           is_paid?: boolean | null
           issue_date?: string
           net_amount?: number
           net_amount_pln?: number | null
+          notes?: string | null
+          payment_status?: string | null
           pdf_url?: string | null
           sale_date?: string
           status?: Database["public"]["Enums"]["invoice_status_enum"] | null
@@ -360,6 +372,8 @@ export type Database = {
         Row: {
           accent_color: string | null
           bank_account: string | null
+          bank_name: string | null
+          bank_swift: string | null
           city: string | null
           country: string | null
           created_at: string | null
@@ -367,8 +381,6 @@ export type Database = {
           full_name: string
           id: string
           logo_url: string | null
-          onboarding_completed: boolean | null
-          onboarding_step: number | null
           phone: string | null
           postal_code: string | null
           street: string | null
@@ -378,6 +390,8 @@ export type Database = {
         Insert: {
           accent_color?: string | null
           bank_account?: string | null
+          bank_name?: string | null
+          bank_swift?: string | null
           city?: string | null
           country?: string | null
           created_at?: string | null
@@ -385,8 +399,6 @@ export type Database = {
           full_name: string
           id: string
           logo_url?: string | null
-          onboarding_completed?: boolean | null
-          onboarding_step?: number | null
           phone?: string | null
           postal_code?: string | null
           street?: string | null
@@ -396,6 +408,8 @@ export type Database = {
         Update: {
           accent_color?: string | null
           bank_account?: string | null
+          bank_name?: string | null
+          bank_swift?: string | null
           city?: string | null
           country?: string | null
           created_at?: string | null
@@ -403,8 +417,6 @@ export type Database = {
           full_name?: string
           id?: string
           logo_url?: string | null
-          onboarding_completed?: boolean | null
-          onboarding_step?: number | null
           phone?: string | null
           postal_code?: string | null
           street?: string | null

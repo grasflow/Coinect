@@ -10,7 +10,11 @@ import node from "@astrojs/node";
 export default defineConfig({
   output: "server",
   integrations: [react(), sitemap()],
-  server: { port: 3000 },
+  server: {
+    port: 3000,
+    // @ts-expect-error This option is experimental and not yet typed in Astro's config types (more than 10 chars).
+    chromeDevtoolsWorkspace: true,
+  },
   vite: {
     plugins: [tailwindcss()],
   },

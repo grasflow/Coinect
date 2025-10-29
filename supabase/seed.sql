@@ -1,55 +1,69 @@
--- seed data for local development
+-- Seed data dla środowiska testowego
+-- Dodaj profil dla użytkownika testowego test@test.com
 
--- insert default test user in auth.users first
--- this will automatically trigger the creation of the profile via the trigger
-insert into auth.users (
-  id,
-  instance_id,
-  aud,
-  role,
-  email,
-  encrypted_password,
-  email_confirmed_at,
-  raw_app_meta_data,
-  raw_user_meta_data,
-  created_at,
-  updated_at,
-  confirmation_token,
-  email_change,
-  email_change_token_new,
-  recovery_token
-)
-values (
-  '4a36e7c5-ec7a-4ec2-9966-67e616e4feea',
-  '00000000-0000-0000-0000-000000000000',
-  'authenticated',
-  'authenticated',
-  'test@example.com',
-  crypt('password123', gen_salt('bf')),
-  now(),
-  '{"provider":"email","providers":["email"]}',
-  '{"full_name":"Test User"}',
-  now(),
-  now(),
-  '',
-  '',
-  '',
-  ''
-) on conflict (id) do nothing;
+-- Najpierw sprawdź czy użytkownik istnieje
+DO $$
+DECLARE
+  test_user_id uuid;
+BEGIN
+  -- Pobierz ID użytkownika testowego
+  SELECT id INTO test_user_id
+  FROM auth.users
+  WHERE email = 'test@test.com'
+  LIMIT 1;
 
--- update the profile with additional data
-update profiles
-set
-  full_name = 'Test User',
-  tax_id = '1234567890',
-  street = 'Test Street 123',
-  city = 'Warszawa',
-  postal_code = '00-001',
-  country = 'Polska',
-  email = 'test@example.com',
-  phone = '+48 123 456 789',
-  bank_account = '12 3456 7890 1234 5678 9012 3456',
-  onboarding_completed = true,
-  onboarding_step = 4
-where id = '4a36e7c5-ec7a-4ec2-9966-67e616e4feea';
+  -- Jeśli użytkownik istnieje, utwórz dla niego profil
+  IF test_user_id IS NOT NULL THEN
+    INSERT INTO profiles (
+      id,
+      email,
+      full_name,
+      tax_id,
+      street,
+      city,
+      postal_code,
+      country,
+      phone,
+      bank_account,
+      bank_name,
+      bank_swift,
+      accent_color,
+      created_at,
+      updated_at
+    ) VALUES (
+      test_user_id,
+      'test@test.com',
+      'Test User',
+      '1234567890',
+      'ul. Testowa 1',
+      'Warszawa',
+      '00-001',
+      'Polska',
+      '+48123456789',
+      'PL12345678901234567890123456',
+      'Bank Testowy SA',
+      'TESTPLPW',
+      '#2563eb',
+      NOW(),
+      NOW()
+    )
+    ON CONFLICT (id) DO UPDATE SET
+      email = EXCLUDED.email,
+      full_name = EXCLUDED.full_name,
+      tax_id = EXCLUDED.tax_id,
+      street = EXCLUDED.street,
+      city = EXCLUDED.city,
+      postal_code = EXCLUDED.postal_code,
+      country = EXCLUDED.country,
+      phone = EXCLUDED.phone,
+      bank_account = EXCLUDED.bank_account,
+      bank_name = EXCLUDED.bank_name,
+      bank_swift = EXCLUDED.bank_swift,
+      accent_color = EXCLUDED.accent_color,
+      updated_at = NOW();
 
+    RAISE NOTICE 'Profil dla test@test.com został utworzony/zaktualizowany';
+  ELSE
+    RAISE WARNING 'Użytkownik test@test.com nie istnieje w auth.users. Najpierw utwórz konto przez UI lub migrację.';
+  END IF;
+END $$;

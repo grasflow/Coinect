@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import DashboardView from "@/components/features/dashboard/DashboardView";
+
+const title = "Dashboard - Coinect";
+---
+
+<Layout title={title}>
+  <DashboardView client:load />
+</Layout>

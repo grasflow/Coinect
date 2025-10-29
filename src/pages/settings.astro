@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SettingsView from "@/components/features/settings/SettingsView";
+
+const title = "Ustawienia - Coinect";
+---
+
+<Layout title={title}>
+  <SettingsView client:load />
+</Layout>

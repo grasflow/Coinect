@@ -1,38 +1,25 @@
-"use client"
+import * as React from "react";
+import { FilterIcon, XIcon } from "lucide-react";
+import type { ClientDTO } from "@/types";
+import type { TimeEntriesFilterState } from "./types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { DateRangePicker } from "./DateRangePicker";
+import { Card, CardContent } from "@/components/ui/card";
 
-import * as React from "react"
-import { FilterIcon, XIcon } from "lucide-react"
-import type { ClientDTO } from "@/types"
-import type { TimeEntriesFilterState } from "./types"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { DateRangePicker } from "./DateRangePicker"
-import { Card, CardContent } from "@/components/ui/card"
-
-type TimeEntryFiltersProps = {
+interface TimeEntryFiltersProps {
   filters: TimeEntriesFilterState;
   onFilterChange: (filters: Partial<TimeEntriesFilterState>) => void;
   clients: ClientDTO[];
   isLoadingClients: boolean;
-};
+}
 
-export function TimeEntryFilters({
-  filters,
-  onFilterChange,
-  clients,
-  isLoadingClients,
-}: TimeEntryFiltersProps) {
-  const hasActiveFilters = filters.clientId || filters.dateRange || filters.status !== "all";
+export function TimeEntryFilters({ filters, onFilterChange, clients, isLoadingClients }: TimeEntryFiltersProps) {
+  const hasActiveFilters = filters.clientId !== "all" || filters.dateRange || filters.status !== "all";
 
   const handleClearFilters = () => {
     onFilterChange({
-      clientId: undefined,
+      clientId: "all",
       dateRange: undefined,
       status: "all",
       page: 1,
@@ -41,7 +28,7 @@ export function TimeEntryFilters({
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent>
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -49,12 +36,7 @@ export function TimeEntryFilters({
               <h2 className="text-sm font-medium">Filtry</h2>
             </div>
             {hasActiveFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClearFilters}
-                className="h-8 px-2 lg:px-3"
-              >
+              <Button variant="ghost" size="sm" onClick={handleClearFilters} className="h-8 px-2 lg:px-3">
                 <XIcon className="mr-2 h-4 w-4" />
                 Wyczyść
               </Button>
@@ -65,16 +47,16 @@ export function TimeEntryFilters({
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Klient</label>
               <Select
-                value={filters.clientId || "all"}
+                value={filters.clientId}
                 onValueChange={(value) =>
                   onFilterChange({
-                    clientId: value === "all" ? undefined : value,
+                    clientId: value,
                     page: 1,
                   })
                 }
                 disabled={isLoadingClients}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Wybierz klienta">
                   <SelectValue placeholder="Wszyscy klienci" />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +86,7 @@ export function TimeEntryFilters({
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Status</label>
               <Select
-                value={filters.status || "all"}
+                value={filters.status}
                 onValueChange={(value) =>
                   onFilterChange({
                     status: value as "all" | "billed" | "unbilled",
@@ -112,7 +94,7 @@ export function TimeEntryFilters({
                   })
                 }
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Wybierz status">
                   <SelectValue placeholder="Wszystkie" />
                 </SelectTrigger>
                 <SelectContent>
@@ -128,4 +110,3 @@ export function TimeEntryFilters({
     </Card>
   );
 }
-

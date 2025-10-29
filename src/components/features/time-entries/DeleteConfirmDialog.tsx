@@ -1,6 +1,4 @@
-"use client"
-
-import * as React from "react"
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,22 +6,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
-type DeleteConfirmDialogProps = {
+interface DeleteConfirmDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   isDeleting?: boolean;
-};
+}
 
-export function DeleteConfirmDialog({
-  isOpen,
-  onClose,
-  onConfirm,
-  isDeleting = false,
-}: DeleteConfirmDialogProps) {
+export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, isDeleting = false }: DeleteConfirmDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -45,4 +38,3 @@ export function DeleteConfirmDialog({
     </Dialog>
   );
 }
-

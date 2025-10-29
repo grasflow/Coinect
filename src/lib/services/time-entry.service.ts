@@ -123,7 +123,8 @@ export class TimeEntryService {
       .select(
         `
         *,
-        client:clients!inner(name),
+        client:clients(name),
+        invoice:invoices(id, deleted_at),
         tags:time_entry_tags(tag:tags(name))
       `,
         { count: "exact" }
@@ -184,8 +185,21 @@ export class TimeEntryService {
       throw new ForbiddenError("Not authorized to update this time entry");
     }
 
+    // Sprawdź czy faktura nadal istnieje (nie została usunięta)
     if (existingEntry.invoice_id) {
-      throw new ForbiddenError("Cannot update invoiced time entry");
+      const { data: invoice, error: invoiceError } = await this.supabase
+        .from("invoices")
+        .select("id")
+        .eq("id", existingEntry.invoice_id)
+        .eq("user_id", userId)
+        .is("deleted_at", null)
+        .single();
+
+      // Jeśli faktura nadal istnieje, zabroń edycji wpisu
+      if (!invoiceError && invoice) {
+        throw new ForbiddenError("Cannot update invoiced time entry");
+      }
+      // Jeśli faktura została usunięta lub nie istnieje, pozwól na edycję wpisu
     }
 
     const updateData: Record<string, unknown> = {};
@@ -228,8 +242,21 @@ export class TimeEntryService {
       throw new ForbiddenError("Not authorized to delete this time entry");
     }
 
+    // Sprawdź czy faktura nadal istnieje (nie została usunięta)
     if (existingEntry.invoice_id) {
-      throw new ForbiddenError("Cannot delete invoiced time entry");
+      const { data: invoice, error: invoiceError } = await this.supabase
+        .from("invoices")
+        .select("id")
+        .eq("id", existingEntry.invoice_id)
+        .eq("user_id", userId)
+        .is("deleted_at", null)
+        .single();
+
+      // Jeśli faktura nadal istnieje, zabroń usunięcia wpisu
+      if (!invoiceError && invoice) {
+        throw new ForbiddenError("Cannot delete invoiced time entry");
+      }
+      // Jeśli faktura została usunięta lub nie istnieje, pozwól na usunięcie wpisu
     }
 
     const { error } = await this.supabase

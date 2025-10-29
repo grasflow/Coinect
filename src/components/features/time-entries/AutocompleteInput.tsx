@@ -1,17 +1,15 @@
-"use client"
+import * as React from "react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
-import * as React from "react"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
-
-type AutocompleteInputProps = {
+interface AutocompleteInputProps {
   value: string;
   onChange: (value: string) => void;
   onSelect?: (value: string) => void;
   suggestions: string[];
   placeholder?: string;
   className?: string;
-};
+}
 
 export function AutocompleteInput({
   value,
@@ -28,9 +26,7 @@ export function AutocompleteInput({
 
   const filteredSuggestions = React.useMemo(() => {
     if (!value) return [];
-    return suggestions.filter((suggestion) =>
-      suggestion.toLowerCase().includes(value.toLowerCase())
-    );
+    return suggestions.filter((suggestion) => suggestion.toLowerCase().includes(value.toLowerCase()));
   }, [suggestions, value]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,9 +46,7 @@ export function AutocompleteInput({
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightedIndex((prev) =>
-        prev < filteredSuggestions.length - 1 ? prev + 1 : prev
-      );
+      setHighlightedIndex((prev) => (prev < filteredSuggestions.length - 1 ? prev + 1 : prev));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
@@ -113,4 +107,3 @@ export function AutocompleteInput({
     </div>
   );
 }
-

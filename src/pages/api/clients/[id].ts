@@ -1,8 +1,91 @@
 import type { APIRoute } from "astro";
-import { DEFAULT_USER_ID } from "@/db/supabase.client";
 import { updateClientSchema } from "@/lib/validation/client.schema";
 
 export const prerender = false;
+
+export const GET: APIRoute = async (context) => {
+  try {
+    const id = context.params.id;
+
+    if (!id) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "INVALID_ID",
+            message: "ID klienta jest wymagane",
+          },
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const {
+      data: { user },
+      error: authError,
+    } = await context.locals.supabase.auth.getUser();
+
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Wymagana autentykacja",
+          },
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const userId = user.id;
+
+    const { data: client, error: fetchError } = await context.locals.supabase
+      .from("clients")
+      .select("*")
+      .eq("id", id)
+      .eq("user_id", userId)
+      .is("deleted_at", null)
+      .single();
+
+    if (fetchError || !client) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "NOT_FOUND",
+            message: "Klient nie został znaleziony",
+          },
+        }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    return new Response(JSON.stringify(client), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch {
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Wystąpił nieoczekiwany błąd",
+        },
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+};
 
 export const PUT: APIRoute = async (context) => {
   try {
@@ -23,21 +106,30 @@ export const PUT: APIRoute = async (context) => {
       );
     }
 
-    let userId: string;
-
     const {
       data: { user },
       error: authError,
     } = await context.locals.supabase.auth.getUser();
 
     if (authError || !user) {
-      userId = DEFAULT_USER_ID;
-    } else {
-      userId = user.id;
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Wymagana autentykacja",
+          },
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
+    const userId = user.id;
+
     const body = await context.request.json();
-    
+
     const validationResult = updateClientSchema.safeParse(body);
     if (!validationResult.success) {
       return new Response(
@@ -108,7 +200,7 @@ export const PUT: APIRoute = async (context) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: {
@@ -143,23 +235,32 @@ export const DELETE: APIRoute = async (context) => {
       );
     }
 
-    let userId: string;
-
     const {
       data: { user },
       error: authError,
     } = await context.locals.supabase.auth.getUser();
 
     if (authError || !user) {
-      userId = DEFAULT_USER_ID;
-    } else {
-      userId = user.id;
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Wymagana autentykacja",
+          },
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
+
+    const userId = user.id;
 
     // Sprawdź czy klient należy do użytkownika
     const { data: existingClient, error: fetchError } = await context.locals.supabase
       .from("clients")
-      .select("id")
+      .select("id, user_id, deleted_at")
       .eq("id", id)
       .eq("user_id", userId)
       .is("deleted_at", null)
@@ -181,11 +282,11 @@ export const DELETE: APIRoute = async (context) => {
     }
 
     // Soft delete - ustaw deleted_at
-    const { error: deleteError } = await context.locals.supabase
-      .from("clients")
-      .update({ deleted_at: new Date().toISOString() })
-      .eq("id", id)
-      .eq("user_id", userId);
+    // Używamy RPC funkcję aby ominąć problemy z RLS
+    // @ts-expect-error - RPC function not typed
+    const { error: deleteError } = await context.locals.supabase.rpc("soft_delete_client", {
+      client_id: id,
+    });
 
     if (deleteError) {
       return new Response(
@@ -193,6 +294,7 @@ export const DELETE: APIRoute = async (context) => {
           error: {
             code: "DB_ERROR",
             message: deleteError.message,
+            details: deleteError,
           },
         }),
         {
@@ -202,14 +304,11 @@ export const DELETE: APIRoute = async (context) => {
       );
     }
 
-    return new Response(
-      JSON.stringify({ message: "Klient został usunięty" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
+    return new Response(JSON.stringify({ message: "Klient został usunięty" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch {
     return new Response(
       JSON.stringify({
         error: {
@@ -224,4 +323,3 @@ export const DELETE: APIRoute = async (context) => {
     );
   }
 };
-

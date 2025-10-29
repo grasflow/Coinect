@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { InvoiceGeneratorView } from "@/components/features/invoices";
+
+const title = "Nowa Faktura - Coinect";
+---
+
+<Layout title={title}>
+  <InvoiceGeneratorView client:load />
+</Layout>

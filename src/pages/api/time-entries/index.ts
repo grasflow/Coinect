@@ -3,24 +3,32 @@ import { z } from "zod";
 import { createTimeEntrySchema } from "@/lib/validation/time-entry.schema";
 import { TimeEntryService } from "@/lib/services/time-entry.service";
 import { NotFoundError, ForbiddenError } from "@/lib/errors";
-import { DEFAULT_USER_ID } from "@/db/supabase.client";
 
 export const prerender = false;
 
 export const GET: APIRoute = async (context) => {
   try {
-    let userId: string;
-
     const {
       data: { user },
       error: authError,
     } = await context.locals.supabase.auth.getUser();
 
     if (authError || !user) {
-      userId = DEFAULT_USER_ID;
-    } else {
-      userId = user.id;
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Wymagana autentykacja",
+          },
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
+
+    const userId = user.id;
 
     const url = new URL(context.request.url);
     const clientId = url.searchParams.get("client_id");
@@ -44,7 +52,8 @@ export const GET: APIRoute = async (context) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (error) {
+    console.error("GET /api/time-entries error:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -62,8 +71,22 @@ export const GET: APIRoute = async (context) => {
 
 export const POST: APIRoute = async (context) => {
   try {
-    // Próba autentykacji - jeśli nie ma tokenu, użyj domyślnego user ID do testowania
-    let userId: string;
+    // Validate that supabase client is initialized
+    if (!context.locals.supabase) {
+      console.error("POST /api/time-entries error: Supabase client not initialized in context.locals");
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "INTERNAL_ERROR",
+            message: "Database client not initialized",
+          },
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
 
     const {
       data: { user },
@@ -71,12 +94,22 @@ export const POST: APIRoute = async (context) => {
     } = await context.locals.supabase.auth.getUser();
 
     if (authError || !user) {
-      // Brak autentykacji - użyj domyślnego user ID do testowania
-      userId = DEFAULT_USER_ID;
-    } else {
-      // Prawdziwa autentykacja
-      userId = user.id;
+      console.error("POST /api/time-entries auth error:", authError);
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Wymagana autentykacja",
+          },
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
+
+    const userId = user.id;
 
     const body = await context.request.json();
 
@@ -91,6 +124,7 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("POST /api/time-entries validation error:", error.errors);
       return new Response(
         JSON.stringify({
           error: {
@@ -107,6 +141,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     if (error instanceof NotFoundError) {
+      console.error("POST /api/time-entries not found error:", error.message);
       return new Response(
         JSON.stringify({
           error: {
@@ -122,6 +157,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     if (error instanceof ForbiddenError) {
+      console.error("POST /api/time-entries forbidden error:", error.message);
       return new Response(
         JSON.stringify({
           error: {
@@ -136,6 +172,7 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
+    console.error("POST /api/time-entries error:", error);
     return new Response(
       JSON.stringify({
         error: {

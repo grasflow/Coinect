@@ -16,3 +16,6 @@ export const createTimeEntrySchema = z.object({
 
 export type CreateTimeEntryInput = z.infer<typeof createTimeEntrySchema>;
 
+export const updateTimeEntrySchema = createTimeEntrySchema.partial();
+
+export type UpdateTimeEntryInput = z.infer<typeof updateTimeEntrySchema>;

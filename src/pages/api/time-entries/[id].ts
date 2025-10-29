@@ -3,24 +3,32 @@ import { z } from "zod";
 import { updateTimeEntrySchema } from "@/lib/validation/time-entry.schema";
 import { TimeEntryService } from "@/lib/services/time-entry.service";
 import { NotFoundError, ForbiddenError } from "@/lib/errors";
-import { DEFAULT_USER_ID } from "@/db/supabase.client";
 
 export const prerender = false;
 
 export const PUT: APIRoute = async (context) => {
   try {
-    let userId: string;
-
     const {
       data: { user },
       error: authError,
     } = await context.locals.supabase.auth.getUser();
 
     if (authError || !user) {
-      userId = DEFAULT_USER_ID;
-    } else {
-      userId = user.id;
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Wymagana autentykacja",
+          },
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
+
+    const userId = user.id;
 
     const entryId = context.params.id;
 
@@ -113,18 +121,27 @@ export const PUT: APIRoute = async (context) => {
 
 export const DELETE: APIRoute = async (context) => {
   try {
-    let userId: string;
-
     const {
       data: { user },
       error: authError,
     } = await context.locals.supabase.auth.getUser();
 
     if (authError || !user) {
-      userId = DEFAULT_USER_ID;
-    } else {
-      userId = user.id;
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Wymagana autentykacja",
+          },
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
+
+    const userId = user.id;
 
     const entryId = context.params.id;
 
@@ -194,4 +211,3 @@ export const DELETE: APIRoute = async (context) => {
     );
   }
 };
-
