@@ -84,7 +84,15 @@ export default defineConfig({
   webServer: {
     command: "npm run dev:test",
     url: "http://localhost:3000",
-    reuseExistingServer: true, // Allow reusing existing server for debugging
+    reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+    env: {
+      SUPABASE_URL: process.env.SUPABASE_URL || "",
+      SUPABASE_KEY: process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || "",
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
+      TEST_USER_EMAIL: process.env.TEST_USER_EMAIL || "",
+      TEST_USER_PASSWORD: process.env.TEST_USER_PASSWORD || "",
+    },
   },
 });
