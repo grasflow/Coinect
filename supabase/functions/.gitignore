@@ -1,0 +1,4 @@
+# Edge Functions build artifacts
+/_shared/.deno/
+*.log
+
