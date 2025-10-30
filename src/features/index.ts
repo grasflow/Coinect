@@ -6,7 +6,7 @@ function getEnvVar(name: string): string | undefined {
 }
 
 export function getEnvironment(): Environment {
-  const envName = getEnvVar("ENV_NAME");
+  const envName = getEnvVar("PUBLIC_ENV_NAME");
 
   if (!envName) {
     return "local";
