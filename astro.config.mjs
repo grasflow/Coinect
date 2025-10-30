@@ -24,8 +24,14 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     define: {
+      // Server-side variables
       "import.meta.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL || ""),
       "import.meta.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || ""),
+      // Client-side variables (must have PUBLIC_ prefix to work in browser)
+      "import.meta.env.PUBLIC_SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL || ""),
+      "import.meta.env.PUBLIC_SUPABASE_KEY": JSON.stringify(
+        process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || ""
+      ),
     },
     build: {
       rollupOptions: {
