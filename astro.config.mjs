@@ -31,7 +31,7 @@ export default defineConfig({
       rollupOptions: {
         output: {
           format: "esm",
-          inlineDynamicImports: true,
+          manualChunks: undefined,
         },
       },
     },
