@@ -6,6 +6,14 @@ declare global {
   namespace App {
     interface Locals {
       supabase: SupabaseServerClient;
+      runtime?: {
+        env: {
+          SUPABASE_URL?: string;
+          SUPABASE_KEY?: string;
+          SUPABASE_ANON_KEY?: string;
+          [key: string]: any;
+        };
+      };
     }
   }
 }

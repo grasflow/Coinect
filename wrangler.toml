@@ -1,9 +1,13 @@
 name = "coinect"
-compatibility_date = "2024-10-01"
+compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 
 # Cloudflare Pages configuration
 pages_build_output_dir = "dist"
+
+# Ensure all modules are properly bundled
+[build]
+command = "npm run build"
 
 # Environment variables (set via Cloudflare dashboard or wrangler secrets)
 # SUPABASE_URL - Your Supabase project URL
