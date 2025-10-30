@@ -30,12 +30,13 @@ export default defineConfig({
     build: {
       rollupOptions: {
         output: {
-          manualChunks: undefined,
+          format: "esm",
+          inlineDynamicImports: true,
         },
       },
     },
     ssr: {
-      noExternal: ["@astrojs/react", "@astrojs/renderers"],
+      noExternal: ["@astrojs/react", "@astrojs/renderers", "astro", /^@astro\//],
     },
   },
   adapter: cloudflare({
