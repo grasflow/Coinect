@@ -96,14 +96,13 @@ jobs:
       - name: Build production
         env:
           NODE_ENV: production
+          # Server-side variables
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY_SECRET: ${{ secrets.SUPABASE_KEY }}
-          SUPABASE_ANON_KEY_SECRET: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: |
-          SUPABASE_KEY_VALUE="${SUPABASE_KEY_SECRET:-${SUPABASE_ANON_KEY_SECRET}}"
-          export SUPABASE_KEY="$SUPABASE_KEY_VALUE"
-          export SUPABASE_ANON_KEY="$SUPABASE_KEY_VALUE"
-          npm run build
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          # Client-side variables (PUBLIC_ prefix makes them available in browser)
+          PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          PUBLIC_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
