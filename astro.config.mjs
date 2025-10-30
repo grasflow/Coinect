@@ -35,7 +35,15 @@ export default defineConfig({
       },
     },
     ssr: {
-      noExternal: true,
+      noExternal: [
+        /^@astro\//,
+        "astro",
+        "@astrojs/react",
+        "@astrojs/renderers",
+        "react",
+        "react-dom",
+        "react-dom/server",
+      ],
     },
   },
   adapter: cloudflare({
