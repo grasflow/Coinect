@@ -27,10 +27,20 @@ export default defineConfig({
       "import.meta.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL || ""),
       "import.meta.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || ""),
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: undefined,
+        },
+      },
+    },
+    ssr: {
+      noExternal: ["@astrojs/react", "@astrojs/renderers"],
+    },
   },
   adapter: cloudflare({
     platformProxy: {
-      enabled: true,
+      enabled: process.env.NODE_ENV !== "production",
     },
   }),
 });

@@ -95,6 +95,7 @@ jobs:
 
       - name: Build production
         env:
+          NODE_ENV: production
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY_SECRET: ${{ secrets.SUPABASE_KEY }}
           SUPABASE_ANON_KEY_SECRET: ${{ secrets.SUPABASE_ANON_KEY }}
