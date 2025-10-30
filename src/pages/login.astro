@@ -39,5 +39,5 @@ const resetSuccess = Astro.url.searchParams.get("reset") === "success";
     <p class="mt-2 text-sm text-gray-600">Zaloguj się, aby kontynuować</p>
   </div>
 
-  <LoginForm client:load />
+  <LoginForm client:only="react" />
 </AuthLayout>

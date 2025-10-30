@@ -16,6 +16,8 @@ export function RegisterForm() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     defaultValues: {
       full_name: "",
       email: "",
@@ -27,6 +29,13 @@ export function RegisterForm() {
       postal_code: "",
     },
   });
+
+  // Debug: log errors
+  React.useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.log("[RegisterForm] Validation errors:", errors);
+    }
+  }, [errors]);
 
   const onSubmit = async (data: RegisterInput) => {
     setApiError("");
