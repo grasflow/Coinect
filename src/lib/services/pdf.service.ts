@@ -461,7 +461,7 @@ async function loadImageWithDimensions(url: string): Promise<{ base64: string; w
 function getImageDimensions(buffer: Buffer, contentType: string): { width: number; height: number } {
   try {
     // PNG format
-    if (contentType.includes("png") || buffer[0] === 0x89 && buffer[1] === 0x50) {
+    if (contentType.includes("png") || (buffer[0] === 0x89 && buffer[1] === 0x50)) {
       // PNG signature check
       const width = buffer.readUInt32BE(16);
       const height = buffer.readUInt32BE(20);
@@ -469,7 +469,7 @@ function getImageDimensions(buffer: Buffer, contentType: string): { width: numbe
     }
 
     // JPEG format
-    if (contentType.includes("jpeg") || contentType.includes("jpg") || buffer[0] === 0xff && buffer[1] === 0xd8) {
+    if (contentType.includes("jpeg") || contentType.includes("jpg") || (buffer[0] === 0xff && buffer[1] === 0xd8)) {
       let offset = 2;
       while (offset < buffer.length) {
         if (buffer[offset] !== 0xff) break;
@@ -478,8 +478,12 @@ function getImageDimensions(buffer: Buffer, contentType: string): { width: numbe
         offset += 2;
 
         // SOF markers (Start Of Frame)
-        if (marker >= 0xc0 && marker <= 0xc3 || marker >= 0xc5 && marker <= 0xc7 ||
-            marker >= 0xc9 && marker <= 0xcb || marker >= 0xcd && marker <= 0xcf) {
+        if (
+          (marker >= 0xc0 && marker <= 0xc3) ||
+          (marker >= 0xc5 && marker <= 0xc7) ||
+          (marker >= 0xc9 && marker <= 0xcb) ||
+          (marker >= 0xcd && marker <= 0xcf)
+        ) {
           const height = buffer.readUInt16BE(offset + 3);
           const width = buffer.readUInt16BE(offset + 5);
           return { width, height };
@@ -491,15 +495,17 @@ function getImageDimensions(buffer: Buffer, contentType: string): { width: numbe
     }
 
     // GIF format
-    if (contentType.includes("gif") || buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46) {
+    if (contentType.includes("gif") || (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46)) {
       const width = buffer.readUInt16LE(6);
       const height = buffer.readUInt16LE(8);
       return { width, height };
     }
 
     // WebP format
-    if (contentType.includes("webp") ||
-        buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46) {
+    if (
+      contentType.includes("webp") ||
+      (buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46)
+    ) {
       // Simple WebP detection (VP8/VP8L/VP8X)
       if (buffer[12] === 0x56 && buffer[13] === 0x50 && buffer[14] === 0x38) {
         const width = buffer.readUInt16LE(26) + 1;
@@ -507,9 +513,8 @@ function getImageDimensions(buffer: Buffer, contentType: string): { width: numbe
         return { width, height };
       }
     }
-  } catch (error) {
+  } catch {
     // If dimension detection fails, return defaults
-    console.error("Error detecting image dimensions:", error);
   }
 
   // Return default dimensions if format not recognized or parsing failed
