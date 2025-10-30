@@ -7,22 +7,21 @@ function getEnvVar(name: string): string | undefined {
 
 export function getEnvironment(): Environment {
   const envName = getEnvVar("ENV_NAME");
-  
+
   if (!envName) {
-    console.warn("ENV_NAME not set, defaulting to 'local'");
     return "local";
   }
 
   const normalizedEnv = envName.toLowerCase().trim();
-  
+
   if (normalizedEnv === "production" || normalizedEnv === "prod") {
     return "prod";
   }
-  
+
   if (normalizedEnv === "integration") {
     return "integration";
   }
-  
+
   return "local";
 }
 
@@ -34,33 +33,30 @@ function getCurrentFlags(): FeatureFlagConfig {
 export function isFeatureEnabled(feature: keyof FeatureFlagConfig): boolean {
   const flags = getCurrentFlags();
   const flagValue = flags[feature];
-  
+
   if (typeof flagValue === "boolean") {
     return flagValue;
   }
-  
+
   if (typeof flagValue === "object" && flagValue !== null) {
     return Object.values(flagValue).some((value) => value === true);
   }
-  
+
   return false;
 }
 
-export function isSubFeatureEnabled(
-  feature: keyof FeatureFlagConfig,
-  subFeature: string
-): boolean {
+export function isSubFeatureEnabled(feature: keyof FeatureFlagConfig, subFeature: string): boolean {
   const flags = getCurrentFlags();
   const flagValue = flags[feature];
-  
+
   if (typeof flagValue === "boolean") {
     return flagValue;
   }
-  
+
   if (typeof flagValue === "object" && flagValue !== null) {
     return (flagValue as Record<string, boolean>)[subFeature] ?? false;
   }
-  
+
   return false;
 }
 
@@ -82,4 +78,3 @@ export function isCollectionsEnabled(): boolean {
 
 export { featureFlagsConfig };
 export type { Environment, FeatureFlagConfig };
-
