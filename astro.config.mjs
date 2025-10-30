@@ -4,7 +4,7 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
-import node from "@astrojs/node";
+import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,7 +22,5 @@ export default defineConfig({
       "import.meta.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || ""),
     },
   },
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: cloudflare(),
 });

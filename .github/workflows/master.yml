@@ -1,0 +1,140 @@
+name: Deploy to Cloudflare Pages
+
+# Uruchamia się automatycznie przy push do master lub manualnie
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+# Anuluj poprzednie uruchomienia dla tego samego branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Uprawnienia dla deploymentu
+permissions:
+  contents: read
+  actions: read
+  deployments: write
+
+jobs:
+  # Job 1: Linting - musi przejść, aby uruchomić testy
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+  # Job 2: Testy jednostkowe - uruchamia się po lincie
+  test-unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:run
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+          compression-level: 6
+
+  # Job 3: Build produkcyjny - uruchamia się tylko gdy testy przejdą
+  build:
+    name: Production Build
+    runs-on: ubuntu-latest
+    needs: test-unit
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY_SECRET: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY_SECRET: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          SUPABASE_KEY_VALUE="${SUPABASE_KEY_SECRET:-${SUPABASE_ANON_KEY_SECRET}}"
+          export SUPABASE_KEY="$SUPABASE_KEY_VALUE"
+          export SUPABASE_ANON_KEY="$SUPABASE_KEY_VALUE"
+          npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v5
+        if: success()
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+          compression-level: 6
+
+  # Job 4: Deployment na Cloudflare Pages
+  deploy:
+    name: Deploy to Cloudflare Pages
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v6
+        with:
+          name: dist
+          path: dist/
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
