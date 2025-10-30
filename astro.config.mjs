@@ -15,6 +15,11 @@ export default defineConfig({
     // @ts-expect-error This option is experimental and not yet typed in Astro's config types (more than 10 chars).
     chromeDevtoolsWorkspace: true,
   },
+  image: {
+    service: {
+      entrypoint: "astro/assets/services/noop",
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
     define: {
@@ -22,5 +27,9 @@ export default defineConfig({
       "import.meta.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || ""),
     },
   },
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true,
+    },
+  }),
 });

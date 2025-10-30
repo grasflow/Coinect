@@ -1,8 +1,5 @@
 import type { InvoiceDetailDTO, Profile, Client } from "@/types";
 import { autoTable } from "jspdf-autotable";
-import { readFileSync } from "fs";
-import { join } from "path";
-import sharp from "sharp";
 
 export interface GeneratePDFOptions {
   invoice: InvoiceDetailDTO;
@@ -24,9 +21,14 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
   });
 
   /** FONTY **/
-  const publicDir = join(process.cwd(), "public");
-  const fontNormal = readFileSync(join(publicDir, "DejaVuSans.ttf")).toString("base64");
-  const fontBold = readFileSync(join(publicDir, "DejaVuSans-Bold.ttf")).toString("base64");
+  // Load fonts from public directory using fetch (Cloudflare Workers compatible)
+  const fontNormalResponse = await fetch("/DejaVuSans.ttf");
+  const fontNormalBuffer = await fontNormalResponse.arrayBuffer();
+  const fontNormal = Buffer.from(fontNormalBuffer).toString("base64");
+
+  const fontBoldResponse = await fetch("/DejaVuSans-Bold.ttf");
+  const fontBoldBuffer = await fontBoldResponse.arrayBuffer();
+  const fontBold = Buffer.from(fontBoldBuffer).toString("base64");
 
   doc.addFileToVFS("DejaVuSans.ttf", fontNormal);
   doc.addFont("DejaVuSans.ttf", "DejaVuSans", "normal");
@@ -436,21 +438,82 @@ async function loadImageWithDimensions(url: string): Promise<{ base64: string; w
   const buf = await res.arrayBuffer();
   const buffer = Buffer.from(buf);
 
-  // Sprawdź wymiary za pomocą sharp
-  const metadata = await sharp(buffer).metadata();
-  const width = metadata.width || 0;
-  const height = metadata.height || 0;
-
   // Konwertuj do base64
   const base64 = buffer.toString("base64");
   const type = res.headers.get("content-type") || "image/png";
   const base64Data = `data:${type};base64,${base64}`;
 
+  // Get dimensions from image data without using sharp
+  // This uses a simple image dimension parser that works with common formats
+  const dimensions = getImageDimensions(buffer, type);
+
   return {
     base64: base64Data,
-    width,
-    height,
+    width: dimensions.width || 200, // Default width if detection fails
+    height: dimensions.height || 100, // Default height if detection fails
   };
+}
+
+/**
+ * Extracts image dimensions from buffer for common formats (PNG, JPEG, GIF)
+ * Cloudflare Workers compatible - pure JavaScript implementation
+ */
+function getImageDimensions(buffer: Buffer, contentType: string): { width: number; height: number } {
+  try {
+    // PNG format
+    if (contentType.includes("png") || buffer[0] === 0x89 && buffer[1] === 0x50) {
+      // PNG signature check
+      const width = buffer.readUInt32BE(16);
+      const height = buffer.readUInt32BE(20);
+      return { width, height };
+    }
+
+    // JPEG format
+    if (contentType.includes("jpeg") || contentType.includes("jpg") || buffer[0] === 0xff && buffer[1] === 0xd8) {
+      let offset = 2;
+      while (offset < buffer.length) {
+        if (buffer[offset] !== 0xff) break;
+
+        const marker = buffer[offset + 1];
+        offset += 2;
+
+        // SOF markers (Start Of Frame)
+        if (marker >= 0xc0 && marker <= 0xc3 || marker >= 0xc5 && marker <= 0xc7 ||
+            marker >= 0xc9 && marker <= 0xcb || marker >= 0xcd && marker <= 0xcf) {
+          const height = buffer.readUInt16BE(offset + 3);
+          const width = buffer.readUInt16BE(offset + 5);
+          return { width, height };
+        }
+
+        const size = buffer.readUInt16BE(offset);
+        offset += size;
+      }
+    }
+
+    // GIF format
+    if (contentType.includes("gif") || buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46) {
+      const width = buffer.readUInt16LE(6);
+      const height = buffer.readUInt16LE(8);
+      return { width, height };
+    }
+
+    // WebP format
+    if (contentType.includes("webp") ||
+        buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46) {
+      // Simple WebP detection (VP8/VP8L/VP8X)
+      if (buffer[12] === 0x56 && buffer[13] === 0x50 && buffer[14] === 0x38) {
+        const width = buffer.readUInt16LE(26) + 1;
+        const height = buffer.readUInt16LE(28) + 1;
+        return { width, height };
+      }
+    }
+  } catch (error) {
+    // If dimension detection fails, return defaults
+    console.error("Error detecting image dimensions:", error);
+  }
+
+  // Return default dimensions if format not recognized or parsing failed
+  return { width: 200, height: 100 };
 }
 
 function formatDate(date: string) {
