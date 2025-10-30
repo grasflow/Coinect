@@ -1,4 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { AstroCookies } from "astro";
 
 import type { Database } from "./database.types";
@@ -13,10 +13,7 @@ function getSupabaseConfig(env?: SupabaseEnv) {
   // Try to get from Cloudflare env first, then fall back to import.meta.env
   const url = env?.SUPABASE_URL || import.meta.env.SUPABASE_URL;
   const key =
-    env?.SUPABASE_KEY ||
-    env?.SUPABASE_ANON_KEY ||
-    import.meta.env.SUPABASE_KEY ||
-    import.meta.env.SUPABASE_ANON_KEY;
+    env?.SUPABASE_KEY || env?.SUPABASE_ANON_KEY || import.meta.env.SUPABASE_KEY || import.meta.env.SUPABASE_ANON_KEY;
 
   if (!url) {
     throw new Error("Missing SUPABASE_URL environment variable");
@@ -40,10 +37,10 @@ export function createSupabaseServerClient(cookies: AstroCookies, env?: Supabase
       get(key: string) {
         return cookies.get(key)?.value;
       },
-      set(key: string, value: string, options: any) {
+      set(key: string, value: string, options: CookieOptions) {
         cookies.set(key, value, options);
       },
-      remove(key: string, options: any) {
+      remove(key: string, options: CookieOptions) {
         cookies.delete(key, options);
       },
     },

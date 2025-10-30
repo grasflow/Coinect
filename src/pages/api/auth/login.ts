@@ -19,7 +19,8 @@ export const POST: APIRoute = async (context) => {
     const validatedData = loginSchema.parse(body);
 
     // Utworzenie klienta Supabase z obsługą cookies
-    const supabase = createSupabaseServerClient(context.cookies);
+    const env = context.locals.runtime?.env;
+    const supabase = createSupabaseServerClient(context.cookies, env);
     const authService = new AuthService(supabase);
 
     // Logowanie użytkownika

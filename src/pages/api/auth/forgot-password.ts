@@ -11,16 +11,17 @@ export const prerender = false;
  * POST /api/auth/forgot-password
  * Wysyła email z linkiem do resetowania hasła
  */
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async (context) => {
   try {
-    const body = await request.json();
+    const body = await context.request.json();
     const validatedData = forgotPasswordSchema.parse(body);
 
-    const supabase = createSupabaseServerClient(cookies);
+    const env = context.locals.runtime?.env;
+    const supabase = createSupabaseServerClient(context.cookies, env);
     const authService = new AuthService(supabase);
 
     // URL przekierowania po kliknięciu w link w emailu
-    const resetUrl = `${new URL(request.url).origin}/reset-password`;
+    const resetUrl = `${new URL(context.request.url).origin}/reset-password`;
 
     await authService.sendPasswordResetEmail(validatedData.email, resetUrl);
 

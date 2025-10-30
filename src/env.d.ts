@@ -11,7 +11,7 @@ declare global {
           SUPABASE_URL?: string;
           SUPABASE_KEY?: string;
           SUPABASE_ANON_KEY?: string;
-          [key: string]: any;
+          [key: string]: string | undefined;
         };
       };
     }

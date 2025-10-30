@@ -4,12 +4,13 @@ import { registerSchema } from "@/lib/validation/auth.schema";
 import { createSupabaseServerClient } from "@/db/supabase.server";
 import { AuthService } from "@/lib/services/auth.service";
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async (context) => {
   try {
-    const body = await request.json();
+    const body = await context.request.json();
     const validatedData = registerSchema.parse(body);
 
-    const supabase = createSupabaseServerClient(cookies);
+    const env = context.locals.runtime?.env;
+    const supabase = createSupabaseServerClient(context.cookies, env);
     const authService = new AuthService(supabase);
 
     const { user } = await authService.register(validatedData);
