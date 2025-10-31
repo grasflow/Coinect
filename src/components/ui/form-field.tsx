@@ -34,7 +34,7 @@ function FormField({ label, helperText, errorText, required, htmlFor, children, 
 
       {React.isValidElement(children)
         ? React.cloneElement(children as React.ReactElement, {
-            ref: (children as any).ref,
+            ref: (children as React.ReactElement & { ref?: React.Ref<unknown> }).ref,
             "aria-invalid": Boolean(errorText) || undefined,
             "aria-describedby": helperText || errorText ? describedById : undefined,
           })
