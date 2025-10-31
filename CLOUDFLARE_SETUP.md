@@ -1,5 +1,15 @@
 # Konfiguracja Cloudflare Pages - Krok po kroku
 
+## ⚠️ UWAGA - PRZECZYTAJ TO NAJPIERW!
+
+**Jeśli deployment idzie przez GitHub Actions** (push do GitHub → GitHub Actions → Cloudflare Pages):
+- ❌ **NIE UŻYWAJ** tego dokumentu
+- ✅ **UŻYJ** [GITHUB_SECRETS_SETUP.md](GITHUB_SECRETS_SETUP.md)
+
+**Ten dokument jest TYLKO dla bezpośredniego deploymentu przez Cloudflare Pages** (bez GitHub Actions).
+
+---
+
 ## Problem
 Nie możesz się zalogować ani założyć konta na produkcji (my.coinect.pl).
 
