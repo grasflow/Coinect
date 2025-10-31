@@ -1,133 +1,122 @@
-# Konfiguracja Cloudflare Pages - Zmienne Środowiskowe
+# Konfiguracja Cloudflare Pages - Krok po kroku
 
 ## Problem
-Po deploymencie na Cloudflare Pages formularz logowania/rejestracji pokazuje błąd "required" przy validacji pól, mimo że dane są prawidłowo wypełnione.
-
-## Przyczyna
-Kod serwerowy (Cloudflare Workers) nie ma dostępu do zmiennych środowiskowych `SUPABASE_URL` i `SUPABASE_KEY`, przez co autentykacja nie działa poprawnie.
+Nie możesz się zalogować ani założyć konta na produkcji (my.coinect.pl).
 
 ## Rozwiązanie
+Musisz ustawić zmienne środowiskowe na Cloudflare Pages.
 
-### Krok 1: Skonfiguruj zmienne w Cloudflare Pages Dashboard
+## Instrukcja krok po kroku
 
-1. **Zaloguj się do Cloudflare Dashboard**: https://dash.cloudflare.com/
+### 1. Otwórz Cloudflare Dashboard
+```
+https://dash.cloudflare.com
+```
 
-2. **Przejdź do swojego projektu**:
-   - Workers & Pages → Twój projekt (prawdopodobnie "coinect")
+### 2. Przejdź do swojego projektu
+1. Kliknij **"Pages"** w menu po lewej
+2. Znajdź i kliknij projekt **"coinect"** (lub jak go nazwałeś)
 
-3. **Otwórz ustawienia zmiennych środowiskowych**:
-   - Zakładka "Settings"
-   - Sekcja "Environment variables"
+### 3. Otwórz ustawienia Environment Variables
+1. Kliknij zakładkę **"Settings"**
+2. Z menu po lewej wybierz **"Environment variables"**
 
-4. **Dodaj zmienne dla środowiska Production**:
+### 4. Dodaj zmienne dla Production
 
-   Kliknij "Add variable" i dodaj następujące zmienne:
+Kliknij **"Add variable"** i dodaj następujące zmienne **JEDNA PO DRUGIEJ**:
 
-   | Zmienna | Wartość |
-   |---------|---------|
-   | `SUPABASE_URL` | Twój Supabase Project URL (np. `https://xxxxx.supabase.co`) |
-   | `SUPABASE_KEY` | Twój Supabase Anon/Public Key (zaczyna się od `eyJ...`) |
+#### Zmienna 1:
+- **Variable name**: `SUPABASE_URL`
+- **Value**: `https://lmijmesmitafugoukznb.supabase.co`
+- **Environment**: Production ✅ (zaznacz checkbox)
+- Kliknij **"Save"**
 
-5. **Zapisz zmiany**:
-   - Kliknij "Save" przy każdej zmiennej
+#### Zmienna 2:
+- **Variable name**: `SUPABASE_KEY`
+- **Value**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0`
+- **Environment**: Production ✅
+- Kliknij **"Save"**
 
-6. **Zredeploy aplikację**:
-   - Możesz to zrobić przez:
-     - **Opcja A**: Push do branch `master` (automatyczny deployment przez GitHub Actions)
-     - **Opcja B**: W Cloudflare Dashboard → "Deployments" → "Retry deployment"
+#### Zmienna 3:
+- **Variable name**: `PUBLIC_SUPABASE_URL`
+- **Value**: `https://lmijmesmitafugoukznb.supabase.co`
+- **Environment**: Production ✅
+- Kliknij **"Save"**
 
-### Krok 2: Znajdowanie wartości Supabase
+#### Zmienna 4:
+- **Variable name**: `PUBLIC_SUPABASE_KEY`
+- **Value**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0`
+- **Environment**: Production ✅
+- Kliknij **"Save"**
 
-Jeśli nie masz zapisanych wartości Supabase:
+#### Zmienna 5:
+- **Variable name**: `PUBLIC_ENV_NAME`
+- **Value**: `production`
+- **Environment**: Production ✅
+- Kliknij **"Save"**
 
-1. **Zaloguj się do Supabase Dashboard**: https://supabase.com/dashboard
+#### Zmienna 6:
+- **Variable name**: `OPENROUTER_API_KEY`
+- **Value**: `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`
+- **Environment**: Production ✅
+- Kliknij **"Save"**
 
-2. **Wybierz swój projekt**
+### 5. Redeploy aplikacji
 
-3. **Przejdź do Settings → API**:
-   - **Project URL**: To jest wartość dla `SUPABASE_URL`
-   - **Project API keys → anon public**: To jest wartość dla `SUPABASE_KEY`
+Po dodaniu wszystkich zmiennych:
 
-### Krok 3: Weryfikacja
+1. Przejdź do zakładki **"Deployments"**
+2. Znajdź ostatni deployment
+3. Kliknij **menu (三)** po prawej stronie
+4. Wybierz **"Retry deployment"**
 
-Po skonfigurowaniu zmiennych i redeploymencie:
+ALBO po prostu zrób:
+```bash
+git push
+```
 
-1. **Otwórz swoją stronę logowania** (https://my.coinect.pl/login)
+### 6. Sprawdź czy działa
 
-2. **Otwórz konsole przeglądarki** (F12 → Console)
+Po deploymencie (trwa ~2-3 minuty):
 
-3. **Sprawdź logi**:
-   - Powinien pojawić się log: `[Supabase Browser] Environment check:`
-   - Sprawdź czy `url` i `key` mają wartości ✅ SET
+1. Otwórz https://my.coinect.pl w **nowej karcie incognito**
+2. Przejdź do `/register`
+3. Spróbuj założyć nowe konto
+4. Powinno zadziałać! ✅
 
-4. **Przetestuj logowanie**:
-   - Wpisz prawidłowe dane logowania
-   - Kliknij "Zaloguj się"
-   - Jeśli wszystko działa poprawnie, zostaniesz przekierowany do `/dashboard`
+## Jak sprawdzić czy zmienne są ustawione?
 
-### Krok 4: Debugging (jeśli nadal nie działa)
+W zakładce **"Environment variables"** powinieneś widzieć:
 
-Jeśli problem nadal występuje, sprawdź:
+```
+Production environment (6 variables)
+├─ SUPABASE_URL
+├─ SUPABASE_KEY
+├─ PUBLIC_SUPABASE_URL
+├─ PUBLIC_SUPABASE_KEY
+├─ PUBLIC_ENV_NAME
+└─ OPENROUTER_API_KEY
+```
 
-1. **GitHub Actions workflow log**:
-   - Przejdź do: https://github.com/[twoje-repo]/actions
-   - Kliknij na ostatni workflow run
-   - Sprawdź krok "Verify environment variables in build"
-   - Powinien pokazać ✅ że znalazł URL i klucz Supabase w buildzie
+## Troubleshooting
 
-2. **Konsola przeglądarki**:
-   - Otwórz F12 → Console
-   - Sprawdź czy widzisz `[Supabase Browser] Environment check:`
-   - Jeśli widzisz ❌ MISSING - znaczy że zmienne nie zostały wstrzyknięte podczas buildu
+### Problem: Nadal nie mogę się zalogować
+1. Sprawdź czy deployment się zakończył (zielony ✓)
+2. Wyczyść cache przeglądarki (Cmd+Shift+R lub Ctrl+Shift+R)
+3. Otwórz w incognito
+4. Sprawdź Console w DevTools (F12) - szukaj błędów
 
-3. **Network tab**:
-   - Otwórz F12 → Network
-   - Spróbuj się zalogować
-   - Sprawdź czy request do `/api/auth/login` się wykonuje
-   - Sprawdź response - powinien zwrócić odpowiedni kod błędu lub sukces
+### Problem: "Missing SUPABASE_URL"
+- Sprawdź czy zmienne są ustawione dla **Production** (nie Preview)
+- Zrób retry deployment
 
-## Zmiany w projekcie (już wykonane)
+### Problem: Nie widzę projektu "coinect" na Cloudflare
+- Sprawdź czy jesteś w odpowiednim koncie Cloudflare
+- Sprawdź czy projekt jest połączony z Git
 
-Następujące zmiany zostały już zastosowane w projekcie:
+## Bezpieczeństwo
 
-### 1. GitHub Actions Workflow (`.github/workflows/master.yml`)
-- ✅ Dodano krok weryfikacji zmiennych środowiskowych po buildzie
-- ✅ Zmienne `PUBLIC_SUPABASE_URL` i `PUBLIC_SUPABASE_KEY` są ustawione podczas buildu
-
-### 2. Astro Config (`astro.config.mjs`)
-- ✅ Dodano `vite.define` do wymuszenia wstrzykiwania zmiennych do kodu klienckiego
-- ✅ Zapewnia, że zmienne są dostępne w przeglądarce
-
-### 3. Supabase Browser Client (`src/db/supabase.browser.ts`)
-- ✅ Dodano sprawdzanie czy zmienne są ustawione
-- ✅ Lepsze error handling z informacyjnymi komunikatami
-- ✅ Rzuca błąd jeśli zmienne nie są dostępne (łatwiejsze debugowanie)
-
-## Dlaczego to się dzieje?
-
-### Build-time vs Runtime
-
-- **Build-time** (GitHub Actions):
-  - Zmienne są wstrzykiwane do kodu JavaScript podczas kompilacji
-  - Kod kliencki (przeglądarka) otrzymuje zmienne jako stałe wartości w JS
-
-- **Runtime** (Cloudflare Workers):
-  - Kod serwerowy (API endpoints) działa na Cloudflare Workers
-  - Potrzebuje dostępu do zmiennych środowiskowych w runtime
-  - Te zmienne MUSZĄ być skonfigurowane w Cloudflare Pages Dashboard
-
-### Czemu to nie działa automatycznie?
-
-Cloudflare Pages nie dziedziczy zmiennych środowiskowych z GitHub Actions. Zmienne ustawione w workflow są używane tylko podczas buildu. Runtime (Cloudflare Workers) wymaga osobnej konfiguracji.
-
-## Kontakt
-
-Jeśli nadal masz problemy:
-1. Sprawdź logi w GitHub Actions
-2. Sprawdź konsole przeglądarki
-3. Upewnij się, że zmienne w Cloudflare Pages są poprawnie ustawione
-4. Sprawdź czy Supabase URL i Key są prawidłowe
-
----
-
-**Ostatnia aktualizacja**: 2025-10-31
+⚠️ **WAŻNE**:
+- Klucze Supabase w tym dokumencie to klucze **demo** - są bezpieczne do użycia
+- Jeśli używasz prawdziwych kluczy produkcyjnych, **NIGDY** ich nie commituj do Git
+- `.env` i inne pliki z kluczami są w `.gitignore`
