@@ -52,11 +52,17 @@ export function LoginForm() {
     return () => subscription.unsubscribe();
   }, [watch]);
 
-  // Sprawdź czy jest komunikat o sukcesie resetowania hasła
+  // Sprawdź czy jest komunikat o sukcesie resetowania hasła lub rejestracji
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("reset") === "success") {
       setSuccessMessage("Hasło zostało zmienione. Możesz się teraz zalogować.");
+      // Usuń parametr z URL bez przeładowania strony
+      window.history.replaceState({}, "", "/login");
+    } else if (params.get("registered") === "true") {
+      setSuccessMessage(
+        "Konto zostało utworzone! Sprawdź swoją skrzynkę email i potwierdź adres, aby móc się zalogować."
+      );
       // Usuń parametr z URL bez przeładowania strony
       window.history.replaceState({}, "", "/login");
     }

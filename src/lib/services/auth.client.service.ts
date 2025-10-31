@@ -11,6 +11,7 @@ interface AuthResponse {
     id: string;
     email: string;
   };
+  hasSession?: boolean;
 }
 
 interface AuthErrorResponse {

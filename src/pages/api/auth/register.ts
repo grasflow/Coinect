@@ -13,7 +13,13 @@ export const POST: APIRoute = async (context) => {
     const supabase = createSupabaseServerClient(context.cookies, env);
     const authService = new AuthService(supabase);
 
-    const { user } = await authService.register(validatedData);
+    const { user, session } = await authService.register(validatedData);
+
+    // Log registration success for debugging
+    console.log("✅ [Register] User registered successfully:", {
+      userId: user.id,
+      hasSession: !!session,
+    });
 
     return new Response(
       JSON.stringify({
@@ -22,6 +28,8 @@ export const POST: APIRoute = async (context) => {
           id: user.id,
           email: user.email,
         },
+        // Include session status to help with debugging
+        hasSession: !!session,
       }),
       {
         status: 201,

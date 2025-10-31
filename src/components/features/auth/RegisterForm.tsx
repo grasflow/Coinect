@@ -69,9 +69,22 @@ export function RegisterForm() {
     setApiError("");
 
     try {
-      await AuthClientService.register(data);
-      // Przekierowanie po udanej rejestracji
-      window.location.assign("/dashboard");
+      const result = await AuthClientService.register(data);
+
+      // Log the response to debug session status
+      // eslint-disable-next-line no-console
+      console.log("📥 [RegisterForm] Registration response:", result);
+
+      // Check if session was created (user is auto-logged in)
+      if ("hasSession" in result && !result.hasSession) {
+        // eslint-disable-next-line no-console
+        console.log("⚠️ [RegisterForm] No session created - likely requires email verification");
+        // Redirect to login with message
+        window.location.assign("/login?registered=true");
+      } else {
+        // Session created - user is logged in, redirect to dashboard
+        window.location.assign("/dashboard");
+      }
     } catch (error) {
       if (error instanceof Error) {
         setApiError(error.message);
