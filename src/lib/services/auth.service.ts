@@ -64,6 +64,9 @@ export class AuthService {
     });
 
     if (signUpError) {
+      // TEMPORARY: Log full error for debugging
+      console.error("🚨 [AuthService] Supabase signUp error:", signUpError);
+
       // Mapowanie błędów Supabase na czytelne komunikaty
       if (signUpError.message.includes("already registered")) {
         throw new AuthError("EMAIL_TAKEN", "Email jest już zajęty");

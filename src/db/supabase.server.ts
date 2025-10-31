@@ -15,6 +15,14 @@ function getSupabaseConfig(env?: SupabaseEnv) {
   const key =
     env?.SUPABASE_KEY || env?.SUPABASE_ANON_KEY || import.meta.env.SUPABASE_KEY || import.meta.env.SUPABASE_ANON_KEY;
 
+  // TEMPORARY: Log config source for debugging
+  console.log("🔧 [Supabase] Config source:", {
+    fromCloudflare: !!env?.SUPABASE_URL,
+    hasUrl: !!url,
+    hasKey: !!key,
+    urlPreview: url ? `${url.substring(0, 30)}...` : "undefined",
+  });
+
   if (!url) {
     throw new Error("Missing SUPABASE_URL environment variable");
   }
