@@ -26,11 +26,11 @@ export default defineConfig({
     // Force inject PUBLIC_ variables for client-side Supabase
     // This ensures environment variables are available in browser code
     define: {
-      'import.meta.env.PUBLIC_SUPABASE_URL': JSON.stringify(
-        process.env.PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ''
+      "import.meta.env.PUBLIC_SUPABASE_URL": JSON.stringify(
+        process.env.PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ""
       ),
-      'import.meta.env.PUBLIC_SUPABASE_KEY': JSON.stringify(
-        process.env.PUBLIC_SUPABASE_KEY || process.env.SUPABASE_KEY || ''
+      "import.meta.env.PUBLIC_SUPABASE_KEY": JSON.stringify(
+        process.env.PUBLIC_SUPABASE_KEY || process.env.SUPABASE_KEY || ""
       ),
     },
     build: {

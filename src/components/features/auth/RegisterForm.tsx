@@ -30,13 +30,6 @@ export function RegisterForm() {
     },
   });
 
-  // Debug: log errors
-  React.useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      console.log("[RegisterForm] Validation errors:", errors);
-    }
-  }, [errors]);
-
   const onSubmit = async (data: RegisterInput) => {
     setApiError("");
 

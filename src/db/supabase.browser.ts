@@ -14,7 +14,11 @@ const envCheck = {
   isProd: import.meta.env.PROD,
 };
 
-console.log("[Supabase Browser] Environment check:", envCheck);
+// Log environment check in development mode only
+if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.log("[Supabase Browser] Environment check:", envCheck);
+}
 
 // Throw error if environment variables are missing
 if (!supabaseUrl || !supabaseAnonKey) {
@@ -29,6 +33,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     "2. vite.define must be configured in astro.config.mjs\n" +
     "3. Environment variables must be added to Cloudflare Pages dashboard";
 
+  // eslint-disable-next-line no-console
   console.error(errorMessage);
 
   throw new Error("Supabase client initialization failed: missing environment variables");
