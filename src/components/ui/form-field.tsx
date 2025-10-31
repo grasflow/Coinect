@@ -15,6 +15,14 @@ interface FormFieldProps {
 function FormField({ label, helperText, errorText, required, htmlFor, children, className }: FormFieldProps) {
   const describedById = React.useId();
 
+  // DEBUG: Log when FormField renders with an error
+  React.useEffect(() => {
+    if (errorText) {
+      // eslint-disable-next-line no-console
+      console.log(`⚠️ [FormField] Rendering error for ${htmlFor}:`, errorText);
+    }
+  }, [errorText, htmlFor]);
+
   return (
     <div data-slot="form-field" className={cn("grid gap-1.5", className)}>
       {label ? (
@@ -26,6 +34,7 @@ function FormField({ label, helperText, errorText, required, htmlFor, children, 
 
       {React.isValidElement(children)
         ? React.cloneElement(children as React.ReactElement, {
+            ref: (children as any).ref,
             "aria-invalid": Boolean(errorText) || undefined,
             "aria-describedby": helperText || errorText ? describedById : undefined,
           })

@@ -40,16 +40,8 @@ export default defineConfig({
         },
       },
     },
-    ssr: {
-      noExternal: [
-        /^@astro\//,
-        "astro",
-        "@astrojs/react",
-        "@astrojs/renderers",
-        "react",
-        "react-dom",
-        "react-dom/server",
-      ],
+    resolve: {
+      dedupe: ["react", "react-dom"],
     },
   },
   adapter: cloudflare({
