@@ -104,6 +104,41 @@ jobs:
           PUBLIC_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: npm run build
 
+      - name: Verify environment variables in build
+        run: |
+          echo "🔍 Weryfikacja czy zmienne środowiskowe są w buildzie..."
+          echo ""
+          echo "Sprawdzam pliki JavaScript w dist/_astro/..."
+
+          # Sprawdź czy katalog istnieje
+          if [ ! -d "dist/_astro" ]; then
+            echo "❌ BŁĄD: Katalog dist/_astro nie istnieje!"
+            exit 1
+          fi
+
+          # Szukaj referencji do Supabase URL
+          echo "Szukam PUBLIC_SUPABASE_URL..."
+          if grep -r "supabase.*\.co" dist/_astro/ 2>/dev/null | head -n 1; then
+            echo "✅ Znaleziono URL Supabase w buildzie"
+          else
+            echo "⚠️  OSTRZEŻENIE: Nie znaleziono URL Supabase w plikach JS"
+            echo "Sprawdzam czy są jakiekolwiek referencje do 'supabase'..."
+            grep -r "supabase" dist/_astro/ 2>/dev/null | head -n 3 || echo "❌ Brak referencji do Supabase!"
+          fi
+
+          echo ""
+          echo "Szukam PUBLIC_SUPABASE_KEY..."
+          if grep -r "eyJ" dist/_astro/ 2>/dev/null | head -n 1 > /dev/null; then
+            echo "✅ Znaleziono klucz Supabase w buildzie (format JWT)"
+          else
+            echo "⚠️  OSTRZEŻENIE: Nie znaleziono klucza Supabase"
+          fi
+
+          echo ""
+          echo "📊 Podsumowanie:"
+          echo "  - Liczba plików JS: $(find dist/_astro -name "*.js" | wc -l)"
+          echo "  - Rozmiar dist/: $(du -sh dist/ | cut -f1)"
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
         if: success()
