@@ -137,24 +137,29 @@ export default function AIInsightsWidget() {
                   </div>
 
                   {/* Generate Analysis Button */}
-                  <Button
-                    variant="filled"
-                    className="w-full h-8 text-xs"
-                    onClick={handleGenerateAnalysis}
-                    disabled={analysisMutation.isPending}
-                  >
-                    {analysisMutation.isPending ? (
-                      <>
-                        <RefreshCw className="w-3 h-3 mr-1.5 animate-spin" />
-                        Generowanie analizy...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-3 h-3 mr-1.5" />
-                        {analysis ? "Odśwież analizę" : "Wygeneruj analizę AI"}
-                      </>
-                    )}
-                  </Button>
+                  <div>
+                    <Button
+                      variant="filled"
+                      className="w-full h-8 text-xs"
+                      onClick={handleGenerateAnalysis}
+                      disabled={analysisMutation.isPending}
+                    >
+                      {analysisMutation.isPending ? (
+                        <>
+                          <RefreshCw className="w-3 h-3 mr-1.5 animate-spin" />
+                          Generowanie analizy...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3 h-3 mr-1.5" />
+                          {analysis ? "Odśwież analizę" : "Wygeneruj analizę AI"}
+                        </>
+                      )}
+                    </Button>
+                    <Muted className="text-[10px] text-center mt-1 block">
+                      Dostępne wpisy: {status.entries_with_notes}
+                    </Muted>
+                  </div>
 
                   {/* Error State */}
                   {analysisMutation.isError && (
