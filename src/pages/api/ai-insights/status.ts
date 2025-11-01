@@ -25,10 +25,9 @@ export const GET: APIRoute = async (context) => {
 
   try {
     // Count time entries with private notes using database function that handles trim()
-    const { data: countData, error: rpcError } = await supabase.rpc(
-      "count_time_entries_with_valid_notes",
-      { p_user_id: user.id }
-    );
+    const { data: countData, error: rpcError } = await supabase.rpc("count_time_entries_with_valid_notes", {
+      p_user_id: user.id,
+    });
 
     if (rpcError) throw rpcError;
 

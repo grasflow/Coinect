@@ -68,10 +68,9 @@ export const GET: APIRoute = async (context) => {
     if (timeEntriesError) throw timeEntriesError;
 
     // 4. AI Insights progress
-    const { data: entriesWithNotesCount, error: aiError } = await supabase.rpc(
-      "count_time_entries_with_valid_notes",
-      { p_user_id: userId }
-    );
+    const { data: entriesWithNotesCount, error: aiError } = await supabase.rpc("count_time_entries_with_valid_notes", {
+      p_user_id: userId,
+    });
 
     if (aiError) throw aiError;
 
