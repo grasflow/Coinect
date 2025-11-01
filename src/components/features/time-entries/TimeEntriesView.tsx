@@ -77,11 +77,6 @@ function TimeEntriesViewContent() {
   };
 
   const handleFormSubmit = async (data: TimeEntryFormViewModel) => {
-    console.log("=== FORM SUBMIT DEBUG ===");
-    console.log("Form data:", data);
-    console.log("private_note value:", data.private_note);
-    console.log("private_note after trim:", data.private_note?.trim());
-
     try {
       if (data.id) {
         const command = {
@@ -93,7 +88,6 @@ function TimeEntriesViewContent() {
           private_note: data.private_note?.trim() || undefined,
           tag_ids: data.tag_ids,
         };
-        console.log("UPDATE command:", command);
         await updateMutation.mutateAsync({
           entryId: data.id,
           command,
@@ -110,7 +104,6 @@ function TimeEntriesViewContent() {
           private_note: data.private_note?.trim() || undefined,
           tag_ids: data.tag_ids,
         };
-        console.log("CREATE command:", command);
         await createMutation.mutateAsync(command);
         toast.success("Wpis czasu został dodany");
       }

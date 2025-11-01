@@ -354,9 +354,7 @@ export function TimeEntryForm({
                 Insights
               </p>
             )}
-            {aiStatus && aiStatus.unlocked && (
-              <p className="text-xs text-green-600">🎉 AI Insights odblokowany!</p>
-            )}
+            {aiStatus && aiStatus.unlocked && <p className="text-xs text-green-600">🎉 AI Insights odblokowany!</p>}
           </div>
 
           {tags.length > 0 && (

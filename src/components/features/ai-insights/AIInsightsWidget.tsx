@@ -239,8 +239,7 @@ export default function AIInsightsWidget() {
                         <div className="space-y-1">
                           {analysis.productivity_insights.most_productive_periods.length > 0 && (
                             <Muted className="text-xs text-orange-700">
-                              Najproduktywniejsze:{" "}
-                              {analysis.productivity_insights.most_productive_periods.join(", ")}
+                              Najproduktywniejsze: {analysis.productivity_insights.most_productive_periods.join(", ")}
                             </Muted>
                           )}
                           {analysis.productivity_insights.suggestions.map((suggestion, idx) => (
@@ -313,9 +312,7 @@ export default function AIInsightsWidget() {
               {status.unlocked ? (
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <Text className="text-sm">
-                    {analysis ? "Analiza gotowa" : "Kliknij aby wygenerować analizę"}
-                  </Text>
+                  <Text className="text-sm">{analysis ? "Analiza gotowa" : "Kliknij aby wygenerować analizę"}</Text>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
