@@ -32,7 +32,7 @@ export const POST: APIRoute = async (context) => {
     // Pobierz dane AI dla użytkownika (tylko z bieżącego miesiąca)
     const currentDate = new Date();
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const firstDayString = firstDayOfMonth.toISOString().split('T')[0];
+    const firstDayString = firstDayOfMonth.toISOString().split("T")[0];
 
     const { data: aiData, error: dataError } = await context.locals.supabase
       .from("ai_insights_data")

@@ -310,14 +310,22 @@ export default function AIInsightsWidget() {
             <div
               className="flex items-center gap-2 cursor-pointer rounded-md px-1 py-1 -mx-1 hover:bg-accent/50 transition-colors min-h-[28px]"
               onClick={() => setIsExpanded(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsExpanded(true);
+                }
+              }}
+              role="button"
+              tabIndex={0}
             >
               {status.unlocked ? (
                 <>
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                    analysis
-                      ? "bg-green-100 text-green-700"
-                      : "bg-blue-100 text-blue-700"
-                  }`}>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                      analysis ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"
+                    }`}
+                  >
                     {analysis ? "✓ Gotowe" : "Nowa analiza"}
                   </span>
                   <Text className="!text-xs text-foreground/80 flex-1">

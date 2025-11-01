@@ -77,7 +77,7 @@ function TimeEntriesViewContent() {
   const handleFormSubmit = async (data: TimeEntryFormViewModel) => {
     try {
       if (data.id || editingEntry?.id) {
-        const entryId = data.id || editingEntry!.id;
+        const entryId = (data.id || editingEntry?.id) as string;
         const command = {
           date: data.date.toISOString().split("T")[0],
           hours: Number(data.hours),
