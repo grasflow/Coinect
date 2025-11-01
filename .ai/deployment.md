@@ -25,18 +25,6 @@ Aplikacja Coinect jest wdrażana na Cloudflare Pages i używa Supabase jako back
 3. Wybierz projekt **coinect**
 4. Przejdź do **Settings** → **Environment variables**
 
-### 2. Dodaj zmienne środowiskowe
-
-Dodaj następujące zmienne dla środowiska **Production**:
-
-| Variable Name | Value | Environment |
-|--------------|-------|-------------|
-| `SUPABASE_URL` | `https://lmijmesmitafugoukznb.supabase.co` | Production |
-| `SUPABASE_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0` | Production |
-| `PUBLIC_SUPABASE_URL` | `https://lmijmesmitafugoukznb.supabase.co` | Production |
-| `PUBLIC_SUPABASE_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0` | Production |
-| `PUBLIC_ENV_NAME` | `production` | Production |
-| `OPENROUTER_API_KEY` | `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` | Production |
 
 ### 3. Jak dodać zmienną:
 
