@@ -1,7 +1,18 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Users, Clock, ArrowRight, Plus, FileText, LoaderIcon, Clock as ClockIcon } from "lucide-react";
+import {
+  Users,
+  Clock,
+  ArrowRight,
+  Plus,
+  FileText,
+  LoaderIcon,
+  Clock as ClockIcon,
+  TrendingUp,
+  DollarSign,
+  CheckCircle2,
+} from "lucide-react";
 import type { DashboardSummaryDTO } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +20,7 @@ import { H1, Muted, Text } from "@/components/ui/typography";
 import { Stack } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { HoursDisplay } from "@/components/ui/hours-display";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import QueryProvider from "@/components/QueryProvider";
 
 async function fetchDashboardSummary(): Promise<DashboardSummaryDTO> {
@@ -59,69 +71,192 @@ function DashboardViewContent() {
   }
 
   return (
-    <Stack className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <H1>Dashboard</H1>
-          <Muted>Przegląd Twojej aktywności</Muted>
+    <TooltipProvider delayDuration={300}>
+      <Stack className="space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <H1>Dashboard</H1>
+            <Muted>Przegląd Twojej aktywności</Muted>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="filled" size="default" onClick={() => (window.location.href = "/time-entries")}>
+              <Plus className="w-4 h-4 mr-2" />
+              Dodaj wpis czasu
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-3">
-          <Button variant="filled" size="default" onClick={() => (window.location.href = "/time-entries")}>
-            <Plus className="w-4 h-4 mr-2" />
-            Dodaj wpis czasu
-          </Button>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {/* Clients Count */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Card className="overflow-hidden transition-all hover:shadow-md cursor-help py-0">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="rounded-lg bg-blue-100 p-1.5 dark:bg-blue-900/20">
+                        <Users className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold leading-none mb-0.5">{summary.clients_count}</div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Klienci</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Liczba aktywnych klientów w systemie</p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Unbilled Hours */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Card className="overflow-hidden transition-all hover:shadow-md cursor-help py-0">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="rounded-lg bg-amber-100 p-1.5 dark:bg-amber-900/20">
+                        <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold leading-none mb-0.5">
+                      {parseFloat(summary.unbilled_hours).toFixed(1)}h
+                    </div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Niezafakturowane h</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>
+                Godziny pracy, które nie zostały jeszcze zafakturowane
+                <br />
+                Dokładnie: {parseFloat(summary.unbilled_hours).toFixed(2)}h
+              </p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Current Month Invoices */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Card className="overflow-hidden transition-all hover:shadow-md cursor-help py-0">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="rounded-lg bg-green-100 p-1.5 dark:bg-green-900/20">
+                        <FileText className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold leading-none mb-0.5">
+                      {(summary.current_month_invoices.total_gross_amount_pln / 1000).toFixed(1)}k
+                    </div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                      Bieżący miesiąc
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>
+                Suma faktur z bieżącego miesiąca: {summary.current_month_invoices.total_gross_amount_pln.toLocaleString("pl-PL")} PLN
+                <br />
+                {summary.current_month_invoices.count} {summary.current_month_invoices.count === 1 ? "faktura" : "faktur"} (
+                {summary.current_month_invoices.manual_count} ręcznych, {summary.current_month_invoices.time_entries_count} z godzin)
+              </p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Total Amount */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Card className="overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-primary/5 to-transparent cursor-help py-0">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="rounded-lg bg-primary/10 p-1.5">
+                        <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold leading-none mb-0.5">
+                      {(summary.total_amount_pln / 1000).toFixed(1)}k
+                    </div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Suma wpisów</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>
+                Całkowita wartość wszystkich wpisów czasu
+                <br />
+                {summary.total_amount_pln.toLocaleString("pl-PL")} PLN (zafakturowane + niezafakturowane)
+              </p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Unbilled Amount */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Card className="overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-orange-50 to-transparent dark:from-orange-900/10 cursor-help py-0">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="rounded-lg bg-orange-100 p-1.5 dark:bg-orange-900/20">
+                        <DollarSign className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold leading-none mb-0.5 text-orange-600 dark:text-orange-400">
+                      {(summary.unbilled_amount_pln / 1000).toFixed(1)}k
+                    </div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Do zafakturowania</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>
+                Wartość niezafakturowanych wpisów czasu
+                <br />
+                {summary.unbilled_amount_pln.toLocaleString("pl-PL")} PLN - wymaga wystawienia faktury
+              </p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Billed Amount */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Card className="overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-emerald-50 to-transparent dark:from-emerald-900/10 cursor-help py-0">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="rounded-lg bg-emerald-100 p-1.5 dark:bg-emerald-900/20">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold leading-none mb-0.5 text-emerald-600 dark:text-emerald-400">
+                      {(summary.billed_amount_pln / 1000).toFixed(1)}k
+                    </div>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Zafakturowane</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>
+                Wartość zafakturowanych wpisów czasu
+                <br />
+                {summary.billed_amount_pln.toLocaleString("pl-PL")} PLN - już wystawione faktury
+              </p>
+            </TooltipContent>
+          </Tooltip>
         </div>
-      </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Clients Count */}
+        {/* Recent Activity */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Klienci</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summary.clients_count}</div>
-            <Muted className="text-xs">Aktywnych klientów</Muted>
-          </CardContent>
-        </Card>
-
-        {/* Unbilled Hours */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Niezafakturowane godziny</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              <HoursDisplay hours={summary.unbilled_hours} />
-            </div>
-            <Muted className="text-xs">Do zafakturowania</Muted>
-          </CardContent>
-        </Card>
-
-        {/* Current Month Invoices */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Faktury - bieżący miesiąc</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {summary.current_month_invoices.total_gross_amount_pln.toFixed(2)} PLN
-            </div>
-            <Muted className="text-xs">
-              {summary.current_month_invoices.count} faktur ({summary.current_month_invoices.manual_count} ręcznych,{" "}
-              {summary.current_month_invoices.time_entries_count} z godzin)
-            </Muted>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
-      <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -231,7 +366,8 @@ function DashboardViewContent() {
           )}
         </CardContent>
       </Card>
-    </Stack>
+      </Stack>
+    </TooltipProvider>
   );
 }
 

@@ -36,20 +36,59 @@ export const GET: APIRoute = async (context) => {
 
     if (clientsError) throw clientsError;
 
-    // 2. Sum unbilled hours
-    const { data: unbilledData, error: unbilledError } = await supabase
+    // 2. Fetch all time entries with amounts
+    const { data: allTimeEntries, error: timeEntriesError } = await supabase
       .from("time_entries")
-      .select("hours")
+      .select("hours, hourly_rate, currency, invoice_id, date")
       .eq("user_id", userId)
-      .is("invoice_id", null)
       .is("deleted_at", null);
 
-    if (unbilledError) throw unbilledError;
+    if (timeEntriesError) throw timeEntriesError;
 
-    const unbilledHours = unbilledData.reduce((sum, entry) => sum + parseFloat(entry.hours || "0"), 0);
+    // Helper function to get exchange rate
+    async function getExchangeRate(currency: string, date: string): Promise<number> {
+      if (currency === "PLN") return 1;
+
+      const { data: rate } = await supabase
+        .from("exchange_rates")
+        .select("rate")
+        .eq("currency", currency)
+        .eq("rate_date", date)
+        .single();
+
+      return rate ? parseFloat(rate.rate) : 1;
+    }
+
+    // Calculate amounts
+    let totalAmountPLN = 0;
+    let unbilledAmountPLN = 0;
+    let billedAmountPLN = 0;
+    let unbilledHours = 0;
+
+    for (const entry of allTimeEntries || []) {
+      const hours = parseFloat(entry.hours || "0");
+      const hourlyRate = parseFloat(entry.hourly_rate || "0");
+      const amount = hours * hourlyRate;
+
+      if (hourlyRate > 0) {
+        const exchangeRate = await getExchangeRate(entry.currency, entry.date);
+        const amountPLN = amount * exchangeRate;
+
+        totalAmountPLN += amountPLN;
+
+        if (entry.invoice_id) {
+          billedAmountPLN += amountPLN;
+        } else {
+          unbilledAmountPLN += amountPLN;
+          unbilledHours += hours;
+        }
+      } else if (!entry.invoice_id) {
+        unbilledHours += hours;
+      }
+    }
 
     // 3. Recent time entries (5 latest)
-    const { data: recentTimeEntries, error: timeEntriesError } = await supabase
+    const { data: recentTimeEntries, error: recentEntriesError } = await supabase
       .from("time_entries")
       .select(
         `
@@ -65,7 +104,7 @@ export const GET: APIRoute = async (context) => {
       .order("date", { ascending: false })
       .limit(5);
 
-    if (timeEntriesError) throw timeEntriesError;
+    if (recentEntriesError) throw recentEntriesError;
 
     // 4. AI Insights progress
     const { data: entriesWithNotesCount, error: aiError } = await supabase.rpc("count_time_entries_with_valid_notes", {
@@ -133,6 +172,9 @@ export const GET: APIRoute = async (context) => {
     const summary: DashboardSummaryDTO = {
       clients_count: clientsCount || 0,
       unbilled_hours: unbilledHours.toFixed(2),
+      total_amount_pln: parseFloat(totalAmountPLN.toFixed(2)),
+      unbilled_amount_pln: parseFloat(unbilledAmountPLN.toFixed(2)),
+      billed_amount_pln: parseFloat(billedAmountPLN.toFixed(2)),
       recent_time_entries: recentTimeEntries.map((entry) => ({
         id: entry.id,
         date: entry.date,

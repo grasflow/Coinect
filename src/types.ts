@@ -279,6 +279,9 @@ export interface AIInsightsAnalysisDTO {
 export interface DashboardSummaryDTO {
   clients_count: number;
   unbilled_hours: string;
+  total_amount_pln: number;
+  unbilled_amount_pln: number;
+  billed_amount_pln: number;
   recent_time_entries: {
     id: string;
     date: string;

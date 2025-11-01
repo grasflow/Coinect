@@ -2,8 +2,8 @@ import * as React from "react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { Edit2Icon, Trash2Icon, LoaderIcon, FileTextIcon } from "lucide-react";
-import type { TimeEntryWithRelationsDTO, PaginatedResponse } from "@/types";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { TimeEntryWithRelationsDTO, PaginatedResponse, Currency } from "@/types";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { HoursDisplay } from "@/components/ui/hours-display";
@@ -20,6 +20,32 @@ interface TimeEntriesListProps {
 export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChange }: TimeEntriesListProps) {
   const totalPages = Math.ceil(data.total / data.limit);
   const currentPage = Math.floor(data.offset / data.limit) + 1;
+
+  // Calculate totals by currency
+  const totals = React.useMemo(() => {
+    const hoursByEntry = data.data.reduce((sum, entry) => sum + parseFloat(entry.hours?.toString() || "0"), 0);
+    
+    const amountsByCurrency: Record<Currency, number> = {
+      PLN: 0,
+      EUR: 0,
+      USD: 0,
+    };
+
+    data.data.forEach((entry) => {
+      const hours = parseFloat(entry.hours?.toString() || "0");
+      const hourlyRate = parseFloat(entry.hourly_rate?.toString() || "0");
+      const amount = hours * hourlyRate;
+
+      if (hourlyRate > 0 && entry.currency) {
+        amountsByCurrency[entry.currency] = (amountsByCurrency[entry.currency] || 0) + amount;
+      }
+    });
+
+    return {
+      hours: hoursByEntry,
+      amounts: amountsByCurrency,
+    };
+  }, [data.data]);
 
   if (isLoading) {
     return (
@@ -128,6 +154,29 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
               );
             })}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={2} className="font-semibold">
+                Podsumowanie
+              </TableCell>
+              <TableCell className="text-right font-semibold">
+                <HoursDisplay hours={totals.hours.toFixed(2)} />
+              </TableCell>
+              <TableCell colSpan={2} className="text-right font-semibold">
+                {Object.entries(totals.amounts)
+                  .filter(([_, amount]) => amount > 0)
+                  .map(([currency, amount]) => (
+                    <div key={currency}>
+                      {amount.toFixed(2)} {currency}
+                    </div>
+                  ))}
+                {Object.values(totals.amounts).every((amount) => amount === 0) && (
+                  <span className="text-muted-foreground">-</span>
+                )}
+              </TableCell>
+              <TableCell colSpan={4}></TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
 
         {totalPages > 1 && (
