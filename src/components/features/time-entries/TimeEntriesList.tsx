@@ -164,7 +164,7 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
               </TableCell>
               <TableCell colSpan={2} className="text-right font-semibold">
                 {Object.entries(totals.amounts)
-                  .filter(([_, amount]) => amount > 0)
+                  .filter(([, amount]) => amount > 0)
                   .map(([currency, amount]) => (
                     <div key={currency}>
                       {amount.toFixed(2)} {currency}
