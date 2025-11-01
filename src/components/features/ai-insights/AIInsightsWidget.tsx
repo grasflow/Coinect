@@ -1,7 +1,18 @@
 import * as React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Sparkles, X, ChevronDown, ChevronUp } from "lucide-react";
-import type { AIInsightsStatusDTO } from "@/types";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import {
+  Sparkles,
+  X,
+  ChevronDown,
+  ChevronUp,
+  TrendingUp,
+  Clock,
+  DollarSign,
+  Lightbulb,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
+import type { AIInsightsStatusDTO, AIInsightsAnalysisDTO } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -18,14 +29,37 @@ async function fetchAIInsightsStatus(): Promise<AIInsightsStatusDTO> {
   return response.json();
 }
 
+async function generateAIAnalysis(): Promise<AIInsightsAnalysisDTO> {
+  const response = await fetch("/api/ai-insights/analyze", {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error?.message || "Failed to generate AI analysis");
+  }
+
+  return response.json();
+}
+
 export default function AIInsightsWidget() {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [isHidden, setIsHidden] = React.useState(false);
+  const [analysis, setAnalysis] = React.useState<AIInsightsAnalysisDTO | null>(null);
 
   const { data: status, isLoading } = useQuery({
     queryKey: ["ai-insights", "status"],
     queryFn: fetchAIInsightsStatus,
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 5000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
+
+  const analysisMutation = useMutation({
+    mutationFn: generateAIAnalysis,
+    onSuccess: (data) => {
+      setAnalysis(data);
+    },
   });
 
   // Check if widget was hidden in localStorage
@@ -44,6 +78,10 @@ export default function AIInsightsWidget() {
   const handleShow = () => {
     setIsHidden(false);
     localStorage.removeItem("ai-insights-widget-hidden");
+  };
+
+  const handleGenerateAnalysis = () => {
+    analysisMutation.mutate();
   };
 
   if (isLoading || !status) {
@@ -68,7 +106,7 @@ export default function AIInsightsWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-80">
+    <div className="fixed bottom-6 right-6 z-50 w-96">
       <Card className="shadow-xl border-2 border-blue-200">
         <CardContent className="">
           {/* Header */}
@@ -95,16 +133,147 @@ export default function AIInsightsWidget() {
               {status.unlocked ? (
                 <>
                   <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                    <p className="text-sm font-medium text-green-800 mb-1">🎉 AI Insights odblokowany!</p>
+                    <p className="text-sm font-medium text-green-800 mb-1">AI Insights odblokowany!</p>
                     <Muted className="text-xs text-green-700">{status.message}</Muted>
                   </div>
 
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <Muted className="text-xs">
-                      Funkcja analizy AI jest w przygotowaniu. Wkrótce pojawią się tutaj rekomendacje dotyczące
-                      optymalizacji stawek i wzorców pracy.
-                    </Muted>
-                  </div>
+                  {/* Generate Analysis Button */}
+                  <Button
+                    variant="filled"
+                    className="w-full"
+                    onClick={handleGenerateAnalysis}
+                    disabled={analysisMutation.isPending}
+                  >
+                    {analysisMutation.isPending ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                        Generowanie analizy...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        {analysis ? "Odśwież analizę" : "Wygeneruj analizę AI"}
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Error State */}
+                  {analysisMutation.isError && (
+                    <div className="p-3 bg-red-50 rounded-lg border border-red-200">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <Text className="text-xs font-medium text-red-800">Błąd generowania analizy</Text>
+                          <Muted className="text-xs text-red-700">
+                            {analysisMutation.error?.message || "Spróbuj ponownie później"}
+                          </Muted>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Analysis Results */}
+                  {analysis && !analysisMutation.isPending && (
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {/* Summary */}
+                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <Text className="text-xs font-medium text-blue-800 mb-1">Podsumowanie</Text>
+                        <Muted className="text-xs text-blue-700">{analysis.summary}</Muted>
+                      </div>
+
+                      {/* Work Patterns */}
+                      <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Clock className="w-4 h-4 text-purple-600" />
+                          <Text className="text-xs font-medium text-purple-800">Wzorce pracy</Text>
+                        </div>
+                        <div className="space-y-1">
+                          <Muted className="text-xs text-purple-700">
+                            Średnio: {analysis.work_patterns.average_hours_per_week.toFixed(1)} godz./tydzień
+                          </Muted>
+                          <Muted className="text-xs text-purple-700">
+                            Najaktywniejsze dni: {analysis.work_patterns.peak_days.join(", ")}
+                          </Muted>
+                          <Muted className="text-xs text-purple-700">
+                            Regularność: {analysis.work_patterns.consistency_score}/10
+                          </Muted>
+                          {analysis.work_patterns.insights.map((insight, idx) => (
+                            <Muted key={idx} className="text-xs text-purple-700">
+                              • {insight}
+                            </Muted>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Rate Analysis */}
+                      <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <DollarSign className="w-4 h-4 text-green-600" />
+                          <Text className="text-xs font-medium text-green-800">Analiza stawek</Text>
+                        </div>
+                        <div className="space-y-1">
+                          <Muted className="text-xs text-green-700">
+                            Średnia stawka: {analysis.rate_analysis.current_average_rate.toFixed(0)} PLN/godz.
+                          </Muted>
+                          <Muted className="text-xs text-green-700">
+                            Zakres: {analysis.rate_analysis.rate_range.min}-{analysis.rate_analysis.rate_range.max}{" "}
+                            PLN/godz.
+                          </Muted>
+                          <Muted className="text-xs text-green-700 font-medium">
+                            {analysis.rate_analysis.optimization_potential}
+                          </Muted>
+                          {analysis.rate_analysis.recommendations.map((rec, idx) => (
+                            <Muted key={idx} className="text-xs text-green-700">
+                              • {rec}
+                            </Muted>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Productivity Insights */}
+                      <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <TrendingUp className="w-4 h-4 text-orange-600" />
+                          <Text className="text-xs font-medium text-orange-800">Produktywność</Text>
+                        </div>
+                        <div className="space-y-1">
+                          {analysis.productivity_insights.most_productive_periods.length > 0 && (
+                            <Muted className="text-xs text-orange-700">
+                              Najproduktywniejsze:{" "}
+                              {analysis.productivity_insights.most_productive_periods.join(", ")}
+                            </Muted>
+                          )}
+                          {analysis.productivity_insights.suggestions.map((suggestion, idx) => (
+                            <Muted key={idx} className="text-xs text-orange-700">
+                              • {suggestion}
+                            </Muted>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Items */}
+                      {analysis.action_items.length > 0 && (
+                        <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Lightbulb className="w-4 h-4 text-yellow-600" />
+                            <Text className="text-xs font-medium text-yellow-800">Rekomendowane działania</Text>
+                          </div>
+                          <div className="space-y-1">
+                            {analysis.action_items.map((action, idx) => (
+                              <Muted key={idx} className="text-xs text-yellow-700">
+                                {idx + 1}. {action}
+                              </Muted>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Timestamp */}
+                      <Muted className="text-xs text-gray-500 text-center">
+                        Wygenerowano: {new Date(analysis.generated_at).toLocaleString("pl-PL")}
+                      </Muted>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -121,7 +290,7 @@ export default function AIInsightsWidget() {
                   <Muted className="text-xs">{status.message}</Muted>
 
                   <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <Text className="text-xs font-medium text-blue-800 mb-1">💡 Wskazówka</Text>
+                    <Text className="text-xs font-medium text-blue-800 mb-1">Wskazówka</Text>
                     <Muted className="text-xs text-blue-700">
                       Dodawaj prywatne notatki do wpisów czasu, aby AI mógł analizować wzorce Twojej pracy i sugerować
                       optymalizacje stawek.
@@ -144,7 +313,9 @@ export default function AIInsightsWidget() {
               {status.unlocked ? (
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <Text className="text-sm">Gotowy do analizy</Text>
+                  <Text className="text-sm">
+                    {analysis ? "Analiza gotowa" : "Kliknij aby wygenerować analizę"}
+                  </Text>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">

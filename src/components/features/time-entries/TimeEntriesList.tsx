@@ -1,7 +1,7 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-import { Edit2Icon, Trash2Icon, LoaderIcon } from "lucide-react";
+import { Edit2Icon, Trash2Icon, LoaderIcon, FileTextIcon } from "lucide-react";
 import type { TimeEntryWithRelationsDTO, PaginatedResponse } from "@/types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,7 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
               <TableHead className="text-right">Stawka</TableHead>
               <TableHead className="text-right">Kwota</TableHead>
               <TableHead>Opis</TableHead>
+              <TableHead className="text-center">Notatka</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Akcje</TableHead>
             </TableRow>
@@ -65,6 +66,7 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
             {data.data.map((entry) => {
               const isInvoiced = !!entry.invoice_id && entry.invoice && entry.invoice.deleted_at === null;
               const amount = entry.hours * (entry.hourly_rate || 0);
+              const hasPrivateNote = entry.private_note && entry.private_note.trim() !== "";
 
               return (
                 <TableRow key={entry.id}>
@@ -80,6 +82,15 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
                     {entry.hourly_rate ? `${amount.toFixed(2)} ${entry.currency || "PLN"}` : "-"}
                   </TableCell>
                   <TableCell className="max-w-[200px] truncate">{entry.public_description || "-"}</TableCell>
+                  <TableCell className="text-center">
+                    {hasPrivateNote ? (
+                      <span title="Ma notatkę prywatną dla AI">
+                        <FileTextIcon className="h-4 w-4 text-blue-600 inline-block" />
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     {isInvoiced ? (
                       <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400">

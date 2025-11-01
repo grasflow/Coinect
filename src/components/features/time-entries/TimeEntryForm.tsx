@@ -5,8 +5,10 @@ import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { z } from "zod";
-import type { ClientDTO, TagDTO, TimeEntryWithRelationsDTO } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import type { ClientDTO, TagDTO, TimeEntryWithRelationsDTO, AIInsightsStatusDTO } from "@/types";
 import type { TimeEntryFormViewModel } from "./types";
+
 import {
   Dialog,
   DialogContent,
@@ -25,6 +27,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { TagSelect } from "./TagSelect";
 import { hoursToHoursAndMinutes, hoursAndMinutesToHours } from "@/lib/helpers/time.helpers";
+
+async function fetchAIInsightsStatus(): Promise<AIInsightsStatusDTO> {
+  const response = await fetch("/api/ai-insights/status");
+  if (!response.ok) throw new Error("Failed to fetch AI Insights status");
+  return response.json();
+}
 
 const timeEntrySchema = z.object({
   client_id: z.string().min(1, "Klient jest wymagany"),
@@ -73,6 +81,13 @@ export function TimeEntryForm({
   isSubmitting = false,
 }: TimeEntryFormProps) {
   const [datePickerOpen, setDatePickerOpen] = React.useState(false);
+
+  // Fetch AI Insights status to show progress
+  const { data: aiStatus } = useQuery({
+    queryKey: ["ai-insights", "status"],
+    queryFn: fetchAIInsightsStatus,
+    enabled: isOpen,
+  });
 
   const {
     register,
@@ -318,13 +333,30 @@ export function TimeEntryForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="private_note">Notatka prywatna</Label>
+            <Label htmlFor="private_note">
+              Notatka prywatna
+              {aiStatus && (
+                <span className="ml-2 text-xs font-normal text-blue-600">
+                  ✨ Dla AI Insights ({aiStatus.entries_with_notes}/{aiStatus.threshold})
+                </span>
+              )}
+            </Label>
             <Textarea
               id="private_note"
-              placeholder="Twoja prywatna notatka..."
+              placeholder="Opisz swoją pracę... (ta notatka jest prywatna i będzie analizowana przez AI)"
               {...register("private_note")}
               rows={3}
+              className="border-blue-200 focus:border-blue-400"
             />
+            {aiStatus && !aiStatus.unlocked && (
+              <p className="text-xs text-muted-foreground">
+                💡 Jeszcze {aiStatus.threshold - aiStatus.entries_with_notes} wpisów z notatkami aby odblokować AI
+                Insights
+              </p>
+            )}
+            {aiStatus && aiStatus.unlocked && (
+              <p className="text-xs text-green-600">🎉 AI Insights odblokowany!</p>
+            )}
           </div>
 
           {tags.length > 0 && (

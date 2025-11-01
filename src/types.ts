@@ -277,6 +277,32 @@ export interface AIInsightsStatusDTO {
 // GET /rest/v1/ai_insights_data
 export type AIInsightDataDTO = AIInsightData;
 
+// POST /api/ai-insights/analyze
+export interface AIInsightsAnalysisDTO {
+  summary: string;
+  work_patterns: {
+    peak_days: string[];
+    average_hours_per_week: number;
+    consistency_score: number;
+    insights: string[];
+  };
+  rate_analysis: {
+    current_average_rate: number;
+    rate_range: {
+      min: number;
+      max: number;
+    };
+    optimization_potential: string;
+    recommendations: string[];
+  };
+  productivity_insights: {
+    most_productive_periods: string[];
+    suggestions: string[];
+  };
+  action_items: string[];
+  generated_at: string;
+}
+
 // ===================================
 // DASHBOARD DTOs
 // ===================================
