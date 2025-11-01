@@ -15,10 +15,6 @@ export class TimeEntryService {
   async createTimeEntry(userId: string, command: CreateTimeEntryCommand): Promise<CreateTimeEntryResponse> {
     const client = await this.getAndValidateClient(command.client_id, userId);
 
-    if (command.tag_ids?.length) {
-      await this.validateTags(command.tag_ids, userId);
-    }
-
     const entryData = {
       user_id: userId,
       client_id: command.client_id,
@@ -38,11 +34,7 @@ export class TimeEntryService {
 
     if (insertError) throw insertError;
 
-    if (command.tag_ids?.length) {
-      await this.associateTags(timeEntry.id, command.tag_ids);
-    }
-
-    return await this.getTimeEntryWithTags(timeEntry.id);
+    return timeEntry;
   }
 
   private async getAndValidateClient(clientId: string, userId: string) {
@@ -59,52 +51,6 @@ export class TimeEntryService {
     }
 
     return client;
-  }
-
-  private async validateTags(tagIds: string[], userId: string) {
-    const { data: tags, error } = await this.supabase.from("tags").select("id").in("id", tagIds).eq("user_id", userId);
-
-    if (error) throw error;
-
-    if (tags.length !== tagIds.length) {
-      throw new ForbiddenError("One or more tags not found or do not belong to user");
-    }
-  }
-
-  private async associateTags(timeEntryId: string, tagIds: string[]) {
-    const associations = tagIds.map((tagId) => ({
-      time_entry_id: timeEntryId,
-      tag_id: tagId,
-    }));
-
-    const { error } = await this.supabase.from("time_entry_tags").insert(associations);
-
-    if (error) throw error;
-  }
-
-  private async getTimeEntryWithTags(timeEntryId: string): Promise<CreateTimeEntryResponse> {
-    const { data, error } = await this.supabase
-      .from("time_entries")
-      .select(
-        `
-        *,
-        tags:time_entry_tags(
-          tag:tags(id, name)
-        )
-      `
-      )
-      .eq("id", timeEntryId)
-      .single();
-
-    if (error) throw error;
-
-    return {
-      ...data,
-      tags: data.tags?.map((t: { tag: { id: string; name: string } }) => ({
-        id: t.tag.id,
-        name: t.tag.name,
-      })),
-    };
   }
 
   async getTimeEntries(
@@ -124,8 +70,7 @@ export class TimeEntryService {
         `
         *,
         client:clients(name),
-        invoice:invoices(id, deleted_at),
-        tags:time_entry_tags(tag:tags(name))
+        invoice:invoices(id, deleted_at)
       `,
         { count: "exact" }
       )
@@ -210,20 +155,16 @@ export class TimeEntryService {
     if (command.public_description !== undefined) updateData.public_description = command.public_description;
     if (command.private_note !== undefined) updateData.private_note = command.private_note?.trim() || null;
 
-    const { error: updateError } = await this.supabase.from("time_entries").update(updateData).eq("id", entryId);
+    const { data: updatedEntry, error: updateError } = await this.supabase
+      .from("time_entries")
+      .update(updateData)
+      .eq("id", entryId)
+      .select()
+      .single();
 
     if (updateError) throw updateError;
 
-    if (command.tag_ids !== undefined) {
-      await this.supabase.from("time_entry_tags").delete().eq("time_entry_id", entryId);
-
-      if (command.tag_ids.length > 0) {
-        await this.validateTags(command.tag_ids, userId);
-        await this.associateTags(entryId, command.tag_ids);
-      }
-    }
-
-    return await this.getTimeEntryWithTags(entryId);
+    return updatedEntry;
   }
 
   async deleteTimeEntry(userId: string, entryId: string): Promise<void> {

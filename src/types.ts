@@ -6,12 +6,10 @@ import type { Database, Tables } from "./db/database.types";
 
 export type Profile = Tables<"profiles">;
 export type Client = Tables<"clients">;
-export type Tag = Tables<"tags">;
 export type TimeEntry = Tables<"time_entries">;
 export type Invoice = Tables<"invoices">;
 export type InvoiceItem = Tables<"invoice_items">;
 export type InvoiceItemTimeEntry = Tables<"invoice_item_time_entries">;
-export type TimeEntryTag = Tables<"time_entry_tags">;
 export type AIInsightData = Tables<"ai_insights_data">;
 export type ExchangeRateCache = Tables<"exchange_rate_cache">;
 
@@ -64,16 +62,6 @@ export interface ClientStatsDTO {
 }
 
 // ===================================
-// TAG DTOs
-// ===================================
-
-// GET /rest/v1/tags
-export type TagDTO = Tag;
-
-// POST /rest/v1/tags
-export type CreateTagCommand = Pick<Tag, "name">;
-
-// ===================================
 // TIME ENTRY DTOs
 // ===================================
 
@@ -86,19 +74,11 @@ export type TimeEntryWithRelationsDTO = TimeEntry & {
     id: string;
     deleted_at: string | null;
   } | null;
-  tags?: {
-    tag: {
-      name: string;
-    };
-  }[];
 };
 
 // GET /rest/v1/time_entries?id=eq.{entry_id} (full relations)
 export type TimeEntryDetailDTO = TimeEntry & {
   client?: Client | null;
-  tags?: {
-    tag: Tag;
-  }[];
 };
 
 // POST /api/time-entries
@@ -110,16 +90,10 @@ export interface CreateTimeEntryCommand {
   currency?: Currency;
   public_description?: string;
   private_note?: string;
-  tag_ids?: string[];
 }
 
 // POST /api/time-entries response
-export type CreateTimeEntryResponse = TimeEntry & {
-  tags?: {
-    id: string;
-    name: string;
-  }[];
-};
+export type CreateTimeEntryResponse = TimeEntry;
 
 // PUT /api/time-entries/{entry_id}
 export interface UpdateTimeEntryCommand {
@@ -129,16 +103,10 @@ export interface UpdateTimeEntryCommand {
   currency?: Currency;
   public_description?: string;
   private_note?: string;
-  tag_ids?: string[];
 }
 
 // PUT /api/time-entries/{entry_id} response
-export type UpdateTimeEntryResponse = TimeEntry & {
-  tags?: {
-    id: string;
-    name: string;
-  }[];
-};
+export type UpdateTimeEntryResponse = TimeEntry;
 
 // GET /api/time-entries/autocomplete
 export interface AutocompleteResponse {

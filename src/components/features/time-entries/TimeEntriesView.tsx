@@ -10,7 +10,6 @@ import {
   useDeleteTimeEntry,
 } from "@/components/hooks/useTimeEntries";
 import { useClients } from "@/components/hooks/useClients";
-import { useTags } from "@/components/hooks/useTags";
 import { TimeEntryFilters } from "./TimeEntryFilters";
 import { TimeEntriesList } from "./TimeEntriesList";
 import { TimeEntryForm } from "./TimeEntryForm";
@@ -34,7 +33,6 @@ function TimeEntriesViewContent() {
 
   const { data: timeEntriesData, isLoading: isLoadingTimeEntries } = useTimeEntries(filters);
   const { data: clients = [], isLoading: isLoadingClients } = useClients();
-  const { data: tags = [] } = useTags();
 
   const createMutation = useCreateTimeEntry();
   const updateMutation = useUpdateTimeEntry();
@@ -78,7 +76,8 @@ function TimeEntriesViewContent() {
 
   const handleFormSubmit = async (data: TimeEntryFormViewModel) => {
     try {
-      if (data.id) {
+      if (data.id || editingEntry?.id) {
+        const entryId = data.id || editingEntry!.id;
         const command = {
           date: data.date.toISOString().split("T")[0],
           hours: Number(data.hours),
@@ -89,7 +88,7 @@ function TimeEntriesViewContent() {
           tag_ids: data.tag_ids,
         };
         await updateMutation.mutateAsync({
-          entryId: data.id,
+          entryId,
           command,
         });
         toast.success("Wpis czasu został zaktualizowany");
@@ -204,7 +203,6 @@ function TimeEntriesViewContent() {
         onSubmit={handleFormSubmit}
         initialData={editingEntry}
         clients={clients}
-        tags={tags}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 

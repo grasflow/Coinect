@@ -16,5 +16,4 @@ export interface TimeEntryFormViewModel {
   currency?: string;
   public_description?: string;
   private_note?: string;
-  tag_ids?: string[];
 }

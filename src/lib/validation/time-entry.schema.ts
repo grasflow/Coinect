@@ -11,7 +11,6 @@ export const createTimeEntrySchema = z.object({
   currency: z.enum(["PLN", "EUR", "USD"]).optional(),
   public_description: z.string().max(5000).optional(),
   private_note: z.string().max(5000).optional(),
-  tag_ids: z.array(z.string().uuid()).optional(),
 });
 
 export type CreateTimeEntryInput = z.infer<typeof createTimeEntrySchema>;

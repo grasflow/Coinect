@@ -50,7 +50,6 @@ export default function AIInsightsWidget() {
   const { data: status, isLoading } = useQuery({
     queryKey: ["ai-insights", "status"],
     queryFn: fetchAIInsightsStatus,
-    refetchInterval: 5000,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
@@ -106,52 +105,52 @@ export default function AIInsightsWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96">
-      <Card className="shadow-xl border-2 border-blue-200">
-        <CardContent className="">
+    <div className="fixed bottom-6 right-6 z-50 w-72">
+      <Card className="shadow-xl border-2 border-blue-200 py-3 px-2">
+        <CardContent className="p-0">
           {/* Header */}
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-white" />
               </div>
-              <Text className="font-semibold">AI Insights</Text>
+              <Text className="text-sm font-semibold">AI Insights</Text>
             </div>
-            <div className="flex items-center gap-1">
-              <Button variant="plain" size="icon" className="w-6 h-6" onClick={() => setIsExpanded(!isExpanded)}>
-                {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+            <div className="flex items-center gap-0.5">
+              <Button variant="plain" size="icon" className="w-5 h-5" onClick={() => setIsExpanded(!isExpanded)}>
+                {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
               </Button>
-              <Button variant="plain" size="icon" className="w-6 h-6" onClick={handleHide}>
-                <X className="w-4 h-4" />
+              <Button variant="plain" size="icon" className="w-5 h-5" onClick={handleHide}>
+                <X className="w-3.5 h-3.5" />
               </Button>
             </div>
           </div>
 
           {/* Content */}
           {isExpanded && (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {status.unlocked ? (
                 <>
-                  <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                    <p className="text-sm font-medium text-green-800 mb-1">AI Insights odblokowany!</p>
-                    <Muted className="text-xs text-green-700">{status.message}</Muted>
+                  <div className="p-2 bg-green-50 rounded border border-green-200">
+                    <p className="text-xs font-medium text-green-800 mb-0.5">AI Insights odblokowany!</p>
+                    <Muted className="text-[10px] leading-tight text-green-700">{status.message}</Muted>
                   </div>
 
                   {/* Generate Analysis Button */}
                   <Button
                     variant="filled"
-                    className="w-full"
+                    className="w-full h-8 text-xs"
                     onClick={handleGenerateAnalysis}
                     disabled={analysisMutation.isPending}
                   >
                     {analysisMutation.isPending ? (
                       <>
-                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                        <RefreshCw className="w-3 h-3 mr-1.5 animate-spin" />
                         Generowanie analizy...
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-4 h-4 mr-2" />
+                        <Sparkles className="w-3 h-3 mr-1.5" />
                         {analysis ? "Odśwież analizę" : "Wygeneruj analizę AI"}
                       </>
                     )}
@@ -159,12 +158,12 @@ export default function AIInsightsWidget() {
 
                   {/* Error State */}
                   {analysisMutation.isError && (
-                    <div className="p-3 bg-red-50 rounded-lg border border-red-200">
-                      <div className="flex items-start gap-2">
-                        <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                    <div className="p-2 bg-red-50 rounded border border-red-200">
+                      <div className="flex items-start gap-1.5">
+                        <AlertCircle className="w-3 h-3 text-red-600 mt-0.5 flex-shrink-0" />
                         <div>
-                          <Text className="text-xs font-medium text-red-800">Błąd generowania analizy</Text>
-                          <Muted className="text-xs text-red-700">
+                          <Text className="text-[10px] font-medium text-red-800">Błąd generowania analizy</Text>
+                          <Muted className="text-[10px] leading-tight text-red-700">
                             {analysisMutation.error?.message || "Spróbuj ponownie później"}
                           </Muted>
                         </div>
@@ -174,31 +173,31 @@ export default function AIInsightsWidget() {
 
                   {/* Analysis Results */}
                   {analysis && !analysisMutation.isPending && (
-                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                    <div className="space-y-2 max-h-80 overflow-y-auto">
                       {/* Summary */}
-                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <Text className="text-xs font-medium text-blue-800 mb-1">Podsumowanie</Text>
-                        <Muted className="text-xs text-blue-700">{analysis.summary}</Muted>
+                      <div className="p-2 bg-blue-50 rounded border border-blue-200">
+                        <Text className="text-[10px] font-medium text-blue-800 mb-0.5">Podsumowanie</Text>
+                        <Muted className="text-[10px] leading-tight text-blue-700">{analysis.summary}</Muted>
                       </div>
 
                       {/* Work Patterns */}
-                      <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Clock className="w-4 h-4 text-purple-600" />
-                          <Text className="text-xs font-medium text-purple-800">Wzorce pracy</Text>
+                      <div className="p-2 bg-purple-50 rounded border border-purple-200">
+                        <div className="flex items-center gap-1 mb-1">
+                          <Clock className="w-3 h-3 text-purple-600" />
+                          <Text className="text-[10px] font-medium text-purple-800">Wzorce pracy</Text>
                         </div>
-                        <div className="space-y-1">
-                          <Muted className="text-xs text-purple-700">
+                        <div className="space-y-0.5">
+                          <Muted className="text-[10px] leading-tight text-purple-700">
                             Średnio: {analysis.work_patterns.average_hours_per_week.toFixed(1)} godz./tydzień
                           </Muted>
-                          <Muted className="text-xs text-purple-700">
+                          <Muted className="text-[10px] leading-tight text-purple-700">
                             Najaktywniejsze dni: {analysis.work_patterns.peak_days.join(", ")}
                           </Muted>
-                          <Muted className="text-xs text-purple-700">
+                          <Muted className="text-[10px] leading-tight text-purple-700">
                             Regularność: {analysis.work_patterns.consistency_score}/10
                           </Muted>
                           {analysis.work_patterns.insights.map((insight, idx) => (
-                            <Muted key={idx} className="text-xs text-purple-700">
+                            <Muted key={idx} className="text-[10px] leading-tight text-purple-700">
                               • {insight}
                             </Muted>
                           ))}
@@ -206,24 +205,24 @@ export default function AIInsightsWidget() {
                       </div>
 
                       {/* Rate Analysis */}
-                      <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <DollarSign className="w-4 h-4 text-green-600" />
-                          <Text className="text-xs font-medium text-green-800">Analiza stawek</Text>
+                      <div className="p-2 bg-green-50 rounded border border-green-200">
+                        <div className="flex items-center gap-1 mb-1">
+                          <DollarSign className="w-3 h-3 text-green-600" />
+                          <Text className="text-[10px] font-medium text-green-800">Analiza stawek</Text>
                         </div>
-                        <div className="space-y-1">
-                          <Muted className="text-xs text-green-700">
+                        <div className="space-y-0.5">
+                          <Muted className="text-[10px] leading-tight text-green-700">
                             Średnia stawka: {analysis.rate_analysis.current_average_rate.toFixed(0)} PLN/godz.
                           </Muted>
-                          <Muted className="text-xs text-green-700">
+                          <Muted className="text-[10px] leading-tight text-green-700">
                             Zakres: {analysis.rate_analysis.rate_range.min}-{analysis.rate_analysis.rate_range.max}{" "}
                             PLN/godz.
                           </Muted>
-                          <Muted className="text-xs text-green-700 font-medium">
+                          <Muted className="text-[10px] leading-tight text-green-700 font-medium">
                             {analysis.rate_analysis.optimization_potential}
                           </Muted>
                           {analysis.rate_analysis.recommendations.map((rec, idx) => (
-                            <Muted key={idx} className="text-xs text-green-700">
+                            <Muted key={idx} className="text-[10px] leading-tight text-green-700">
                               • {rec}
                             </Muted>
                           ))}
@@ -231,19 +230,19 @@ export default function AIInsightsWidget() {
                       </div>
 
                       {/* Productivity Insights */}
-                      <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <TrendingUp className="w-4 h-4 text-orange-600" />
-                          <Text className="text-xs font-medium text-orange-800">Produktywność</Text>
+                      <div className="p-2 bg-orange-50 rounded border border-orange-200">
+                        <div className="flex items-center gap-1 mb-1">
+                          <TrendingUp className="w-3 h-3 text-orange-600" />
+                          <Text className="text-[10px] font-medium text-orange-800">Produktywność</Text>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           {analysis.productivity_insights.most_productive_periods.length > 0 && (
-                            <Muted className="text-xs text-orange-700">
+                            <Muted className="text-[10px] leading-tight text-orange-700">
                               Najproduktywniejsze: {analysis.productivity_insights.most_productive_periods.join(", ")}
                             </Muted>
                           )}
                           {analysis.productivity_insights.suggestions.map((suggestion, idx) => (
-                            <Muted key={idx} className="text-xs text-orange-700">
+                            <Muted key={idx} className="text-[10px] leading-tight text-orange-700">
                               • {suggestion}
                             </Muted>
                           ))}
@@ -252,14 +251,14 @@ export default function AIInsightsWidget() {
 
                       {/* Action Items */}
                       {analysis.action_items.length > 0 && (
-                        <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Lightbulb className="w-4 h-4 text-yellow-600" />
-                            <Text className="text-xs font-medium text-yellow-800">Rekomendowane działania</Text>
+                        <div className="p-2 bg-yellow-50 rounded border border-yellow-200">
+                          <div className="flex items-center gap-1 mb-1">
+                            <Lightbulb className="w-3 h-3 text-yellow-600" />
+                            <Text className="text-[10px] font-medium text-yellow-800">Rekomendowane działania</Text>
                           </div>
-                          <div className="space-y-1">
+                          <div className="space-y-0.5">
                             {analysis.action_items.map((action, idx) => (
-                              <Muted key={idx} className="text-xs text-yellow-700">
+                              <Muted key={idx} className="text-[10px] leading-tight text-yellow-700">
                                 {idx + 1}. {action}
                               </Muted>
                             ))}
@@ -268,7 +267,7 @@ export default function AIInsightsWidget() {
                       )}
 
                       {/* Timestamp */}
-                      <Muted className="text-xs text-gray-500 text-center">
+                      <Muted className="text-[10px] text-gray-500 text-center">
                         Wygenerowano: {new Date(analysis.generated_at).toLocaleString("pl-PL")}
                       </Muted>
                     </div>
@@ -277,20 +276,20 @@ export default function AIInsightsWidget() {
               ) : (
                 <>
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Muted className="text-xs">Postęp odblokowania</Muted>
-                      <Text className="text-xs font-semibold">
+                    <div className="flex items-center justify-between mb-1">
+                      <Muted className="text-[10px]">Postęp odblokowania</Muted>
+                      <Text className="text-[10px] font-semibold">
                         {status.entries_with_notes}/{status.threshold}
                       </Text>
                     </div>
                     <Progress value={status.progress_percentage} />
                   </div>
 
-                  <Muted className="text-xs">{status.message}</Muted>
+                  <Muted className="text-[10px] leading-tight">{status.message}</Muted>
 
-                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <Text className="text-xs font-medium text-blue-800 mb-1">Wskazówka</Text>
-                    <Muted className="text-xs text-blue-700">
+                  <div className="p-2 bg-blue-50 rounded border border-blue-200">
+                    <Text className="text-[10px] font-medium text-blue-800 mb-0.5">Wskazówka</Text>
+                    <Muted className="text-[10px] leading-tight text-blue-700">
                       Dodawaj prywatne notatki do wpisów czasu, aby AI mógł analizować wzorce Twojej pracy i sugerować
                       optymalizacje stawek.
                     </Muted>
@@ -298,8 +297,8 @@ export default function AIInsightsWidget() {
                 </>
               )}
 
-              <div className="pt-2 border-t">
-                <a href="/time-entries" className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+              <div className="pt-1.5 border-t">
+                <a href="/time-entries" className="text-[10px] text-blue-600 hover:text-blue-800 font-medium">
                   Dodaj wpisy czasu →
                 </a>
               </div>
@@ -308,19 +307,32 @@ export default function AIInsightsWidget() {
 
           {/* Collapsed state */}
           {!isExpanded && (
-            <div className="flex items-center justify-between">
+            <div
+              className="flex items-center gap-2 cursor-pointer rounded-md px-1 py-1 -mx-1 hover:bg-accent/50 transition-colors min-h-[28px]"
+              onClick={() => setIsExpanded(true)}
+            >
               {status.unlocked ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <Text className="text-sm">{analysis ? "Analiza gotowa" : "Kliknij aby wygenerować analizę"}</Text>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Progress value={status.progress_percentage} className="w-24 h-2" />
-                  <Text className="text-xs">
-                    {status.entries_with_notes}/{status.threshold}
+                <>
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                    analysis
+                      ? "bg-green-100 text-green-700"
+                      : "bg-blue-100 text-blue-700"
+                  }`}>
+                    {analysis ? "✓ Gotowe" : "Nowa analiza"}
+                  </span>
+                  <Text className="!text-xs text-foreground/80 flex-1">
+                    {analysis ? "Kliknij aby zobaczyć" : "Kliknij aby wygenerować"}
                   </Text>
-                </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-700">
+                      {status.entries_with_notes}/{status.threshold}
+                    </span>
+                    <Progress value={status.progress_percentage} className="flex-1 h-1.5" />
+                  </div>
+                </>
               )}
             </div>
           )}

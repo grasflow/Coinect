@@ -5,7 +5,7 @@ import { createJsonSchema } from "@/lib/services/openrouter.helpers";
 
 export const prerender = false;
 
-const MINIMUM_ENTRIES_FOR_ANALYSIS = 20;
+const MINIMUM_ENTRIES_FOR_ANALYSIS = 10;
 
 export const POST: APIRoute = async (context) => {
   try {
@@ -29,11 +29,16 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
-    // Pobierz dane AI dla użytkownika
+    // Pobierz dane AI dla użytkownika (tylko z bieżącego miesiąca)
+    const currentDate = new Date();
+    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const firstDayString = firstDayOfMonth.toISOString().split('T')[0];
+
     const { data: aiData, error: dataError } = await context.locals.supabase
       .from("ai_insights_data")
       .select("*")
       .eq("user_id", user.id)
+      .gte("date", firstDayString)
       .order("date", { ascending: false });
 
     if (dataError) {
@@ -192,7 +197,6 @@ function prepareDataForAnalysis(data: AIInsightDataDTO[]): string {
       min: Math.min(...data.map((d) => d.hourly_rate)),
       max: Math.max(...data.map((d) => d.hourly_rate)),
     },
-    tags_frequency: {} as Record<string, number>,
   };
 
   // Agregacja po dniach tygodnia
@@ -202,14 +206,6 @@ function prepareDataForAnalysis(data: AIInsightDataDTO[]): string {
     }
     stats.by_day_of_week[entry.day_of_week].count++;
     stats.by_day_of_week[entry.day_of_week].total_hours += entry.hours;
-
-    // Agregacja tagów
-    if (entry.tags && Array.isArray(entry.tags)) {
-      entry.tags.forEach((tag) => {
-        const tagStr = String(tag);
-        stats.tags_frequency[tagStr] = (stats.tags_frequency[tagStr] || 0) + 1;
-      });
-    }
   });
 
   // Przykładowe notatki (pierwsze 10) - bez wrażliwych danych
@@ -221,7 +217,6 @@ function prepareDataForAnalysis(data: AIInsightDataDTO[]): string {
       hours: d.hours,
       rate: d.hourly_rate,
       note_preview: d.private_note?.substring(0, 100),
-      tags: d.tags,
     }));
 
   return JSON.stringify(

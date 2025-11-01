@@ -6,7 +6,7 @@ import { pl } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import type { ClientDTO, TagDTO, TimeEntryWithRelationsDTO, AIInsightsStatusDTO } from "@/types";
+import type { ClientDTO, TimeEntryWithRelationsDTO, AIInsightsStatusDTO } from "@/types";
 import type { TimeEntryFormViewModel } from "./types";
 
 import {
@@ -25,7 +25,6 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { TagSelect } from "./TagSelect";
 import { hoursToHoursAndMinutes, hoursAndMinutesToHours } from "@/lib/helpers/time.helpers";
 
 async function fetchAIInsightsStatus(): Promise<AIInsightsStatusDTO> {
@@ -35,6 +34,7 @@ async function fetchAIInsightsStatus(): Promise<AIInsightsStatusDTO> {
 }
 
 const timeEntrySchema = z.object({
+  id: z.string().optional(),
   client_id: z.string().min(1, "Klient jest wymagany"),
   date: z.date({ required_error: "Data jest wymagana" }),
   hours: z
@@ -58,7 +58,6 @@ const timeEntrySchema = z.object({
   currency: z.string().optional(),
   public_description: z.string().optional(),
   private_note: z.string().optional(),
-  tag_ids: z.array(z.string()).optional(),
 });
 
 interface TimeEntryFormProps {
@@ -67,7 +66,6 @@ interface TimeEntryFormProps {
   onSubmit: (data: TimeEntryFormViewModel) => void;
   initialData?: TimeEntryWithRelationsDTO;
   clients: ClientDTO[];
-  tags: TagDTO[];
   isSubmitting?: boolean;
 }
 
@@ -77,7 +75,6 @@ export function TimeEntryForm({
   onSubmit,
   initialData,
   clients,
-  tags,
   isSubmitting = false,
 }: TimeEntryFormProps) {
   const [datePickerOpen, setDatePickerOpen] = React.useState(false);
@@ -109,7 +106,6 @@ export function TimeEntryForm({
       currency: "PLN",
       public_description: "",
       private_note: "",
-      tag_ids: [],
     },
   });
 
@@ -147,7 +143,6 @@ export function TimeEntryForm({
           currency: initialData.currency || "PLN",
           public_description: initialData.public_description || "",
           private_note: initialData.private_note || "",
-          tag_ids: initialData.tags?.map((t) => t.tag.id) || [],
         });
       } else {
         reset({
@@ -159,7 +154,6 @@ export function TimeEntryForm({
           currency: "PLN",
           public_description: "",
           private_note: "",
-          tag_ids: [],
         });
       }
     }
@@ -356,19 +350,6 @@ export function TimeEntryForm({
             )}
             {aiStatus && aiStatus.unlocked && <p className="text-xs text-green-600">🎉 AI Insights odblokowany!</p>}
           </div>
-
-          {tags.length > 0 && (
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tagi</Label>
-              <Controller
-                control={control}
-                name="tag_ids"
-                render={({ field }) => (
-                  <TagSelect value={field.value || []} onChange={field.onChange} tags={tags} placeholder="Dodaj tagi" />
-                )}
-              />
-            </div>
-          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
