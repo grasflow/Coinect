@@ -68,18 +68,16 @@ export const GET: APIRoute = async (context) => {
     if (timeEntriesError) throw timeEntriesError;
 
     // 4. AI Insights progress
-    const { count: entriesWithNotes, error: aiError } = await supabase
-      .from("time_entries")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .is("deleted_at", null)
-      .not("private_note", "is", null)
-      .neq("private_note", "");
+    const { data: entriesWithNotesCount, error: aiError } = await supabase.rpc(
+      "count_time_entries_with_valid_notes",
+      { p_user_id: userId }
+    );
 
     if (aiError) throw aiError;
 
     const aiThreshold = 20;
-    const aiUnlocked = (entriesWithNotes || 0) >= aiThreshold;
+    const entriesWithNotes = typeof entriesWithNotesCount === "number" ? entriesWithNotesCount : 0;
+    const aiUnlocked = entriesWithNotes >= aiThreshold;
 
     // 5. Faktury z bieżącego miesiąca
     const now = new Date();

@@ -24,19 +24,16 @@ export const GET: APIRoute = async (context) => {
   }
 
   try {
-    // Count time entries with private notes
-    const { count: entriesWithNotes, error } = await supabase
-      .from("time_entries")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .not("private_note", "is", null)
-      .neq("private_note", "")
-      .is("deleted_at", null);
+    // Count time entries with private notes using database function that handles trim()
+    const { data: countData, error: rpcError } = await supabase.rpc(
+      "count_time_entries_with_valid_notes",
+      { p_user_id: user.id }
+    );
 
-    if (error) throw error;
+    if (rpcError) throw rpcError;
 
     const threshold = 20;
-    const count = entriesWithNotes || 0;
+    const count = typeof countData === "number" ? countData : 0;
     const unlocked = count >= threshold;
     const progressPercentage = Math.min((count / threshold) * 100, 100);
 
