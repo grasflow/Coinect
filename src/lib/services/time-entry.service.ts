@@ -27,7 +27,7 @@ export class TimeEntryService {
       hourly_rate: command.hourly_rate ?? client.default_hourly_rate ?? 0,
       currency: command.currency ?? client.default_currency ?? "PLN",
       public_description: command.public_description ?? null,
-      private_note: command.private_note ?? null,
+      private_note: command.private_note?.trim() || null,
     } as const;
 
     const { data: timeEntry, error: insertError } = await this.supabase
@@ -208,7 +208,7 @@ export class TimeEntryService {
     if (command.hourly_rate !== undefined) updateData.hourly_rate = command.hourly_rate;
     if (command.currency !== undefined) updateData.currency = command.currency;
     if (command.public_description !== undefined) updateData.public_description = command.public_description;
-    if (command.private_note !== undefined) updateData.private_note = command.private_note;
+    if (command.private_note !== undefined) updateData.private_note = command.private_note?.trim() || null;
 
     const { error: updateError } = await this.supabase.from("time_entries").update(updateData).eq("id", entryId);
 

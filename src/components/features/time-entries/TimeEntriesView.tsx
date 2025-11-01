@@ -87,7 +87,7 @@ function TimeEntriesViewContent() {
             hourly_rate: data.hourly_rate ? Number(data.hourly_rate) : undefined,
             currency: data.currency as "PLN" | "EUR" | "USD" | undefined,
             public_description: data.public_description || undefined,
-            private_note: data.private_note || undefined,
+            private_note: data.private_note?.trim() || undefined,
             tag_ids: data.tag_ids,
           },
         });
@@ -100,7 +100,7 @@ function TimeEntriesViewContent() {
           hourly_rate: data.hourly_rate ? Number(data.hourly_rate) : undefined,
           currency: data.currency as "PLN" | "EUR" | "USD" | undefined,
           public_description: data.public_description || undefined,
-          private_note: data.private_note || undefined,
+          private_note: data.private_note?.trim() || undefined,
           tag_ids: data.tag_ids,
         });
         toast.success("Wpis czasu został dodany");
