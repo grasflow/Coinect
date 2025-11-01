@@ -28,7 +28,6 @@ Authorization: Bearer {access_token}
 - `currency` (string, PLN|EUR|USD) - Waluta (domyślnie z klienta)
 - `public_description` (string, max 5000 znaków) - Opis publiczny
 - `private_note` (string, max 5000 znaków) - Notatka prywatna
-- `tag_ids` (string[]) - Tablica ID tagów
 
 ### Przykład:
 
@@ -40,8 +39,7 @@ Authorization: Bearer {access_token}
   "hourly_rate": 150.0,
   "currency": "PLN",
   "public_description": "Backend development",
-  "private_note": "Client was unprepared",
-  "tag_ids": ["uuid1", "uuid2"]
+  "private_note": "Client was unprepared"
 }
 ```
 
@@ -63,13 +61,7 @@ Authorization: Bearer {access_token}
   "invoice_id": null,
   "deleted_at": null,
   "created_at": "2025-01-15T18:00:00Z",
-  "updated_at": "2025-01-15T18:00:00Z",
-  "tags": [
-    {
-      "id": "uuid1",
-      "name": "scope-change"
-    }
-  ]
+  "updated_at": "2025-01-15T18:00:00Z"
 }
 ```
 
@@ -104,7 +96,7 @@ Authorization: Bearer {access_token}
 {
   "error": {
     "code": "FORBIDDEN",
-    "message": "One or more tags not found or do not belong to user"
+    "message": "Client does not belong to user"
   }
 }
 ```
@@ -136,17 +128,15 @@ Authorization: Bearer {access_token}
 1. **Walidacja użytkownika** - Weryfikacja JWT tokena
 2. **Walidacja danych** - Sprawdzenie wszystkich parametrów przez Zod
 3. **Weryfikacja klienta** - Sprawdzenie czy klient należy do użytkownika
-4. **Weryfikacja tagów** - Sprawdzenie czy wszystkie tagi należą do użytkownika
-5. **Dziedziczenie wartości** - Pobieranie `default_hourly_rate` i `default_currency` z klienta (jeśli nie podano)
-6. **Tworzenie wpisu** - INSERT do `time_entries`
-7. **Trigger AI insights** - Automatyczna synchronizacja (jeśli `private_note` wypełnione)
-8. **Przypisanie tagów** - Batch INSERT do `time_entry_tags`
-9. **Zwrot danych** - Pobranie wpisu z zagnieżdżonymi tagami
+4. **Dziedziczenie wartości** - Pobieranie `default_hourly_rate` i `default_currency` z klienta (jeśli nie podano)
+5. **Tworzenie wpisu** - INSERT do `time_entries`
+6. **Trigger AI insights** - Automatyczna synchronizacja (jeśli `private_note` wypełnione)
+7. **Zwrot danych** - Pobranie utworzonego wpisu
 
 ## Zabezpieczenia
 
 - **RLS (Row-Level Security)** - Włączone na wszystkich tabelach
-- **Walidacja własności** - Sprawdzenie `user_id` dla klienta i tagów
+- **Walidacja własności** - Sprawdzenie `user_id` dla klienta
 - **Parametryzowane zapytania** - Ochrona przed SQL injection
 - **Walidacja typów** - Zod schema dla wszystkich parametrów
 

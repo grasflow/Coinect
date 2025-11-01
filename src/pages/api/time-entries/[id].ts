@@ -48,7 +48,9 @@ export const PUT: APIRoute = async (context) => {
     }
 
     const body = await context.request.json();
+    console.log("Time entry update request body:", JSON.stringify(body, null, 2));
     const validatedData = updateTimeEntrySchema.parse(body);
+    console.log("Validated data:", JSON.stringify(validatedData, null, 2));
 
     const service = new TimeEntryService(context.locals.supabase);
     const result = await service.updateTimeEntry(userId, entryId, validatedData);
@@ -58,6 +60,8 @@ export const PUT: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.error("Time entry update error:", error);
+
     if (error instanceof z.ZodError) {
       return new Response(
         JSON.stringify({
@@ -104,11 +108,12 @@ export const PUT: APIRoute = async (context) => {
       );
     }
 
+    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
     return new Response(
       JSON.stringify({
         error: {
           code: "INTERNAL_ERROR",
-          message: "An unexpected error occurred",
+          message: errorMessage,
         },
       }),
       {

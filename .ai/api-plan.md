@@ -18,7 +18,6 @@ All API endpoints require authentication unless explicitly stated otherwise. The
 | ------------ | --------------------- | -------------------------------------- |
 | Profile      | `profiles`            | User profile and invoice issuer data   |
 | Client       | `clients`             | Freelancer's clients                   |
-| Tag          | `tags`                | Tags for private notes in time entries |
 | TimeEntry    | `time_entries`        | Time tracking entries                  |
 | Invoice      | `invoices`            | Generated invoices                     |
 | InvoiceItem  | `invoice_items`       | Line items on invoices                 |
@@ -656,136 +655,12 @@ Authorization: Bearer {access_token}
 
 ---
 
-## 5. Tag Endpoints
+## 5. Time Entry Endpoints
 
-### 5.1. List Tags
+### 5.1. List Time Entries
 
-**Endpoint:** `GET /rest/v1/tags`  
-**Provider:** Supabase PostgREST  
-**Description:** Get all tags for current user
-
-**Headers:**
-
-```
-Authorization: Bearer {access_token}
-apikey: {supabase_anon_key}
-```
-
-**Query Parameters:**
-
-- `order=name.asc` - Sort alphabetically
-- `order=created_at.desc` - Sort by creation date
-
-**Success Response (200):**
-
-```json
-[
-  {
-    "id": "uuid",
-    "user_id": "uuid",
-    "name": "rush",
-    "created_at": "2025-01-01T10:00:00Z"
-  },
-  {
-    "id": "uuid",
-    "user_id": "uuid",
-    "name": "scope-change",
-    "created_at": "2025-01-05T14:00:00Z"
-  }
-]
-```
-
-**Error Responses:**
-
-- `401 Unauthorized` - Missing or invalid token
-
----
-
-### 5.2. Create Tag
-
-**Endpoint:** `POST /rest/v1/tags`  
-**Provider:** Supabase PostgREST  
-**Description:** Create new tag
-
-**Headers:**
-
-```
-Authorization: Bearer {access_token}
-apikey: {supabase_anon_key}
-Content-Type: application/json
-Prefer: return=representation
-```
-
-**Request Body:**
-
-```json
-{
-  "name": "weekend"
-}
-```
-
-**Success Response (201):**
-
-```json
-[
-  {
-    "id": "uuid",
-    "user_id": "uuid",
-    "name": "weekend",
-    "created_at": "2025-01-20T15:00:00Z"
-  }
-]
-```
-
-**Error Responses:**
-
-- `400 Bad Request` - Missing required field
-- `401 Unauthorized` - Missing or invalid token
-- `409 Conflict` - Tag with same name already exists for this user
-
-**Validation:**
-
-- `name` is required
-- `name` must be unique per user (UNIQUE constraint)
-- Maximum 100 characters
-
----
-
-### 5.3. Delete Tag
-
-**Endpoint:** `DELETE /rest/v1/tags?id=eq.{tag_id}`  
-**Provider:** Supabase PostgREST  
-**Description:** Delete a tag
-
-**Headers:**
-
-```
-Authorization: Bearer {access_token}
-apikey: {supabase_anon_key}
-```
-
-**Success Response (204):**
-No content
-
-**Error Responses:**
-
-- `401 Unauthorized` - Missing or invalid token
-- `403 Forbidden` - Tag belongs to different user
-- `404 Not Found` - Tag not found
-
-**Business Logic:**
-
-- Deleting a tag removes all associations in `time_entry_tags` (CASCADE)
-- This triggers update of AI insights data
-
----
-
-## 6. Time Entry Endpoints
-
-### 6.1. List Time Entries
-
-**Endpoint:** `GET /rest/v1/time_entries`  
-**Provider:** Supabase PostgREST  
+**Endpoint:** `GET /rest/v1/time_entries`
+**Provider:** Supabase PostgREST
 **Description:** Get all time entries for current user with filtering
 
 **Headers:**
@@ -803,7 +678,7 @@ apikey: {supabase_anon_key}
 - `invoice_id=is.null` - Filter unbilled entries
 - `invoice_id=not.is.null` - Filter billed entries
 - `order=date.desc` - Sort by date
-- `select=*,client:clients(name),tags:time_entry_tags(tag:tags(name))` - Include relations
+- `select=*,client:clients(name)` - Include relations
 - `limit=50` - Pagination limit
 - `offset=0` - Pagination offset
 
@@ -827,14 +702,7 @@ apikey: {supabase_anon_key}
     "updated_at": "2025-01-15T18:00:00Z",
     "client": {
       "name": "Acme Corp"
-    },
-    "tags": [
-      {
-        "tag": {
-          "name": "scope-change"
-        }
-      }
-    ]
+    }
   }
 ]
 ```
@@ -845,10 +713,10 @@ apikey: {supabase_anon_key}
 
 ---
 
-### 6.2. Get Time Entry by ID
+### 5.2. Get Time Entry by ID
 
-**Endpoint:** `GET /rest/v1/time_entries?id=eq.{entry_id}`  
-**Provider:** Supabase PostgREST  
+**Endpoint:** `GET /rest/v1/time_entries?id=eq.{entry_id}`
+**Provider:** Supabase PostgREST
 **Description:** Get specific time entry details
 
 **Headers:**
@@ -860,7 +728,7 @@ apikey: {supabase_anon_key}
 
 **Query Parameters:**
 
-- `select=*,client:clients(*),tags:time_entry_tags(tag:tags(*))` - Include full relations
+- `select=*,client:clients(*)` - Include full relations
 
 **Success Response (200):**
 
@@ -885,15 +753,7 @@ apikey: {supabase_anon_key}
       "name": "Acme Corp",
       "default_currency": "PLN",
       "default_hourly_rate": "150.00"
-    },
-    "tags": [
-      {
-        "tag": {
-          "id": "uuid",
-          "name": "scope-change"
-        }
-      }
-    ]
+    }
   }
 ]
 ```
@@ -906,11 +766,11 @@ apikey: {supabase_anon_key}
 
 ---
 
-### 6.3. Create Time Entry
+### 5.3. Create Time Entry
 
-**Endpoint:** `POST /api/time-entries`  
-**Provider:** Custom Astro API  
-**Description:** Create new time entry with tags
+**Endpoint:** `POST /api/time-entries`
+**Provider:** Custom Astro API
+**Description:** Create new time entry
 
 **Headers:**
 
@@ -929,8 +789,7 @@ Content-Type: application/json
   "hourly_rate": 150.0,
   "currency": "PLN",
   "public_description": "Backend development",
-  "private_note": "Lots of scope changes",
-  "tag_ids": ["uuid1", "uuid2"]
+  "private_note": "Lots of scope changes"
 }
 ```
 
@@ -950,13 +809,7 @@ Content-Type: application/json
   "invoice_id": null,
   "deleted_at": null,
   "created_at": "2025-01-15T18:00:00Z",
-  "updated_at": "2025-01-15T18:00:00Z",
-  "tags": [
-    {
-      "id": "uuid1",
-      "name": "scope-change"
-    }
-  ]
+  "updated_at": "2025-01-15T18:00:00Z"
 }
 ```
 
@@ -964,8 +817,8 @@ Content-Type: application/json
 
 - `400 Bad Request` - Missing required fields or invalid data
 - `401 Unauthorized` - Missing or invalid token
-- `403 Forbidden` - Client or tags belong to different user
-- `404 Not Found` - Client or tag not found
+- `403 Forbidden` - Client belongs to different user
+- `404 Not Found` - Client not found
 
 **Validation:**
 
@@ -979,16 +832,15 @@ Content-Type: application/json
 **Business Logic:**
 
 - Creates time entry in `time_entries` table
-- Creates associations in `time_entry_tags` table for provided tags
 - Triggers automatic sync to `ai_insights_data` if `private_note` is present
 
 ---
 
-### 6.4. Update Time Entry
+### 5.4. Update Time Entry
 
-**Endpoint:** `PUT /api/time-entries/{entry_id}`  
-**Provider:** Custom Astro API  
-**Description:** Update time entry with tags
+**Endpoint:** `PUT /api/time-entries/{entry_id}`
+**Provider:** Custom Astro API
+**Description:** Update time entry
 
 **Headers:**
 
@@ -1005,8 +857,7 @@ Content-Type: application/json
   "hours": 10.0,
   "hourly_rate": 150.0,
   "public_description": "Backend development and bug fixes",
-  "private_note": "Lots of scope changes, extended to weekend",
-  "tag_ids": ["uuid1", "uuid2", "uuid3"]
+  "private_note": "Lots of scope changes, extended to weekend"
 }
 ```
 
@@ -1026,17 +877,7 @@ Content-Type: application/json
   "invoice_id": null,
   "deleted_at": null,
   "created_at": "2025-01-15T18:00:00Z",
-  "updated_at": "2025-01-15T20:30:00Z",
-  "tags": [
-    {
-      "id": "uuid1",
-      "name": "scope-change"
-    },
-    {
-      "id": "uuid3",
-      "name": "weekend"
-    }
-  ]
+  "updated_at": "2025-01-15T20:30:00Z"
 }
 ```
 
@@ -1055,15 +896,14 @@ Content-Type: application/json
 
 - Cannot update time entries that are already invoiced (`invoice_id IS NOT NULL`) - enforced by RLS
 - Updates time entry fields
-- Replaces all tag associations (deletes old, creates new)
 - Triggers update of `ai_insights_data`
 
 ---
 
-### 6.5. Delete Time Entry (Soft Delete)
+### 5.5. Delete Time Entry (Soft Delete)
 
-**Endpoint:** `PATCH /rest/v1/time_entries?id=eq.{entry_id}`  
-**Provider:** Supabase PostgREST  
+**Endpoint:** `PATCH /rest/v1/time_entries?id=eq.{entry_id}`
+**Provider:** Supabase PostgREST
 **Description:** Soft delete a time entry
 
 **Headers:**
@@ -1099,10 +939,10 @@ No content
 
 ---
 
-### 6.6. Get Unbilled Time Entries for Client
+### 5.6. Get Unbilled Time Entries for Client
 
-**Endpoint:** `GET /rest/v1/time_entries?client_id=eq.{client_id}&invoice_id=is.null`  
-**Provider:** Supabase PostgREST  
+**Endpoint:** `GET /rest/v1/time_entries?client_id=eq.{client_id}&invoice_id=is.null`
+**Provider:** Supabase PostgREST
 **Description:** Get all unbilled time entries for a specific client
 
 **Headers:**
@@ -1141,10 +981,10 @@ apikey: {supabase_anon_key}
 
 ---
 
-### 6.7. Get Autocomplete Suggestions for Public Descriptions
+### 5.7. Get Autocomplete Suggestions for Public Descriptions
 
-**Endpoint:** `GET /api/time-entries/autocomplete?q={query}`  
-**Provider:** Custom Astro API  
+**Endpoint:** `GET /api/time-entries/autocomplete?q={query}`
+**Provider:** Custom Astro API
 **Description:** Get unique public descriptions matching query
 
 **Headers:**
@@ -1180,10 +1020,10 @@ Authorization: Bearer {access_token}
 
 ---
 
-### 6.8. Export Time Entries to CSV
+### 5.8. Export Time Entries to CSV
 
-**Endpoint:** `GET /api/time-entries/export`  
-**Provider:** Custom Astro API  
+**Endpoint:** `GET /api/time-entries/export`
+**Provider:** Custom Astro API
 **Description:** Export time entries to CSV file
 
 **Headers:**
@@ -1224,12 +1064,12 @@ Date,Client,Hours,Hourly Rate,Amount,Public Description,Status
 
 ---
 
-## 7. Invoice Endpoints
+## 6. Invoice Endpoints
 
-### 7.1. List Invoices
+### 6.1. List Invoices
 
-**Endpoint:** `GET /rest/v1/invoices`  
-**Provider:** Supabase PostgREST  
+**Endpoint:** `GET /rest/v1/invoices`
+**Provider:** Supabase PostgREST
 **Description:** Get all invoices for current user with filtering
 
 **Headers:**
@@ -1297,7 +1137,7 @@ apikey: {supabase_anon_key}
 
 ---
 
-### 7.2. Get Invoice by ID
+### 6.2. Get Invoice by ID
 
 **Endpoint:** `GET /rest/v1/invoices?id=eq.{invoice_id}`  
 **Provider:** Supabase PostgREST  
@@ -1928,7 +1768,6 @@ apikey: {supabase_anon_key}
     "hours": "8.00",
     "hourly_rate": "150.00",
     "private_note": "Lots of scope changes, client was unprepared",
-    "tags": ["scope-change", "rush"],
     "created_at": "2025-01-15T18:00:00Z"
   }
 ]
@@ -2080,11 +1919,7 @@ Authorization: Bearer {access_token}
 - `default_currency`: must be PLN, EUR, or USD
 - `default_hourly_rate`: must be >= 0
 
-### 11.3. Tag
-
-- `name`: required, max 100 characters, unique per user
-
-### 11.4. Time Entry
+### 11.3. Time Entry
 
 - `client_id`: required, must exist and belong to user
 - `hours`: required, must be > 0, max 999.99
@@ -2093,7 +1928,7 @@ Authorization: Bearer {access_token}
 - `date`: required, valid date format
 - Cannot edit if already invoiced (`invoice_id IS NOT NULL`)
 
-### 11.5. Invoice
+### 11.4. Invoice
 
 - `client_id`: required, must exist and belong to user
 - `issue_date`: required, valid date
@@ -2145,7 +1980,6 @@ All database tables have RLS policies enforcing:
 
 - Full CRUD on own profile
 - Full CRUD on own clients
-- Full CRUD on own tags
 - Full CRUD on own time entries (except if already invoiced)
 - Full CRUD on own invoices
 - Read-only access to exchange rate cache

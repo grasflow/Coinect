@@ -59,9 +59,7 @@ Endpoint został w pełni zaimplementowany zgodnie z planem wdrożenia.
 ✅ Przypisanie wpisu do konkretnego klienta
 ✅ Dziedziczenie domyślnej stawki godzinowej z klienta
 ✅ Dziedziczenie domyślnej waluty z klienta
-✅ Przypisywanie tagów (many-to-many)
 ✅ Walidacja własności klienta (sprawdzenie user_id)
-✅ Walidacja własności tagów (sprawdzenie user_id)
 ✅ Pełna walidacja danych wejściowych (Zod)
 ✅ Obsługa błędów (401, 400, 403, 404, 500)
 ✅ Automatyczna synchronizacja do AI insights (przez trigger)
@@ -71,7 +69,7 @@ Endpoint został w pełni zaimplementowany zgodnie z planem wdrożenia.
 
 ✅ JWT Bearer token authentication
 ✅ Row-Level Security (RLS) na wszystkich tabelach
-✅ Walidacja własności zasobów (client, tags)
+✅ Walidacja własności zasobów (client)
 ✅ Parametryzowane zapytania SQL
 ✅ Walidacja typów i formatów (Zod)
 ✅ Ochrona przed SQL injection
@@ -145,7 +143,6 @@ const response = await fetch("/api/time-entries", {
     hours: 8.0,
     public_description: "Backend development",
     private_note: "Client was unprepared",
-    tag_ids: ["uuid1", "uuid2"],
   }),
 });
 
@@ -163,9 +160,7 @@ if (response.ok) {
 - Target: < 200ms dla 95% requestów
 - Wykorzystane indeksy:
   - `idx_clients_user_id`
-  - `idx_tags_user_id`
-- Batch insert dla tagów
-- Single query dla pobrania wyniku z relacjami
+- Single query dla pobrania wyniku
 
 ## Wnioski
 

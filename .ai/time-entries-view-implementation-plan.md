@@ -25,8 +25,7 @@ Komponenty zostaną zaimplementowane w React i osadzone na stronie Astro. Głów
     │   ├── DataTable (z shadcn/ui)
     │   └── Pagination (komponent reużywalny)
     └── /src/components/features/time-entries/TimeEntryForm.tsx
-        ├── AutocompleteInput.tsx
-        └── TagSelect.tsx
+        └── AutocompleteInput.tsx
 ```
 
 ## 4. Szczegóły komponentów
@@ -75,7 +74,7 @@ Komponenty zostaną zaimplementowane w React i osadzone na stronie Astro. Głów
 ### `TimeEntryForm.tsx`
 
 - **Opis komponentu:** Formularz do dodawania i edycji wpisów czasu, renderowany w modalu.
-- **Główne elementy:** Pola formularza (`Select` dla klienta, `DatePicker` dla daty, `Input` dla godzin i stawki, `AutocompleteInput` dla opisu, `Textarea` dla notatki, `TagSelect` dla tagów).
+- **Główne elementy:** Pola formularza (`Select` dla klienta, `DatePicker` dla daty, `Input` dla godzin i stawki, `AutocompleteInput` dla opisu, `Textarea` dla notatki).
 - **Obsługiwane interakcje:**
   - `onSubmit(data)`: Emituje zdarzenie po pomyślnej walidacji i zatwierdzeniu formularza.
 - **Obsługiwana walidacja:**
@@ -83,14 +82,13 @@ Komponenty zostaną zaimplementowane w React i osadzone na stronie Astro. Głów
   - `date`: Wymagana.
   - `hours`: Wymagane, musi być liczbą dodatnią.
   - `hourly_rate`: Opcjonalne, musi być liczbą nieujemną.
-- **Typy:** `TimeEntryFormViewModel`, `CreateTimeEntryCommand`, `UpdateTimeEntryCommand`, `ClientDTO`, `TagDTO`.
+- **Typy:** `TimeEntryFormViewModel`, `CreateTimeEntryCommand`, `UpdateTimeEntryCommand`, `ClientDTO`.
 - **Propsy:**
   - `isOpen: boolean`
   - `onClose: () => void`
   - `onSubmit: (data: TimeEntryFormViewModel) => void`
   - `initialData?: TimeEntryWithRelationsDTO` (do edycji)
   - `clients: ClientDTO[]`
-  - `tags: TagDTO[]`
 
 ## 5. Typy
 
@@ -115,7 +113,6 @@ export type TimeEntryFormViewModel = {
   hourly_rate?: string;
   public_description?: string;
   private_note?: string;
-  tag_ids?: string[];
 };
 ```
 
@@ -194,5 +191,5 @@ Stan filtrów (`TimeEntriesFilterState`) będzie zarządzany w głównym kompone
     - Implementacja `TimeEntryForm` w modalu, wraz z walidacją po stronie klienta (np. z użyciem `zod`).
 5.  **Połączenie komponentów:** Złożenie widoku w `TimeEntriesView`, zarządzanie stanem filtrów i przekazywanie danych oraz callbacków do komponentów podrzędnych.
 6.  **Obsługa edycji i usuwania:** Dodanie do `useTimeEntries` mutacji do edycji i usuwania. Podłączenie logiki do przycisków w `TimeEntriesList`.
-7.  **Funkcje dodatkowe:** Implementacja komponentów `AutocompleteInput` i `TagSelect` (zakładając, że odpowiednie endpointy API zostaną utworzone).
+7.  **Funkcje dodatkowe:** Implementacja komponentu `AutocompleteInput` (zakładając, że odpowiedni endpoint API zostanie utworzony).
 8.  **Stylowanie i RWD:** Dopracowanie wyglądu, dodanie stanów ładowania (np. skeleton loader) i zapewnienie responsywności, zwłaszcza dla tabeli na urządzeniach mobilnych.

@@ -5,13 +5,12 @@
 **Endpoint:** `POST /api/time-entries`  
 **Provider:** Custom Astro API
 
-Punkt końcowy służy do tworzenia nowego wpisu czasu pracy dla zalogowanego użytkownika. Umożliwia przypisanie wpisu do konkretnego klienta, określenie liczby godzin, stawki godzinowej, waluty oraz opcjonalnych opisów i tagów. Endpoint automatycznie synchronizuje dane do tabeli `ai_insights_data` przez trigger bazodanowy (gdy `private_note` jest wypełnione).
+Punkt końcowy służy do tworzenia nowego wpisu czasu pracy dla zalogowanego użytkownika. Umożliwia przypisanie wpisu do konkretnego klienta, określenie liczby godzin, stawki godzinowej, waluty oraz opcjonalnych opisów. Endpoint automatycznie synchronizuje dane do tabeli `ai_insights_data` przez trigger bazodanowy (gdy `private_note` jest wypełnione).
 
 **Główne funkcjonalności:**
 
 - Tworzenie wpisu czasu z walidacją danych
 - Dziedziczenie domyślnych wartości (stawka, waluta) z klienta
-- Przypisywanie tagów do wpisu (relacja many-to-many)
 - Automatyczna synchronizacja do AI insights przez trigger
 - Zabezpieczenie przez RLS na poziomie bazy danych
 
@@ -50,7 +49,6 @@ Content-Type: application/json
 - `currency` (string) - Waluta stawki (PLN/EUR/USD). Jeśli nie podano, używana jest `default_currency` klienta
 - `public_description` (string) - Opis publiczny, widoczny na fakturze
 - `private_note` (string) - Notatka prywatna, używana do analizy AI (nie pojawia się na fakturach)
-- `tag_ids` (string[]) - Tablica UUID tagów do przypisania
 
 ### Request Body (przykład)
 
@@ -62,8 +60,7 @@ Content-Type: application/json
   "hourly_rate": 150.0,
   "currency": "PLN",
   "public_description": "Backend development",
-  "private_note": "Lots of scope changes, client was unprepared",
-  "tag_ids": ["uuid1", "uuid2"]
+  "private_note": "Lots of scope changes, client was unprepared"
 }
 ```
 
@@ -83,7 +80,6 @@ export type CreateTimeEntryCommand = {
   currency?: Currency;
   public_description?: string;
   private_note?: string;
-  tag_ids?: string[];
 };
 ```
 
@@ -91,12 +87,7 @@ export type CreateTimeEntryCommand = {
 
 ```typescript
 // src/types.ts
-export type CreateTimeEntryResponse = TimeEntry & {
-  tags?: Array<{
-    id: string;
-    name: string;
-  }>;
-};
+export type CreateTimeEntryResponse = TimeEntry;
 
 export type TimeEntry = Tables<"time_entries">; // z database.types.ts
 ```
@@ -139,17 +130,7 @@ export const createTimeEntrySchema = z.object({
   "invoice_id": null,
   "deleted_at": null,
   "created_at": "2025-01-15T18:00:00Z",
-  "updated_at": "2025-01-15T18:00:00Z",
-  "tags": [
-    {
-      "id": "uuid1",
-      "name": "scope-change"
-    },
-    {
-      "id": "uuid2",
-      "name": "rush"
-    }
-  ]
+  "updated_at": "2025-01-15T18:00:00Z"
 }
 ```
 
@@ -187,7 +168,7 @@ export const createTimeEntrySchema = z.object({
 {
   "error": {
     "code": "FORBIDDEN",
-    "message": "Client or tags belong to different user"
+    "message": "Client belongs to different user"
   }
 }
 ```
@@ -198,7 +179,7 @@ export const createTimeEntrySchema = z.object({
 {
   "error": {
     "code": "NOT_FOUND",
-    "message": "Client or tag not found"
+    "message": "Client not found"
   }
 }
 ```
@@ -232,20 +213,14 @@ export const createTimeEntrySchema = z.object({
 5. Service → Validate client ownership & get defaults
    ↓ (Query: SELECT from clients WHERE id = ? AND user_id = ?)
    ↓
-6. Service → Validate tag ownership (if tag_ids provided)
-   ↓ (Query: SELECT from tags WHERE id IN (?) AND user_id = ?)
-   ↓
-7. Service → Insert time entry
+6. Service → Insert time entry
    ↓ (INSERT INTO time_entries)
    ↓
-8. Database Trigger → Auto-sync to ai_insights_data (if private_note exists)
+7. Database Trigger → Auto-sync to ai_insights_data (if private_note exists)
    ↓
-9. Service → Insert tag associations (if tag_ids provided)
-   ↓ (INSERT INTO time_entry_tags)
+8. Service → Fetch created entry
    ↓
-10. Service → Fetch created entry with tags
-    ↓
-11. Response → Return 201 with created entry
+9. Response → Return 201 with created entry
 ```
 
 ### Interakcje z bazą danych
@@ -253,15 +228,12 @@ export const createTimeEntrySchema = z.object({
 **Tabele zaangażowane:**
 
 - `clients` (SELECT) - weryfikacja i pobieranie domyślnych wartości
-- `tags` (SELECT) - weryfikacja tagów
 - `time_entries` (INSERT) - tworzenie wpisu
-- `time_entry_tags` (INSERT) - przypisywanie tagów
 - `ai_insights_data` (INSERT/UPDATE przez trigger) - automatyczna synchronizacja
 
 **Triggery wywołane:**
 
 - `sync_time_entries_to_ai_insights` - automatycznie wywołany po INSERT na `time_entries`
-- `sync_tags_to_ai_insights` - automatycznie wywołany po INSERT na `time_entry_tags`
 
 ---
 
@@ -277,13 +249,12 @@ export const createTimeEntrySchema = z.object({
 
 - **RLS (Row-Level Security):** Wszystkie operacje na bazie danych są chronione przez RLS policies
 - **Sprawdzenie własności klienta:** Service musi zweryfikować, że `client_id` należy do `auth.uid()`
-- **Sprawdzenie własności tagów:** Service musi zweryfikować, że wszystkie `tag_ids` należą do `auth.uid()`
 - **Brak uprawnień:** Zwróć 403 Forbidden
 
 ### Walidacja danych wejściowych
 
 - **Zod schema:** Walidacja typu, formatu i zakresu wszystkich parametrów
-- **UUID validation:** Sprawdzenie formatu UUID dla `client_id` i `tag_ids`
+- **UUID validation:** Sprawdzenie formatu UUID dla `client_id`
 - **Date validation:** Sprawdzenie formatu daty i czy jest prawidłowa (nie futurystyczna)
 - **Range validation:** `hours` > 0 i ≤ 999.99, `hourly_rate` ≥ 0
 - **Enum validation:** `currency` musi być jedną z: PLN, EUR, USD
@@ -319,9 +290,7 @@ export const createTimeEntrySchema = z.object({
 | Nieprawidłowa waluta                | 400         | VALIDATION_ERROR | Currency must be PLN, EUR, or USD       | Zwróć błąd walidacji                          |
 | Nieprawidłowy format daty           | 400         | VALIDATION_ERROR | Date must be in YYYY-MM-DD format       | Zwróć błąd walidacji                          |
 | Klient nie istnieje                 | 404         | NOT_FOUND        | Client not found                        | Zwróć błąd 404                                |
-| Tag nie istnieje                    | 404         | NOT_FOUND        | Tag not found: {tag_id}                 | Zwróć błąd 404 z ID tagu                      |
 | Klient należy do innego użytkownika | 403         | FORBIDDEN        | Client belongs to different user        | Zwróć błąd 403                                |
-| Tag należy do innego użytkownika    | 403         | FORBIDDEN        | Tag belongs to different user           | Zwróć błąd 403                                |
 | Błąd bazy danych                    | 500         | INTERNAL_ERROR   | Failed to create time entry             | Loguj błąd, zwróć ogólny komunikat            |
 | Błąd triggera                       | 500         | INTERNAL_ERROR   | Database operation failed               | Loguj błąd, zwróć ogólny komunikat            |
 
@@ -387,40 +356,26 @@ function handleError(error: unknown): Response {
 
 ### Potencjalne wąskie gardła
 
-1. **Walidacja tagów:** Jeśli użytkownik poda wiele tagów (np. 20+), zapytanie SELECT IN może być wolne
-   - **Optymalizacja:** Użyj przygotowanego zapytania z indeksem na `tags(user_id, id)`
-
-2. **Trigger synchronizacji AI:** Trigger może dodać opóźnienie, jeśli tablica tagów jest duża
-   - **Optymalizacja:** Trigger jest asynchroniczny, nie blokuje głównej transakcji
-
-3. **Pobieranie domyślnych wartości klienta:** Dodatkowe zapytanie SELECT
+1. **Pobieranie domyślnych wartości klienta:** Dodatkowe zapytanie SELECT
    - **Optymalizacja:** Użyj indeksu `idx_clients_user_id`, zapytanie jest szybkie
 
-4. **Zwracanie utworzonego wpisu z tagami:** Wymaga dodatkowego JOIN
+2. **Zwracanie utworzonego wpisu:** Wymaga dodatkowego SELECT
    - **Optymalizacja:** Użyj `select` z relacjami Supabase zamiast osobnych zapytań
 
 ### Strategie optymalizacji
 
 1. **Indeksy bazodanowe:**
-   - Upewnij się, że istnieją indeksy: `idx_clients_user_id`, `idx_tags_user_id`
+   - Upewnij się, że istnieje indeks: `idx_clients_user_id`
    - Sprawdź wydajność przez `EXPLAIN ANALYZE`
 
-2. **Batching tag associations:**
-   - Wstaw wszystkie rekordy `time_entry_tags` jednym zapytaniem INSERT
-
-   ```sql
-   INSERT INTO time_entry_tags (time_entry_id, tag_id)
-   VALUES ($1, $2), ($1, $3), ($1, $4)
-   ```
-
-3. **Caching domyślnych wartości klienta:**
+2. **Caching domyślnych wartości klienta:**
    - Rozważ cache w Redis dla często używanych klientów (post-MVP)
 
-4. **Connection pooling:**
+3. **Connection pooling:**
    - Supabase automatycznie używa connection pooling
    - Upewnij się, że nie tworzysz nowych połączeń w pętli
 
-5. **Error-first approach:**
+4. **Error-first approach:**
    - Najpierw waliduj wszystkie dane (fail fast)
    - Dopiero później wykonuj operacje bazodanowe
 
@@ -456,7 +411,6 @@ export const createTimeEntrySchema = z.object({
   currency: z.enum(["PLN", "EUR", "USD"]).optional(),
   public_description: z.string().max(5000).optional(),
   private_note: z.string().max(5000).optional(),
-  tag_ids: z.array(z.string().uuid()).optional(),
 });
 
 export type CreateTimeEntryInput = z.infer<typeof createTimeEntrySchema>;
@@ -477,12 +431,7 @@ export class TimeEntryService {
     // 1. Pobierz i zweryfikuj klienta
     const client = await this.getAndValidateClient(command.client_id, userId);
 
-    // 2. Zweryfikuj tagi (jeśli podano)
-    if (command.tag_ids?.length) {
-      await this.validateTags(command.tag_ids, userId);
-    }
-
-    // 3. Przygotuj dane wpisu (z domyślnymi wartościami)
+    // 2. Przygotuj dane wpisu (z domyślnymi wartościami)
     const entryData = {
       user_id: userId,
       client_id: command.client_id,
@@ -494,7 +443,7 @@ export class TimeEntryService {
       private_note: command.private_note ?? null,
     };
 
-    // 4. Wstaw wpis czasu
+    // 3. Wstaw wpis czasu
     const { data: timeEntry, error: insertError } = await this.supabase
       .from("time_entries")
       .insert(entryData)
@@ -503,13 +452,8 @@ export class TimeEntryService {
 
     if (insertError) throw insertError;
 
-    // 5. Przypisz tagi (jeśli podano)
-    if (command.tag_ids?.length) {
-      await this.associateTags(timeEntry.id, command.tag_ids);
-    }
-
-    // 6. Pobierz utworzony wpis z tagami
-    return await this.getTimeEntryWithTags(timeEntry.id);
+    // 4. Zwróć utworzony wpis
+    return timeEntry;
   }
 
   private async getAndValidateClient(clientId: string, userId: string) {
@@ -526,53 +470,6 @@ export class TimeEntryService {
     }
 
     return client;
-  }
-
-  private async validateTags(tagIds: string[], userId: string) {
-    const { data: tags, error } = await this.supabase.from("tags").select("id").in("id", tagIds).eq("user_id", userId);
-
-    if (error) throw error;
-
-    if (tags.length !== tagIds.length) {
-      throw new Error("One or more tags not found or do not belong to user");
-    }
-  }
-
-  private async associateTags(timeEntryId: string, tagIds: string[]) {
-    const associations = tagIds.map((tagId) => ({
-      time_entry_id: timeEntryId,
-      tag_id: tagId,
-    }));
-
-    const { error } = await this.supabase.from("time_entry_tags").insert(associations);
-
-    if (error) throw error;
-  }
-
-  private async getTimeEntryWithTags(timeEntryId: string): Promise<CreateTimeEntryResponse> {
-    const { data, error } = await this.supabase
-      .from("time_entries")
-      .select(
-        `
-        *,
-        tags:time_entry_tags(
-          tag:tags(id, name)
-        )
-      `
-      )
-      .eq("id", timeEntryId)
-      .single();
-
-    if (error) throw error;
-
-    // Transform nested structure
-    return {
-      ...data,
-      tags: data.tags?.map((t: any) => ({
-        id: t.tag.id,
-        name: t.tag.name,
-      })),
-    };
   }
 }
 ```
@@ -713,7 +610,7 @@ export const POST: APIRoute = async (context) => {
 
     // Obsługa błędów z message (np. z serwisu)
     if (error instanceof Error) {
-      // Check if it's a client/tag not found error
+      // Check if it's a client not found error
       if (error.message.includes("not found") || error.message.includes("does not belong")) {
         return new Response(
           JSON.stringify({
@@ -804,11 +701,6 @@ describe("TimeEntryService", () => {
 
     mockSupabase.single.mockResolvedValueOnce({
       data: { id: "entry-id", hours: 8 },
-      error: null,
-    });
-
-    mockSupabase.single.mockResolvedValueOnce({
-      data: { id: "entry-id", hours: 8, tags: [] },
       error: null,
     });
 

@@ -85,7 +85,6 @@ function TimeEntriesViewContent() {
           currency: data.currency as "PLN" | "EUR" | "USD" | undefined,
           public_description: data.public_description || undefined,
           private_note: data.private_note?.trim() || undefined,
-          tag_ids: data.tag_ids,
         };
         await updateMutation.mutateAsync({
           entryId,
@@ -101,7 +100,6 @@ function TimeEntriesViewContent() {
           currency: data.currency as "PLN" | "EUR" | "USD" | undefined,
           public_description: data.public_description || undefined,
           private_note: data.private_note?.trim() || undefined,
-          tag_ids: data.tag_ids,
         };
         await createMutation.mutateAsync(command);
         toast.success("Wpis czasu został dodany");

@@ -124,22 +124,32 @@ export const POST: APIRoute = async (context) => {
     });
 
     const result = await client.generate<Omit<AIInsightsAnalysisDTO, "generated_at">>({
-      system: `Jesteś ekspertem od analizy wzorców pracy i optymalizacji stawek dla freelancerów.
-Analizujesz dane o wpisach czasu pracy i zwracasz szczegółowe rekomendacje w języku polskim.
+      system: `Jesteś analitykiem danych specjalizującym się w odkrywaniu ukrytych wzorców i nietypowych korelacji.
 
-Zasady analizy:
-- Consistency score to ocena regularności pracy (0-10, gdzie 10 = bardzo regularna)
-- Identyfikuj wzorce w dniach tygodnia i godzinach pracy
-- Sugeruj optymalizacje stawek na podstawie rodzaju pracy i czasu
-- Wskazuj możliwości poprawy work-life balance
-- Bądź konkretny i praktyczny w rekomendacjach
+Twoje zadanie:
+1. Przeanalizuj otrzymane dane bez założeń wstępnych
+2. Szukaj nieoczywistych zależności i anomalii
+3. Identyfikuj wzorce, których użytkownik może nie być świadomy
+4. Zwróć uwagę na odstępstwa od normy - mogą być kluczowe
+5. Analizuj kontekst notatek prywatnych - często zawierają nieświadome sygnały
 
-Odpowiadaj wyłącznie w formacie JSON zgodnym ze schematem.`,
-      user: `Przeanalizuj poniższe dane o pracy freelancera i wygeneruj szczegółowe insighty:
+Podejście analityczne:
+- NIE zakładaj, że więcej godzin = lepiej
+- NIE sugeruj standardowych optymalizacji
+- Szukaj paradoksów (np. czy wyższe stawki = mniej godzin? czy odwrotnie?)
+- Analizuj emocjonalny kontekst notatek
+- Identyfikuj "czarne łabędzie" - dni odstające od wzorca
+- Sprawdź czy istnieją cykle (tygodniowe, miesięczne)
+- Poszukaj korelacji między dniem tygodnia a efektywnością/stawką
+
+Consistency score oblicz na podstawie rzeczywistej zmienności danych, nie na podstawie założeń.
+
+Odpowiadaj w języku polskim, format JSON zgodny ze schematem.`,
+      user: `Dane do głębokiej analizy:
 
 ${analysisData}
 
-Przeanalizuj wzorce pracy, stawki, produktywność i zasugeruj konkretne działania do podjęcia.`,
+Odkryj to, czego dane nie mówią wprost. Szukaj historii za liczbami.`,
       responseFormat,
     });
 

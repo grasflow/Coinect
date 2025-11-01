@@ -58,23 +58,7 @@ Przechowuje dane klientów użytkownika.
 
 ---
 
-### 1.3. tags
-Przechowuje tagi używane w prywatnych notatkach wpisów czasu.
-
-| Kolumna | Typ | Ograniczenia | Opis |
-|---------|-----|--------------|------|
-| id | UUID | PRIMARY KEY DEFAULT uuid_generate_v4() | Identyfikator tagu |
-| user_id | UUID | NOT NULL | Właściciel tagu |
-| name | VARCHAR(100) | NOT NULL | Nazwa tagu |
-| created_at | TIMESTAMPTZ | DEFAULT NOW() | Data utworzenia |
-
-**Constraints:**
-- `user_id` -> `profiles(id) ON DELETE CASCADE`
-- UNIQUE `(user_id, name)`
-
----
-
-### 1.4. time_entries
+### 1.3. time_entries
 Przechowuje wpisy czasu pracy użytkownika.
 
 | Kolumna | Typ | Ograniczenia | Opis |
@@ -100,23 +84,7 @@ Przechowuje wpisy czasu pracy użytkownika.
 
 ---
 
-### 1.5. time_entry_tags
-Tabela łącząca wpisy czasu z tagami (relacja wiele-do-wielu).
-
-| Kolumna | Typ | Ograniczenia | Opis |
-|---------|-----|--------------|------|
-| time_entry_id | UUID | NOT NULL | Identyfikator wpisu czasu |
-| tag_id | UUID | NOT NULL | Identyfikator tagu |
-| created_at | TIMESTAMPTZ | DEFAULT NOW() | Data utworzenia |
-
-**Constraints:**
-- PRIMARY KEY `(time_entry_id, tag_id)`
-- `time_entry_id` -> `time_entries(id) ON DELETE CASCADE`
-- `tag_id` -> `tags(id) ON DELETE CASCADE`
-
----
-
-### 1.6. invoices
+### 1.4. invoices
 Przechowuje faktury wygenerowane przez użytkownika.
 
 | Kolumna | Typ | Ograniczenia | Opis |
@@ -157,7 +125,7 @@ Przechowuje faktury wygenerowane przez użytkownika.
 
 ---
 
-### 1.7. invoice_items
+### 1.5. invoice_items
 Przechowuje pozycje (linie) na fakturze.
 
 | Kolumna | Typ | Ograniczenia | Opis |
@@ -178,7 +146,7 @@ Przechowuje pozycje (linie) na fakturze.
 
 ---
 
-### 1.8. invoice_item_time_entries
+### 1.6. invoice_item_time_entries
 Tabela łącząca pozycje faktur z wpisami czasu (relacja wiele-do-wielu).
 
 | Kolumna | Typ | Ograniczenia | Opis |
@@ -194,7 +162,7 @@ Tabela łącząca pozycje faktur z wpisami czasu (relacja wiele-do-wielu).
 
 ---
 
-### 1.9. ai_insights_data
+### 1.7. ai_insights_data
 Tabela agregująca zanonimizowane dane dla przyszłych analiz AI.
 
 | Kolumna | Typ | Ograniczenia | Opis |
@@ -207,7 +175,6 @@ Tabela agregująca zanonimizowane dane dla przyszłych analiz AI.
 | hours | NUMERIC(5,2) | NOT NULL | Liczba godzin |
 | hourly_rate | NUMERIC(10,2) | NOT NULL | Stawka godzinowa |
 | private_note | TEXT | | Notatka prywatna |
-| tags | JSONB | | Tagi jako tablica JSON |
 | created_at | TIMESTAMPTZ | DEFAULT NOW() | Data utworzenia |
 
 **Constraints:**
@@ -217,7 +184,7 @@ Tabela agregująca zanonimizowane dane dla przyszłych analiz AI.
 
 ---
 
-### 1.10. exchange_rate_cache
+### 1.8. exchange_rate_cache
 Przechowuje cache kursów walut z API NBP.
 
 | Kolumna | Typ | Ograniczenia | Opis |
@@ -254,7 +221,6 @@ CREATE TYPE invoice_status_enum AS ENUM ('unpaid', 'paid');
 
 ### 3.2. One-to-Many
 - `profiles` → `clients` (jeden użytkownik ma wielu klientów)
-- `profiles` → `tags` (jeden użytkownik ma wiele tagów)
 - `profiles` → `time_entries` (jeden użytkownik ma wiele wpisów czasu)
 - `profiles` → `invoices` (jeden użytkownik ma wiele faktur)
 - `profiles` → `ai_insights_data` (jeden użytkownik ma wiele wpisów analitycznych)
@@ -265,7 +231,6 @@ CREATE TYPE invoice_status_enum AS ENUM ('unpaid', 'paid');
 - `time_entries` → `ai_insights_data` (jeden wpis czasu → jeden wpis analityczny)
 
 ### 3.3. Many-to-Many
-- `time_entries` ↔ `tags` (przez `time_entry_tags`)
 - `invoice_items` ↔ `time_entries` (przez `invoice_item_time_entries`)
 
 ---
@@ -281,9 +246,6 @@ CREATE INDEX idx_profiles_user_id ON profiles(id);
 -- clients
 CREATE INDEX idx_clients_user_id ON clients(user_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_clients_name ON clients(user_id, name) WHERE deleted_at IS NULL;
-
--- tags
-CREATE INDEX idx_tags_user_id ON tags(user_id);
 
 -- time_entries
 CREATE INDEX idx_time_entries_user_id ON time_entries(user_id) WHERE deleted_at IS NULL;
@@ -306,7 +268,6 @@ CREATE INDEX idx_invoice_items_invoice_id ON invoice_items(invoice_id);
 -- ai_insights_data
 CREATE INDEX idx_ai_insights_user_id ON ai_insights_data(user_id);
 CREATE INDEX idx_ai_insights_date ON ai_insights_data(user_id, date DESC);
-CREATE INDEX idx_ai_insights_tags ON ai_insights_data USING GIN(tags);
 
 -- exchange_rate_cache
 CREATE INDEX idx_exchange_rate_currency_date ON exchange_rate_cache(currency, rate_date DESC);
@@ -359,25 +320,7 @@ CREATE POLICY "Users can delete own clients"
   USING (auth.uid() = user_id);
 ```
 
-### 5.3. tags
-
-```sql
-ALTER TABLE tags ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view own tags"
-  ON tags FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own tags"
-  ON tags FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete own tags"
-  ON tags FOR DELETE
-  USING (auth.uid() = user_id);
-```
-
-### 5.4. time_entries
+### 5.3. time_entries
 
 ```sql
 ALTER TABLE time_entries ENABLE ROW LEVEL SECURITY;
@@ -399,23 +342,7 @@ CREATE POLICY "Users can delete own time entries"
   USING (auth.uid() = user_id AND invoice_id IS NULL);
 ```
 
-### 5.5. time_entry_tags
-
-```sql
-ALTER TABLE time_entry_tags ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can manage own time entry tags"
-  ON time_entry_tags FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM time_entries
-      WHERE time_entries.id = time_entry_tags.time_entry_id
-      AND time_entries.user_id = auth.uid()
-    )
-  );
-```
-
-### 5.6. invoices
+### 5.4. invoices
 
 ```sql
 ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
@@ -437,7 +364,7 @@ CREATE POLICY "Users can delete own invoices"
   USING (auth.uid() = user_id);
 ```
 
-### 5.7. invoice_items
+### 5.5. invoice_items
 
 ```sql
 ALTER TABLE invoice_items ENABLE ROW LEVEL SECURITY;
@@ -453,7 +380,7 @@ CREATE POLICY "Users can manage own invoice items"
   );
 ```
 
-### 5.8. invoice_item_time_entries
+### 5.6. invoice_item_time_entries
 
 ```sql
 ALTER TABLE invoice_item_time_entries ENABLE ROW LEVEL SECURITY;
@@ -470,7 +397,7 @@ CREATE POLICY "Users can manage own invoice item time entries"
   );
 ```
 
-### 5.9. ai_insights_data
+### 5.7. ai_insights_data
 
 ```sql
 ALTER TABLE ai_insights_data ENABLE ROW LEVEL SECURITY;
@@ -485,7 +412,7 @@ CREATE POLICY "System can manage AI insights"
   USING (auth.uid() = user_id);
 ```
 
-### 5.10. exchange_rate_cache
+### 5.8. exchange_rate_cache
 
 ```sql
 ALTER TABLE exchange_rate_cache ENABLE ROW LEVEL SECURITY;
@@ -550,8 +477,7 @@ BEGIN
       day_of_week,
       hours,
       hourly_rate,
-      private_note,
-      tags
+      private_note
     )
     VALUES (
       NEW.user_id,
@@ -560,13 +486,7 @@ BEGIN
       EXTRACT(ISODOW FROM NEW.date),
       NEW.hours,
       NEW.hourly_rate,
-      NEW.private_note,
-      (
-        SELECT jsonb_agg(t.name)
-        FROM time_entry_tags tet
-        JOIN tags t ON t.id = tet.tag_id
-        WHERE tet.time_entry_id = NEW.id
-      )
+      NEW.private_note
     )
     ON CONFLICT (time_entry_id)
     DO UPDATE SET
@@ -574,13 +494,12 @@ BEGIN
       day_of_week = EXCLUDED.day_of_week,
       hours = EXCLUDED.hours,
       hourly_rate = EXCLUDED.hourly_rate,
-      private_note = EXCLUDED.private_note,
-      tags = EXCLUDED.tags;
+      private_note = EXCLUDED.private_note;
   ELSE
     -- Usuń wpis AI jeśli private_note został usunięty
     DELETE FROM ai_insights_data WHERE time_entry_id = NEW.id;
   END IF;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -591,33 +510,7 @@ CREATE TRIGGER sync_time_entries_to_ai_insights
   EXECUTE FUNCTION sync_ai_insights_data();
 ```
 
-### 6.3. Automatyczne zasilanie ai_insights_data po zmianie tagów
-
-```sql
-CREATE OR REPLACE FUNCTION sync_ai_insights_tags()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Zaktualizuj tagi w ai_insights_data
-  UPDATE ai_insights_data
-  SET tags = (
-    SELECT jsonb_agg(t.name)
-    FROM time_entry_tags tet
-    JOIN tags t ON t.id = tet.tag_id
-    WHERE tet.time_entry_id = COALESCE(NEW.time_entry_id, OLD.time_entry_id)
-  )
-  WHERE time_entry_id = COALESCE(NEW.time_entry_id, OLD.time_entry_id);
-  
-  RETURN COALESCE(NEW, OLD);
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER sync_tags_to_ai_insights
-  AFTER INSERT OR UPDATE OR DELETE ON time_entry_tags
-  FOR EACH ROW
-  EXECUTE FUNCTION sync_ai_insights_tags();
-```
-
-### 6.4. Automatyczne tworzenie profilu po rejestracji
+### 6.3. Automatyczne tworzenie profilu po rejestracji
 
 ```sql
 CREATE OR REPLACE FUNCTION create_profile_for_user()
@@ -658,7 +551,6 @@ CREATE TRIGGER on_auth_user_created
 ### 7.3. Wydajność
 - **Indeksy strategiczne**: Utworzone na kolumnach używanych do filtrowania (daty, statusy, relacje).
 - **Indeksy warunkowe**: Indeksy z WHERE deleted_at IS NULL dla szybszego filtrowania aktywnych rekordów.
-- **GIN index na JSONB**: Dla kolumny `tags` w `ai_insights_data`.
 
 ### 7.4. Wielowalutowość
 - **ENUM dla walut**: Ogranicza wartości do PLN, EUR, USD.
@@ -672,13 +564,12 @@ CREATE TRIGGER on_auth_user_created
 
 ### 7.6. Przygotowanie na AI
 - **Tabela ai_insights_data**: Zdenormalizowana, zasilana automatycznie przez triggery.
-- **JSONB dla tagów**: Elastyczne przechowywanie tagów dla analiz.
 - **Anonimizacja**: Tylko ID użytkownika, bez danych klienta.
 
 ### 7.7. Normalizacja
 - **3NF**: Schemat jest znormalizowany do 3. postaci normalnej.
 - **Denormalizacja celowa**: Tylko `ai_insights_data` (dla wydajności analiz).
-- **Tabele łączące**: Dla relacji many-to-many (`time_entry_tags`, `invoice_item_time_entries`).
+- **Tabele łączące**: Dla relacji many-to-many (`invoice_item_time_entries`).
 
 ### 7.8. Numeracja faktur
 - **UNIQUE constraint**: `(user_id, invoice_number)` zapewnia unikalność w obrębie użytkownika.
