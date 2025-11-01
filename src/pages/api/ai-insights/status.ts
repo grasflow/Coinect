@@ -31,7 +31,7 @@ export const GET: APIRoute = async (context) => {
 
     if (rpcError) throw rpcError;
 
-    const threshold = 10;
+    const threshold = 1;
     const count = typeof countData === "number" ? countData : 0;
     const unlocked = count >= threshold;
     const progressPercentage = Math.min((count / threshold) * 100, 100);

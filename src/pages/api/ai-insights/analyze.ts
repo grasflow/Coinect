@@ -5,7 +5,7 @@ import { createJsonSchema } from "@/lib/services/openrouter.helpers";
 
 export const prerender = false;
 
-const MINIMUM_ENTRIES_FOR_ANALYSIS = 10;
+const MINIMUM_ENTRIES_FOR_ANALYSIS = 1;
 
 export const POST: APIRoute = async (context) => {
   try {
