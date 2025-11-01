@@ -131,9 +131,7 @@ function DashboardViewContent() {
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
                       {parseFloat(summary.unbilled_hours).toFixed(1)}h
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Niezafakturowane h
-                    </p>
+                    <p className="text-xs text-muted-foreground">Niezafakturowane h</p>
                   </CardContent>
                 </Card>
               </div>
@@ -161,9 +159,7 @@ function DashboardViewContent() {
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
                       {(summary.current_month_invoices.total_gross_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Bieżący miesiąc
-                    </p>
+                    <p className="text-xs text-muted-foreground">Bieżący miesiąc</p>
                   </CardContent>
                 </Card>
               </div>
@@ -223,9 +219,7 @@ function DashboardViewContent() {
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5 text-orange-600 dark:text-orange-400">
                       {(summary.unbilled_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Do zafakturowania
-                    </p>
+                    <p className="text-xs text-muted-foreground">Do zafakturowania</p>
                   </CardContent>
                 </Card>
               </div>
@@ -253,9 +247,7 @@ function DashboardViewContent() {
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5 text-emerald-600 dark:text-emerald-400">
                       {(summary.billed_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Zafakturowane
-                    </p>
+                    <p className="text-xs text-muted-foreground">Zafakturowane</p>
                   </CardContent>
                 </Card>
               </div>
@@ -278,7 +270,12 @@ function DashboardViewContent() {
                 <CardTitle>Ostatnie wpisy czasu</CardTitle>
                 <CardDescription>5 najnowszych wpisów</CardDescription>
               </div>
-              <Button variant="plain" size="sm" className="self-start -ml-3 md:ml-0 md:self-auto" onClick={() => (window.location.href = "/time-entries")}>
+              <Button
+                variant="plain"
+                size="sm"
+                className="self-start -ml-3 md:ml-0 md:self-auto"
+                onClick={() => (window.location.href = "/time-entries")}
+              >
                 Zobacz wszystkie
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
@@ -330,7 +327,12 @@ function DashboardViewContent() {
                 <CardTitle>Ostatnie faktury</CardTitle>
                 <CardDescription>5 najnowszych faktur</CardDescription>
               </div>
-              <Button variant="plain" size="sm" className="self-start -ml-3 md:ml-0 md:self-auto" onClick={() => (window.location.href = "/invoices")}>
+              <Button
+                variant="plain"
+                size="sm"
+                className="self-start -ml-3 md:ml-0 md:self-auto"
+                onClick={() => (window.location.href = "/invoices")}
+              >
                 Zobacz wszystkie
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
