@@ -151,7 +151,9 @@ function SettingsViewContent() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="full_name" className="mb-1.5">Imię i nazwisko / Nazwa firmy *</Label>
+              <Label htmlFor="full_name" className="mb-1.5">
+                Imię i nazwisko / Nazwa firmy *
+              </Label>
               <Input
                 id="full_name"
                 name="full_name"
@@ -162,7 +164,9 @@ function SettingsViewContent() {
             </div>
 
             <div>
-              <Label htmlFor="tax_id" className="mb-1.5">NIP</Label>
+              <Label htmlFor="tax_id" className="mb-1.5">
+                NIP
+              </Label>
               <Input
                 id="tax_id"
                 name="tax_id"
@@ -173,7 +177,9 @@ function SettingsViewContent() {
             </div>
 
             <div>
-              <Label htmlFor="email" className="mb-1.5">Email</Label>
+              <Label htmlFor="email" className="mb-1.5">
+                Email
+              </Label>
               <Input
                 id="email"
                 name="email"
@@ -185,7 +191,9 @@ function SettingsViewContent() {
             </div>
 
             <div>
-              <Label htmlFor="phone" className="mb-1.5">Telefon</Label>
+              <Label htmlFor="phone" className="mb-1.5">
+                Telefon
+              </Label>
               <Input
                 id="phone"
                 name="phone"
@@ -243,7 +251,9 @@ function SettingsViewContent() {
           {/* Bank Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="bank_account" className="mb-1.5">Numer konta bankowego</Label>
+              <Label htmlFor="bank_account" className="mb-1.5">
+                Numer konta bankowego
+              </Label>
               <Input
                 id="bank_account"
                 name="bank_account"
@@ -254,7 +264,9 @@ function SettingsViewContent() {
             </div>
 
             <div>
-              <Label htmlFor="bank_name" className="mb-1.5">Nazwa banku</Label>
+              <Label htmlFor="bank_name" className="mb-1.5">
+                Nazwa banku
+              </Label>
               <Input
                 id="bank_name"
                 name="bank_name"
@@ -265,7 +277,9 @@ function SettingsViewContent() {
             </div>
 
             <div>
-              <Label htmlFor="bank_swift" className="mb-1.5">Kod SWIFT/BIC</Label>
+              <Label htmlFor="bank_swift" className="mb-1.5">
+                Kod SWIFT/BIC
+              </Label>
               <Input
                 id="bank_swift"
                 name="bank_swift"
@@ -353,7 +367,9 @@ function SettingsViewContent() {
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <Label htmlFor="accent_color" className="mb-1">Kolor akcentu</Label>
+                <Label htmlFor="accent_color" className="mb-1">
+                  Kolor akcentu
+                </Label>
                 <Muted className="text-sm">Kolor nagłówków i linii na fakturach</Muted>
               </div>
               <div className="flex items-center gap-3">
