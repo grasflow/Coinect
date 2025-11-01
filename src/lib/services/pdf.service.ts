@@ -87,7 +87,7 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
   doc.text(invoice.invoice_number, pageWidth - margin, y + 12, { align: "right" });
 
   // Dane wystawienia po prawej stronie
-  doc.setFontSize(9);
+  doc.setFontSize(7);
   doc.setFont("DejaVuSans", "normal");
   doc.setTextColor(0, 0, 0);
 
@@ -99,7 +99,7 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
   ];
 
   invoiceDetails.forEach((detail, i) => {
-    doc.text(detail, pageWidth - margin, y + 20 + i * 5, { align: "right" });
+    doc.text(detail, pageWidth - margin, y + 20 + i * 3.5, { align: "right" });
   });
 
   y += 40;

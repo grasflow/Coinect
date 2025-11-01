@@ -13,19 +13,64 @@ const { title = "Coinect - Logowanie" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Android/Chrome -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="Profesjonalne zarządzanie czasem pracy i fakturowanie dla freelancerów i małych firm"
+    />
+    <meta property="og:image" content="/open-graph.png" />
+    <meta property="og:url" content="https://my.coinect.pl" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Coinect" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta
+      name="twitter:description"
+      content="Profesjonalne zarządzanie czasem pracy i fakturowanie dla freelancerów i małych firm"
+    />
+    <meta name="twitter:image" content="/open-graph.png" />
+
+    <!-- Additional Meta -->
+    <meta
+      name="description"
+      content="Profesjonalne zarządzanie czasem pracy i fakturowanie dla freelancerów i małych firm"
+    />
+    <meta name="keywords" content="zarządzanie czasem, fakturowanie, freelancer, faktury, time tracking" />
+    <meta name="author" content="Coinect" />
   </head>
   <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
     <main class="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div class="sm:mx-auto sm:w-full sm:max-w-md">
         <a href="/" class="block group">
-          <h1
-            class="text-center text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-blue-800 transition-all"
-          >
-            Coinect
-          </h1>
+          <div class="flex justify-center">
+            <img src="/logo.svg" alt="Coinect" class="h-12 w-auto group-hover:scale-105 transition-transform" />
+          </div>
         </a>
       </div>
 

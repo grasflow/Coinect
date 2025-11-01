@@ -23,8 +23,8 @@ export function MainNavbar({ userName, userEmail }: MainNavbarProps) {
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="/" className="text-xl font-bold text-gray-900">
-              Coinect
+            <a href="/" className="flex items-center">
+              <img src="/logo.svg" alt="Coinect" className="h-8 w-auto" />
             </a>
           </div>
 
