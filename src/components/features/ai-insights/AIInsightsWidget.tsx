@@ -90,7 +90,7 @@ export default function AIInsightsWidget() {
   // If hidden, show small button to reopen
   if (isHidden) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 left-6 z-50">
         <Button
           variant="filled"
           size="icon"
@@ -105,7 +105,7 @@ export default function AIInsightsWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-72">
+    <div className="fixed bottom-6 left-6 z-50 w-72">
       <Card className="shadow-xl border-2 border-blue-200 py-3 px-2">
         <CardContent className="p-0">
           {/* Header */}
