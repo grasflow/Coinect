@@ -23,9 +23,10 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
   /** FONTY **/
   // Load fonts from public directory via HTTP (Cloudflare Workers compatible)
   // Use absolute URLs in production, relative in development
-  const baseUrl = typeof import.meta.env !== "undefined" && import.meta.env.SITE
-    ? import.meta.env.SITE
-    : (typeof process !== "undefined" && process.env.SITE) || "http://localhost:3000";
+  const baseUrl =
+    typeof import.meta.env !== "undefined" && import.meta.env.SITE
+      ? import.meta.env.SITE
+      : (typeof process !== "undefined" && process.env.SITE) || "http://localhost:3000";
 
   const fontNormalUrl = `${baseUrl}/DejaVuSans.ttf`;
   const fontBoldUrl = `${baseUrl}/DejaVuSans-Bold.ttf`;
@@ -50,7 +51,6 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
     doc.addFileToVFS("DejaVuSans-Bold.ttf", fontBold);
     doc.addFont("DejaVuSans-Bold.ttf", "DejaVuSans", "bold");
   } catch (error) {
-    console.error("Error loading fonts for PDF generation:", error);
     throw new Error(`Nie udało się załadować czcionek: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 
