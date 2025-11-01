@@ -26,6 +26,18 @@ Aplikacja Coinect jest wdrażana na Cloudflare Pages i używa Supabase jako back
 4. Przejdź do **Settings** → **Environment variables**
 
 
+### 2. Wymagane zmienne środowiskowe
+
+Musisz skonfigurować następujące zmienne:
+
+| Zmienna | Opis | Jak pobrać |
+|---------|------|------------|
+| `SUPABASE_URL` | URL produkcyjnego Supabase | Supabase Dashboard → Settings → API → Project URL |
+| `SUPABASE_KEY` | Klucz API Supabase (anon/public) | Supabase Dashboard → Settings → API → anon/public key |
+| `PUBLIC_SUPABASE_URL` | URL Supabase dla frontendu | Ta sama wartość co `SUPABASE_URL` |
+| `PUBLIC_SUPABASE_KEY` | Klucz Supabase dla frontendu | Ta sama wartość co `SUPABASE_KEY` |
+| `OPENROUTER_API_KEY` | Klucz API OpenRouter dla AI | https://openrouter.ai/keys |
+
 ### 3. Jak dodać zmienną:
 
 1. Kliknij **"Add variable"**

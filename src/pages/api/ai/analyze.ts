@@ -42,8 +42,12 @@ export const POST: APIRoute = async (context) => {
       });
     }
 
+    // Get API key from runtime environment (Cloudflare Pages)
+    const env = context.locals.runtime?.env;
+    const apiKey = env?.OPENROUTER_API_KEY || import.meta.env.OPENROUTER_API_KEY;
+
     const client = new OpenRouterService({
-      apiKey: import.meta.env.OPENROUTER_API_KEY,
+      apiKey,
       defaultModel: model ?? "meta-llama/llama-3.3-8b-instruct:free",
       defaultParams: commonParams.balanced,
     });
