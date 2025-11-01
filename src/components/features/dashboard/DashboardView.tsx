@@ -125,7 +125,9 @@ function DashboardViewContent() {
                     <div className="text-2xl font-bold leading-none mb-0.5">
                       {parseFloat(summary.unbilled_hours).toFixed(1)}h
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Niezafakturowane h</p>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                      Niezafakturowane h
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -162,10 +164,13 @@ function DashboardViewContent() {
             </TooltipTrigger>
             <TooltipContent side="top">
               <p>
-                Suma faktur z bieżącego miesiąca: {summary.current_month_invoices.total_gross_amount_pln.toLocaleString("pl-PL")} PLN
+                Suma faktur z bieżącego miesiąca:{" "}
+                {summary.current_month_invoices.total_gross_amount_pln.toLocaleString("pl-PL")} PLN
                 <br />
-                {summary.current_month_invoices.count} {summary.current_month_invoices.count === 1 ? "faktura" : "faktur"} (
-                {summary.current_month_invoices.manual_count} ręcznych, {summary.current_month_invoices.time_entries_count} z godzin)
+                {summary.current_month_invoices.count}{" "}
+                {summary.current_month_invoices.count === 1 ? "faktura" : "faktur"} ({" "}
+                {summary.current_month_invoices.manual_count} ręcznych,{" "}
+                {summary.current_month_invoices.time_entries_count} z godzin)
               </p>
             </TooltipContent>
           </Tooltip>
@@ -212,7 +217,9 @@ function DashboardViewContent() {
                     <div className="text-2xl font-bold leading-none mb-0.5 text-orange-600 dark:text-orange-400">
                       {(summary.unbilled_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Do zafakturowania</p>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                      Do zafakturowania
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -240,7 +247,9 @@ function DashboardViewContent() {
                     <div className="text-2xl font-bold leading-none mb-0.5 text-emerald-600 dark:text-emerald-400">
                       {(summary.billed_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Zafakturowane</p>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                      Zafakturowane
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -257,115 +266,117 @@ function DashboardViewContent() {
 
         {/* Recent Activity */}
         <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Ostatnie wpisy czasu</CardTitle>
-              <CardDescription>5 najnowszych wpisów</CardDescription>
-            </div>
-            <Button variant="plain" size="sm" onClick={() => (window.location.href = "/time-entries")}>
-              Zobacz wszystkie
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {summary.recent_time_entries.length === 0 ? (
-            <div className="text-center py-8">
-              <ClockIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
-              <Text className="font-medium mb-2">Brak wpisów czasu</Text>
-              <Muted className="mb-4">Dodaj pierwszy wpis czasu pracy</Muted>
-              <Button variant="tinted" size="sm" onClick={() => (window.location.href = "/time-entries")}>
-                Dodaj pierwszy wpis
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Ostatnie wpisy czasu</CardTitle>
+                <CardDescription>5 najnowszych wpisów</CardDescription>
+              </div>
+              <Button variant="plain" size="sm" onClick={() => (window.location.href = "/time-entries")}>
+                Zobacz wszystkie
+                <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {summary.recent_time_entries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Text className="font-medium">{entry.client_name}</Text>
-                      <Badge>
-                        <HoursDisplay hours={entry.hours} />
-                      </Badge>
+          </CardHeader>
+          <CardContent>
+            {summary.recent_time_entries.length === 0 ? (
+              <div className="text-center py-8">
+                <ClockIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
+                <Text className="font-medium mb-2">Brak wpisów czasu</Text>
+                <Muted className="mb-4">Dodaj pierwszy wpis czasu pracy</Muted>
+                <Button variant="tinted" size="sm" onClick={() => (window.location.href = "/time-entries")}>
+                  Dodaj pierwszy wpis
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {summary.recent_time_entries.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Text className="font-medium">{entry.client_name}</Text>
+                        <Badge>
+                          <HoursDisplay hours={entry.hours} />
+                        </Badge>
+                      </div>
+                      {entry.public_description && (
+                        <Muted className="text-sm truncate">{entry.public_description}</Muted>
+                      )}
                     </div>
-                    {entry.public_description && <Muted className="text-sm truncate">{entry.public_description}</Muted>}
-                  </div>
-                  <Muted className="text-sm ml-4 whitespace-nowrap">
-                    {new Date(entry.date).toLocaleDateString("pl-PL")}
-                  </Muted>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Recent Invoices */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Ostatnie faktury</CardTitle>
-              <CardDescription>5 najnowszych faktur</CardDescription>
-            </div>
-            <Button variant="plain" size="sm" onClick={() => (window.location.href = "/invoices")}>
-              Zobacz wszystkie
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {summary.recent_invoices.length === 0 ? (
-            <div className="text-center py-8">
-              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
-              <Text className="font-medium mb-2">Brak faktur</Text>
-              <Muted className="mb-4">Utwórz swoją pierwszą fakturę</Muted>
-              <Button variant="tinted" size="sm" onClick={() => (window.location.href = "/invoices/new")}>
-                Utwórz pierwszą fakturę
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {summary.recent_invoices.map((invoice) => (
-                <div
-                  key={invoice.id}
-                  role="button"
-                  tabIndex={0}
-                  className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => (window.location.href = `/invoices`)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      window.location.href = `/invoices`;
-                    }
-                  }}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Text className="font-medium">{invoice.invoice_number}</Text>
-                      {invoice.is_manual && <Badge>Ręczna</Badge>}
-                    </div>
-                    <Muted className="text-sm truncate">{invoice.client_name}</Muted>
-                  </div>
-                  <div className="text-right ml-4">
-                    <Text className="font-medium">
-                      {invoice.gross_amount.toFixed(2)} {invoice.currency}
-                    </Text>
-                    <Muted className="text-sm whitespace-nowrap">
-                      {new Date(invoice.issue_date).toLocaleDateString("pl-PL")}
+                    <Muted className="text-sm ml-4 whitespace-nowrap">
+                      {new Date(entry.date).toLocaleDateString("pl-PL")}
                     </Muted>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Invoices */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Ostatnie faktury</CardTitle>
+                <CardDescription>5 najnowszych faktur</CardDescription>
+              </div>
+              <Button variant="plain" size="sm" onClick={() => (window.location.href = "/invoices")}>
+                Zobacz wszystkie
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardHeader>
+          <CardContent>
+            {summary.recent_invoices.length === 0 ? (
+              <div className="text-center py-8">
+                <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" aria-hidden="true" />
+                <Text className="font-medium mb-2">Brak faktur</Text>
+                <Muted className="mb-4">Utwórz swoją pierwszą fakturę</Muted>
+                <Button variant="tinted" size="sm" onClick={() => (window.location.href = "/invoices/new")}>
+                  Utwórz pierwszą fakturę
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {summary.recent_invoices.map((invoice) => (
+                  <div
+                    key={invoice.id}
+                    role="button"
+                    tabIndex={0}
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => (window.location.href = `/invoices`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        window.location.href = `/invoices`;
+                      }
+                    }}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Text className="font-medium">{invoice.invoice_number}</Text>
+                        {invoice.is_manual && <Badge>Ręczna</Badge>}
+                      </div>
+                      <Muted className="text-sm truncate">{invoice.client_name}</Muted>
+                    </div>
+                    <div className="text-right ml-4">
+                      <Text className="font-medium">
+                        {invoice.gross_amount.toFixed(2)} {invoice.currency}
+                      </Text>
+                      <Muted className="text-sm whitespace-nowrap">
+                        {new Date(invoice.issue_date).toLocaleDateString("pl-PL")}
+                      </Muted>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </Stack>
     </TooltipProvider>
   );

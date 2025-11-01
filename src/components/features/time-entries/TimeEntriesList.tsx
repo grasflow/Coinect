@@ -24,7 +24,7 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
   // Calculate totals by currency
   const totals = React.useMemo(() => {
     const hoursByEntry = data.data.reduce((sum, entry) => sum + parseFloat(entry.hours?.toString() || "0"), 0);
-    
+
     const amountsByCurrency: Record<Currency, number> = {
       PLN: 0,
       EUR: 0,
