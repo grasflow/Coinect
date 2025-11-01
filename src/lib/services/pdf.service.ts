@@ -1,5 +1,7 @@
 import type { InvoiceDetailDTO, Profile, Client } from "@/types";
 import { autoTable } from "jspdf-autotable";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 export interface GeneratePDFOptions {
   invoice: InvoiceDetailDTO;
@@ -21,14 +23,16 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
   });
 
   /** FONTY **/
-  // Load fonts from public directory using fetch (Cloudflare Workers compatible)
-  const fontNormalResponse = await fetch("/DejaVuSans.ttf");
-  const fontNormalBuffer = await fontNormalResponse.arrayBuffer();
-  const fontNormal = Buffer.from(fontNormalBuffer).toString("base64");
+  // Load fonts from public directory using file system
+  const publicDir = join(process.cwd(), "public");
+  const fontNormalPath = join(publicDir, "DejaVuSans.ttf");
+  const fontBoldPath = join(publicDir, "DejaVuSans-Bold.ttf");
 
-  const fontBoldResponse = await fetch("/DejaVuSans-Bold.ttf");
-  const fontBoldBuffer = await fontBoldResponse.arrayBuffer();
-  const fontBold = Buffer.from(fontBoldBuffer).toString("base64");
+  const fontNormalBuffer = await readFile(fontNormalPath);
+  const fontNormal = fontNormalBuffer.toString("base64");
+
+  const fontBoldBuffer = await readFile(fontBoldPath);
+  const fontBold = fontBoldBuffer.toString("base64");
 
   doc.addFileToVFS("DejaVuSans.ttf", fontNormal);
   doc.addFont("DejaVuSans.ttf", "DejaVuSans", "normal");
