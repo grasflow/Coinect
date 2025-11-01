@@ -268,6 +268,7 @@ export interface AIInsightsAnalysisDTO {
     suggestions: string[];
   };
   action_items: string[];
+  entries_count: number;
   generated_at: string;
 }
 

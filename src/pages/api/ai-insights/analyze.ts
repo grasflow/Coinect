@@ -149,6 +149,7 @@ Przeanalizuj wzorce pracy, stawki, produktywność i zasugeruj konkretne działa
 
     const analysis: AIInsightsAnalysisDTO = {
       ...result.content,
+      entries_count: aiData.length,
       generated_at: new Date().toISOString(),
     };
 

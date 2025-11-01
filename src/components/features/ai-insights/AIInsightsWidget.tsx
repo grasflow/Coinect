@@ -269,6 +269,8 @@ export default function AIInsightsWidget() {
                       {/* Timestamp */}
                       <Muted className="text-[10px] text-gray-500 text-center">
                         Wygenerowano: {new Date(analysis.generated_at).toLocaleString("pl-PL")}
+                        <br />
+                        Na podstawie {analysis.entries_count} {analysis.entries_count === 1 ? 'wpisu' : (analysis.entries_count % 10 >= 2 && analysis.entries_count % 10 <= 4 && (analysis.entries_count % 100 < 10 || analysis.entries_count % 100 >= 20)) ? 'wpisy' : 'wpisów'}
                       </Muted>
                     </div>
                   )}
