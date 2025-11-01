@@ -196,7 +196,7 @@ export const InvoiceItemsEditor = memo(function InvoiceItemsEditor({
         ))}
 
         {/* Suma netto */}
-        <div className="flex justify-between border-t pt-4 text-lg font-semibold">
+        <div className="flex justify-between border-t pt-4 text-base md:text-lg font-semibold">
           <span>Suma netto:</span>
           <span>{formatCurrency(totalNet)}</span>
         </div>

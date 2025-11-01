@@ -241,7 +241,7 @@ function InvoiceGeneratorContent() {
   return (
     <div className="space-y-6">
       {/* Nagłówek strony */}
-      <h1 className="text-3xl font-bold">Nowa Faktura</h1>
+      <h1 className="text-2xl md:text-3xl font-bold">Nowa Faktura</h1>
 
       {/* Stepper */}
       <Card data-step-indicator>
@@ -299,7 +299,7 @@ function InvoiceGeneratorContent() {
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Tryb generowania faktury</h3>
+                <h3 className="text-base md:text-lg font-medium">Tryb generowania faktury</h3>
                 <Tabs
                   value={state.invoiceMode}
                   onValueChange={(value) => {

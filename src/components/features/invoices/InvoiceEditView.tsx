@@ -188,7 +188,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
           </Button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold">Edycja faktury {invoice.invoice_number}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold">Edycja faktury {invoice.invoice_number}</h1>
               {isModified && <Badge>Niezapisane zmiany</Badge>}
             </div>
             <p className="text-muted-foreground">Klient: {invoice.client?.name}</p>

@@ -162,17 +162,17 @@ function TimeEntriesViewContent() {
 
   return (
     <div className="container mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <H1>Wpisy Czasu</H1>
           <Muted>Zarządzaj swoimi wpisami czasu pracy</Muted>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleExport}>
+        <div className="flex flex-col gap-2 md:flex-row">
+          <Button variant="outline" size="sm" className="md:h-10 md:px-4" onClick={handleExport}>
             <DownloadIcon className="mr-2 h-4 w-4" />
             Eksportuj CSV
           </Button>
-          <Button onClick={handleAddNew}>
+          <Button size="sm" className="md:h-10 md:px-4" onClick={handleAddNew}>
             <PlusIcon className="mr-2 h-4 w-4" />
             Dodaj wpis
           </Button>

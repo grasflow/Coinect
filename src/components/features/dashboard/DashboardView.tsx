@@ -78,8 +78,14 @@ function DashboardViewContent() {
           <div>
             <H1>Dashboard</H1>
             <Muted>Przegląd Twojej aktywności</Muted>
+            <div className="mt-4 md:hidden">
+              <Button variant="filled" size="sm" onClick={() => (window.location.href = "/time-entries")}>
+                <Plus className="w-4 h-4 mr-2" />
+                Dodaj wpis czasu
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-3">
+          <div className="hidden md:flex gap-3">
             <Button variant="filled" size="default" onClick={() => (window.location.href = "/time-entries")}>
               <Plus className="w-4 h-4 mr-2" />
               Dodaj wpis czasu
@@ -92,16 +98,16 @@ function DashboardViewContent() {
           {/* Clients Count */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                <Card className="overflow-hidden transition-all hover:shadow-md cursor-help py-0">
+              <div className="h-full">
+                <Card className="h-full overflow-hidden transition-all hover:shadow-md cursor-help py-0">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="rounded-lg bg-blue-100 p-1.5 dark:bg-blue-900/20">
                         <Users className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold leading-none mb-0.5">{summary.clients_count}</div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Klienci</p>
+                    <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">{summary.clients_count}</div>
+                    <p className="text-xs text-muted-foreground">Klienci</p>
                   </CardContent>
                 </Card>
               </div>
@@ -114,18 +120,18 @@ function DashboardViewContent() {
           {/* Unbilled Hours */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                <Card className="overflow-hidden transition-all hover:shadow-md cursor-help py-0">
+              <div className="h-full">
+                <Card className="h-full overflow-hidden transition-all hover:shadow-md cursor-help py-0">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="rounded-lg bg-amber-100 p-1.5 dark:bg-amber-900/20">
                         <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold leading-none mb-0.5">
+                    <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
                       {parseFloat(summary.unbilled_hours).toFixed(1)}h
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                    <p className="text-xs text-muted-foreground">
                       Niezafakturowane h
                     </p>
                   </CardContent>
@@ -144,18 +150,18 @@ function DashboardViewContent() {
           {/* Current Month Invoices */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                <Card className="overflow-hidden transition-all hover:shadow-md cursor-help py-0">
+              <div className="h-full">
+                <Card className="h-full overflow-hidden transition-all hover:shadow-md cursor-help py-0">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="rounded-lg bg-green-100 p-1.5 dark:bg-green-900/20">
                         <FileText className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold leading-none mb-0.5">
+                    <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
                       {(summary.current_month_invoices.total_gross_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                    <p className="text-xs text-muted-foreground">
                       Bieżący miesiąc
                     </p>
                   </CardContent>
@@ -178,18 +184,18 @@ function DashboardViewContent() {
           {/* Total Amount */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                <Card className="overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-primary/5 to-transparent cursor-help py-0">
+              <div className="h-full">
+                <Card className="h-full overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-primary/5 to-transparent cursor-help py-0">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="rounded-lg bg-primary/10 p-1.5">
                         <TrendingUp className="h-3.5 w-3.5 text-primary" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold leading-none mb-0.5">
+                    <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
                       {(summary.total_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">Suma wpisów</p>
+                    <p className="text-xs text-muted-foreground">Suma wpisów</p>
                   </CardContent>
                 </Card>
               </div>
@@ -206,18 +212,18 @@ function DashboardViewContent() {
           {/* Unbilled Amount */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                <Card className="overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-orange-50 to-transparent dark:from-orange-900/10 cursor-help py-0">
+              <div className="h-full">
+                <Card className="h-full overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-orange-50 to-transparent dark:from-orange-900/10 cursor-help py-0">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="rounded-lg bg-orange-100 p-1.5 dark:bg-orange-900/20">
                         <DollarSign className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold leading-none mb-0.5 text-orange-600 dark:text-orange-400">
+                    <div className="text-xl md:text-2xl font-bold leading-none mb-1.5 text-orange-600 dark:text-orange-400">
                       {(summary.unbilled_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                    <p className="text-xs text-muted-foreground">
                       Do zafakturowania
                     </p>
                   </CardContent>
@@ -236,18 +242,18 @@ function DashboardViewContent() {
           {/* Billed Amount */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                <Card className="overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-emerald-50 to-transparent dark:from-emerald-900/10 cursor-help py-0">
+              <div className="h-full">
+                <Card className="h-full overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-emerald-50 to-transparent dark:from-emerald-900/10 cursor-help py-0">
                   <CardContent className="p-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="rounded-lg bg-emerald-100 p-1.5 dark:bg-emerald-900/20">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold leading-none mb-0.5 text-emerald-600 dark:text-emerald-400">
+                    <div className="text-xl md:text-2xl font-bold leading-none mb-1.5 text-emerald-600 dark:text-emerald-400">
                       {(summary.billed_amount_pln / 1000).toFixed(1)}k
                     </div>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-medium">
+                    <p className="text-xs text-muted-foreground">
                       Zafakturowane
                     </p>
                   </CardContent>
@@ -267,12 +273,12 @@ function DashboardViewContent() {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <CardTitle>Ostatnie wpisy czasu</CardTitle>
                 <CardDescription>5 najnowszych wpisów</CardDescription>
               </div>
-              <Button variant="plain" size="sm" onClick={() => (window.location.href = "/time-entries")}>
+              <Button variant="plain" size="sm" className="self-start -ml-3 md:ml-0 md:self-auto" onClick={() => (window.location.href = "/time-entries")}>
                 Zobacz wszystkie
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
@@ -319,12 +325,12 @@ function DashboardViewContent() {
         {/* Recent Invoices */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <CardTitle>Ostatnie faktury</CardTitle>
                 <CardDescription>5 najnowszych faktur</CardDescription>
               </div>
-              <Button variant="plain" size="sm" onClick={() => (window.location.href = "/invoices")}>
+              <Button variant="plain" size="sm" className="self-start -ml-3 md:ml-0 md:self-auto" onClick={() => (window.location.href = "/invoices")}>
                 Zobacz wszystkie
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Button>

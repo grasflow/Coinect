@@ -173,7 +173,7 @@ export function LoginForm() {
         <Button
           type="submit"
           variant="filled"
-          className="w-full h-11 text-base font-semibold shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 transition-all"
+          className="w-full h-11 text-sm md:text-base font-semibold shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 transition-all"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
