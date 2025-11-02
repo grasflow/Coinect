@@ -111,10 +111,8 @@ export function useInvoiceGenerator() {
       const { issueDate, paymentTermDays } = prev.settings;
 
       // Jeśli paymentTermDays nie jest 'custom', przelicz dueDate automatycznie
-      if (paymentTermDays !== 'custom' && paymentTermDays !== undefined) {
-        const newDueDate = paymentTermDays === 'immediate'
-          ? issueDate
-          : addDays(issueDate, paymentTermDays);
+      if (paymentTermDays !== "custom" && paymentTermDays !== undefined) {
+        const newDueDate = paymentTermDays === "immediate" ? issueDate : addDays(issueDate, paymentTermDays);
 
         // Tylko aktualizuj jeśli data się zmieniła
         if (prev.settings.dueDate?.getTime() !== newDueDate.getTime()) {

@@ -30,7 +30,10 @@ const generateInvoiceSchema = z
       .optional(),
     custom_exchange_rate: z.number().positive().nullable().optional(),
     notes: z.string().optional(),
-    due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    due_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .optional(),
   })
   .refine(
     (data) => {

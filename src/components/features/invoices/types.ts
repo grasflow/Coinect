@@ -56,7 +56,7 @@ export interface InvoiceSettingsViewModel {
   isCustomExchangeRate?: boolean; // Czy kurs został ręcznie nadpisany
   notes?: string; // Dodatkowe uwagi wyświetlane na dole faktury
   dueDate?: Date; // Termin płatności
-  paymentTermDays?: number | 'immediate' | 'custom' | 'month'; // Wybrany termin w dniach, 'natychmiast', 'wybrana data' lub '1 miesiąc'
+  paymentTermDays?: number | "immediate" | "custom" | "month"; // Wybrany termin w dniach, 'natychmiast', 'wybrana data' lub '1 miesiąc'
 }
 
 /**

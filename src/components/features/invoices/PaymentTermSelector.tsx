@@ -6,25 +6,25 @@ import { addDays, addMonths } from "date-fns";
 interface PaymentTermSelectorProps {
   issueDate: Date;
   dueDate?: Date;
-  paymentTermDays?: number | 'immediate' | 'custom' | 'month';
-  onChange: (dueDate: Date, paymentTermDays: number | 'immediate' | 'custom' | 'month') => void;
+  paymentTermDays?: number | "immediate" | "custom" | "month";
+  onChange: (dueDate: Date, paymentTermDays: number | "immediate" | "custom" | "month") => void;
 }
 
 const PAYMENT_TERMS = [
-  { value: 'immediate', label: 'natychmiast' },
-  { value: '1', label: '1 dzień' },
-  { value: '3', label: '3 dni' },
-  { value: '5', label: '5 dni' },
-  { value: '7', label: '7 dni' },
-  { value: '14', label: '14 dni' },
-  { value: '21', label: '21 dni' },
-  { value: '30', label: '30 dni' },
-  { value: '45', label: '45 dni' },
-  { value: '60', label: '60 dni' },
-  { value: '75', label: '75 dni' },
-  { value: '90', label: '90 dni' },
-  { value: 'month', label: '1 miesiąc' },
-  { value: 'custom', label: 'wybrana data' },
+  { value: "immediate", label: "natychmiast" },
+  { value: "1", label: "1 dzień" },
+  { value: "3", label: "3 dni" },
+  { value: "5", label: "5 dni" },
+  { value: "7", label: "7 dni" },
+  { value: "14", label: "14 dni" },
+  { value: "21", label: "21 dni" },
+  { value: "30", label: "30 dni" },
+  { value: "45", label: "45 dni" },
+  { value: "60", label: "60 dni" },
+  { value: "75", label: "75 dni" },
+  { value: "90", label: "90 dni" },
+  { value: "month", label: "1 miesiąc" },
+  { value: "custom", label: "wybrana data" },
 ];
 
 function formatDate(date: Date): string {
@@ -34,17 +34,17 @@ function formatDate(date: Date): string {
 export function PaymentTermSelector({ issueDate, dueDate, paymentTermDays, onChange }: PaymentTermSelectorProps) {
   const handlePaymentTermChange = (value: string) => {
     let newDueDate: Date;
-    let newPaymentTermDays: number | 'immediate' | 'custom' | 'month';
+    let newPaymentTermDays: number | "immediate" | "custom" | "month";
 
-    if (value === 'immediate') {
+    if (value === "immediate") {
       newDueDate = issueDate;
-      newPaymentTermDays = 'immediate';
-    } else if (value === 'custom') {
+      newPaymentTermDays = "immediate";
+    } else if (value === "custom") {
       newDueDate = dueDate || addDays(issueDate, 7);
-      newPaymentTermDays = 'custom';
-    } else if (value === 'month') {
+      newPaymentTermDays = "custom";
+    } else if (value === "month") {
       newDueDate = addMonths(issueDate, 1);
-      newPaymentTermDays = 'month';
+      newPaymentTermDays = "month";
     } else {
       const days = parseInt(value, 10);
       newDueDate = addDays(issueDate, days);
@@ -56,15 +56,18 @@ export function PaymentTermSelector({ issueDate, dueDate, paymentTermDays, onCha
 
   const handleCustomDateChange = (dateStr: string) => {
     const newDate = new Date(dateStr);
-    onChange(newDate, 'custom');
+    onChange(newDate, "custom");
   };
 
   // Determine current value for the select
   const selectValue =
-    paymentTermDays === 'immediate' ? 'immediate' :
-    paymentTermDays === 'custom' ? 'custom' :
-    paymentTermDays === 'month' ? 'month' :
-    String(paymentTermDays || '7');
+    paymentTermDays === "immediate"
+      ? "immediate"
+      : paymentTermDays === "custom"
+        ? "custom"
+        : paymentTermDays === "month"
+          ? "month"
+          : String(paymentTermDays || "7");
 
   return (
     <div className="space-y-2">
@@ -83,7 +86,7 @@ export function PaymentTermSelector({ issueDate, dueDate, paymentTermDays, onCha
       </Select>
 
       {/* Show date picker when 'wybrana data' is selected */}
-      {paymentTermDays === 'custom' && (
+      {paymentTermDays === "custom" && (
         <div className="space-y-2 pt-2">
           <Label htmlFor="custom-due-date" className="text-xs text-muted-foreground">
             Wybierz datę terminu płatności
@@ -99,10 +102,8 @@ export function PaymentTermSelector({ issueDate, dueDate, paymentTermDays, onCha
       )}
 
       {/* Show calculated due date for non-custom selections */}
-      {paymentTermDays !== 'custom' && dueDate && (
-        <p className="text-xs text-muted-foreground">
-          Termin: {dueDate.toLocaleDateString('pl-PL')}
-        </p>
+      {paymentTermDays !== "custom" && dueDate && (
+        <p className="text-xs text-muted-foreground">Termin: {dueDate.toLocaleDateString("pl-PL")}</p>
       )}
     </div>
   );

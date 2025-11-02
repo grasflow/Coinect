@@ -19,7 +19,10 @@ const updateInvoiceSchema = z.object({
     .optional(),
   custom_exchange_rate: z.number().nullable().optional(),
   notes: z.string().nullable().optional(),
-  due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  due_date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 });
 
 const patchInvoiceSchema = z.object({

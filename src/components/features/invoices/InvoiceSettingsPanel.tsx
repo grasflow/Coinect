@@ -67,7 +67,7 @@ export const InvoiceSettingsPanel = memo(
       onChange({ notes: value || undefined });
     };
 
-    const handlePaymentTermChange = (dueDate: Date, paymentTermDays: number | 'immediate' | 'custom' | 'month') => {
+    const handlePaymentTermChange = (dueDate: Date, paymentTermDays: number | "immediate" | "custom" | "month") => {
       onChange({ dueDate, paymentTermDays });
     };
 

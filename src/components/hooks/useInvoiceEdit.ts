@@ -72,7 +72,7 @@ export function useUpdateInvoice(invoiceId: string) {
 function calculatePaymentTermDays(
   issueDate: Date,
   dueDate: Date | undefined
-): number | 'immediate' | 'custom' | 'month' {
+): number | "immediate" | "custom" | "month" {
   if (!dueDate) {
     return 7; // Domyślnie 7 dni jeśli brak dueDate
   }
@@ -81,7 +81,7 @@ function calculatePaymentTermDays(
 
   // Natychmiastowa płatność
   if (daysDiff === 0) {
-    return 'immediate';
+    return "immediate";
   }
 
   // Sprawdź czy to dokładnie 1 miesiąc
@@ -91,9 +91,8 @@ function calculatePaymentTermDays(
     const expectedMonthDate = new Date(issueDate);
     expectedMonthDate.setMonth(expectedMonthDate.getMonth() + 1);
 
-    if (expectedMonthDate.getDate() === dueDate.getDate() &&
-        expectedMonthDate.getMonth() === dueDate.getMonth()) {
-      return 'month';
+    if (expectedMonthDate.getDate() === dueDate.getDate() && expectedMonthDate.getMonth() === dueDate.getMonth()) {
+      return "month";
     }
   }
 
@@ -104,7 +103,7 @@ function calculatePaymentTermDays(
   }
 
   // Niestandardowa data
-  return 'custom';
+  return "custom";
 }
 
 /**
