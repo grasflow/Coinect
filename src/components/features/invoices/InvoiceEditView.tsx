@@ -121,7 +121,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
       document.body.removeChild(a);
 
       toast.success("PDF został pobrany", { id: toastId });
-    } catch (error) {
+    } catch {
       toast.error("Nie udało się pobrać PDF", { id: toastId });
     }
   };

@@ -108,10 +108,7 @@ export function BottomNavigation() {
 
                 {/* Icon with subtle animation */}
                 <Icon
-                  className={cn(
-                    "w-6 h-6 transition-transform duration-200",
-                    active && "scale-110"
-                  )}
+                  className={cn("w-6 h-6 transition-transform duration-200", active && "scale-110")}
                   strokeWidth={active ? 2.5 : 2}
                   aria-hidden="true"
                 />

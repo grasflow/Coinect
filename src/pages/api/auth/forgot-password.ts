@@ -73,9 +73,6 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
-    // Log error for debugging
-    if (error instanceof Error) {
-    }
     return new Response(
       JSON.stringify({
         error: {

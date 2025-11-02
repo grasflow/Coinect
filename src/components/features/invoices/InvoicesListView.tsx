@@ -57,7 +57,7 @@ function InvoicesListContent() {
       document.body.removeChild(a);
 
       toast.success("PDF został pobrany", { id: toastId });
-    } catch (error) {
+    } catch {
       toast.error("Nie udało się pobrać PDF", { id: toastId });
     }
   };
@@ -104,7 +104,10 @@ function InvoicesListContent() {
           <H1>Faktury</H1>
           <Muted>Zarządzaj fakturami i śledź płatności</Muted>
         </div>
-        <Button onClick={() => (window.location.href = "/invoices/new")} className="self-start md:self-auto md:shrink-0">
+        <Button
+          onClick={() => (window.location.href = "/invoices/new")}
+          className="self-start md:self-auto md:shrink-0"
+        >
           <Plus className="mr-2 h-4 w-4" />
           <Text className="md:hidden">Nowa faktura</Text>
           <span className="hidden md:inline">Nowa faktura</span>

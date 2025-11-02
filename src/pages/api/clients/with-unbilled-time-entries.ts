@@ -80,14 +80,14 @@ export const GET: APIRoute = async (context) => {
           }
           return acc;
         },
-        [] as typeof data
+        [] as Omit<NonNullable<typeof data>[number], "time_entries">[]
       ) || [];
 
     return new Response(JSON.stringify(uniqueClients), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: {

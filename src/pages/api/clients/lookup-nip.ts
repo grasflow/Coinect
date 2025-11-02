@@ -39,7 +39,6 @@ export const GET: APIRoute = async ({ url }) => {
       },
     });
   } catch (error) {
-
     const errorMessage = error instanceof Error ? error.message : "Nie udało się pobrać danych firmy";
 
     return new Response(
