@@ -170,7 +170,6 @@ Odkryj to, czego dane nie mówią wprost. Szukaj historii za liczbami.`,
   } catch (e: unknown) {
     const error = e as Error & { name?: string };
 
-    console.error("AI Insights analysis error:", error);
 
     const statusCode = error.name === "OpenRouterAuthError" ? 401 : 500;
     const errorMessage = error?.message ?? "Unknown error occurred";

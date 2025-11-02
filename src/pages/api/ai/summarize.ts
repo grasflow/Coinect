@@ -74,8 +74,6 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (e: unknown) {
     const error = e instanceof Error ? e : new Error("Unknown error");
-    console.error("Error in /api/ai/summarize:", error);
-    console.error("Error details:", {
       name: error.name,
       message: error.message,
       stack: error.stack,

@@ -89,7 +89,6 @@ export const GET: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching invoice:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -282,7 +281,6 @@ export const PUT: APIRoute = async (context) => {
       );
     }
 
-    console.error("Error updating invoice:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -363,7 +361,6 @@ export const PATCH: APIRoute = async (context) => {
       );
     }
 
-    console.error("Error patching invoice:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -461,7 +458,6 @@ export const DELETE: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-    console.error("Error deleting invoice:", error);
     return new Response(
       JSON.stringify({
         error: {

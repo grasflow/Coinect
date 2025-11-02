@@ -39,7 +39,6 @@ export const GET: APIRoute = async ({ url }) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching company data from Biała Lista VAT:", error);
 
     const errorMessage = error instanceof Error ? error.message : "Nie udało się pobrać danych firmy";
 

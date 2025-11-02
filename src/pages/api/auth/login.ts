@@ -80,7 +80,6 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Nieoczekiwany błąd
-    console.error("Login error:", error);
     return new Response(
       JSON.stringify({
         error: {

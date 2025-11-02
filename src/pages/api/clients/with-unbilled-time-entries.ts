@@ -54,7 +54,6 @@ export const GET: APIRoute = async (context) => {
       .order("name");
 
     if (error) {
-      console.error("Database error:", error);
       return new Response(
         JSON.stringify({
           error: {
@@ -89,7 +88,6 @@ export const GET: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Unexpected error:", error);
     return new Response(
       JSON.stringify({
         error: {

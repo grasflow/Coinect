@@ -28,9 +28,6 @@ interface GenerateInvoiceResponse {
 }
 
 async function generateInvoice(command: GenerateInvoiceCommand): Promise<GenerateInvoiceResponse> {
-  // eslint-disable-next-line no-console
-  console.log("Wysyłanie danych do API:", JSON.stringify(command, null, 2));
-
   const response = await fetch("/api/invoices/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -39,15 +36,6 @@ async function generateInvoice(command: GenerateInvoiceCommand): Promise<Generat
 
   if (!response.ok) {
     const error = await response.json();
-    // eslint-disable-next-line no-console
-    console.error("Błąd API:", JSON.stringify(error, null, 2));
-
-    // Jeśli są szczegóły walidacji, pokaż je
-    if (error.error?.details) {
-      // eslint-disable-next-line no-console
-      console.error("Szczegóły walidacji:", JSON.stringify(error.error.details, null, 2));
-    }
-
     throw new Error(error.error?.message || "Nie udało się wygenerować faktury");
   }
 

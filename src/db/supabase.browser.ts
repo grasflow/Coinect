@@ -5,21 +5,6 @@ import type { Database } from "./database.types";
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || import.meta.env.SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_KEY || import.meta.env.SUPABASE_KEY;
 
-// Enhanced environment check with detailed logging
-const envCheck = {
-  url: supabaseUrl || "❌ MISSING",
-  key: supabaseAnonKey ? `✅ SET (${supabaseAnonKey.length} chars)` : "❌ MISSING",
-  mode: import.meta.env.MODE,
-  isDev: import.meta.env.DEV,
-  isProd: import.meta.env.PROD,
-};
-
-// Log environment check in development mode only
-if (import.meta.env.DEV) {
-  // eslint-disable-next-line no-console
-  console.log("[Supabase Browser] Environment check:", envCheck);
-}
-
 // Throw error if environment variables are missing
 if (!supabaseUrl || !supabaseAnonKey) {
   const errorMessage =
@@ -32,9 +17,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
     "1. Variables must be set in GitHub Actions workflow\n" +
     "2. vite.define must be configured in astro.config.mjs\n" +
     "3. Environment variables must be added to Cloudflare Pages dashboard";
-
-  // eslint-disable-next-line no-console
-  console.error(errorMessage);
 
   throw new Error("Supabase client initialization failed: missing environment variables");
 }

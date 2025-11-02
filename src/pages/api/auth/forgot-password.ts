@@ -75,7 +75,6 @@ export const POST: APIRoute = async (context) => {
 
     // Log error for debugging
     if (error instanceof Error) {
-      console.error("Forgot password error:", error.message);
     }
     return new Response(
       JSON.stringify({

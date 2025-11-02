@@ -53,7 +53,6 @@ export const GET: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("GET /api/time-entries error:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -73,7 +72,6 @@ export const POST: APIRoute = async (context) => {
   try {
     // Validate that supabase client is initialized
     if (!context.locals.supabase) {
-      console.error("POST /api/time-entries error: Supabase client not initialized in context.locals");
       return new Response(
         JSON.stringify({
           error: {
@@ -94,7 +92,6 @@ export const POST: APIRoute = async (context) => {
     } = await context.locals.supabase.auth.getUser();
 
     if (authError || !user) {
-      console.error("POST /api/time-entries auth error:", authError);
       return new Response(
         JSON.stringify({
           error: {
@@ -124,7 +121,6 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("POST /api/time-entries validation error:", error.errors);
       return new Response(
         JSON.stringify({
           error: {
@@ -141,7 +137,6 @@ export const POST: APIRoute = async (context) => {
     }
 
     if (error instanceof NotFoundError) {
-      console.error("POST /api/time-entries not found error:", error.message);
       return new Response(
         JSON.stringify({
           error: {
@@ -157,7 +152,6 @@ export const POST: APIRoute = async (context) => {
     }
 
     if (error instanceof ForbiddenError) {
-      console.error("POST /api/time-entries forbidden error:", error.message);
       return new Response(
         JSON.stringify({
           error: {
@@ -172,7 +166,6 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
-    console.error("POST /api/time-entries error:", error);
     return new Response(
       JSON.stringify({
         error: {

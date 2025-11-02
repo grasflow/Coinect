@@ -51,7 +51,6 @@ export const GET: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("AI Insights status error:", error);
     return new Response(
       JSON.stringify({
         error: {

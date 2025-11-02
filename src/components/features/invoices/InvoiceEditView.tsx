@@ -122,8 +122,6 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
 
       toast.success("PDF został pobrany", { id: toastId });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Błąd pobierania PDF:", error);
       toast.error("Nie udało się pobrać PDF", { id: toastId });
     }
   };

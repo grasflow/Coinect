@@ -58,8 +58,6 @@ function InvoicesListContent() {
 
       toast.success("PDF został pobrany", { id: toastId });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Błąd pobierania PDF:", error);
       toast.error("Nie udało się pobrać PDF", { id: toastId });
     }
   };
@@ -101,14 +99,15 @@ function InvoicesListContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <H1>Faktury</H1>
           <Muted>Zarządzaj fakturami i śledź płatności</Muted>
         </div>
-        <Button onClick={() => (window.location.href = "/invoices/new")}>
+        <Button onClick={() => (window.location.href = "/invoices/new")} className="self-start md:self-auto md:shrink-0">
           <Plus className="mr-2 h-4 w-4" />
-          Nowa faktura
+          <Text className="md:hidden">Nowa faktura</Text>
+          <span className="hidden md:inline">Nowa faktura</span>
         </Button>
       </div>
 
@@ -205,7 +204,7 @@ function InvoicesListContent() {
 
               {/* Paginacja */}
               {totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <div className="text-sm text-muted-foreground" data-testid="pagination-info">
                     Strona {filters.page} z {totalPages}
                   </div>

@@ -50,7 +50,6 @@ export const GET: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Get profile error:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -115,7 +114,6 @@ export const PATCH: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-    console.error("Update profile error:", error);
 
     // Obsługa błędów walidacji Zod
     if (error instanceof ZodError) {

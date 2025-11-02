@@ -209,7 +209,6 @@ export const GET: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Dashboard summary error:", error);
     return new Response(
       JSON.stringify({
         error: {

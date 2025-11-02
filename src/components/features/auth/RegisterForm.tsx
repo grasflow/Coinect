@@ -14,8 +14,6 @@ export function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
-    getValues,
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     mode: "onSubmit",
@@ -32,53 +30,14 @@ export function RegisterForm() {
     },
   });
 
-  // DEBUG: Log component mount
-  React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log("🔵 [RegisterForm] Component mounted");
-    return () => {
-      // eslint-disable-next-line no-console
-      console.log("🔴 [RegisterForm] Component unmounted");
-    };
-  }, []);
-
-  // DEBUG: Log errors whenever they change
-  React.useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      // eslint-disable-next-line no-console
-      console.log("❌ [RegisterForm] Validation errors:", errors);
-    }
-  }, [errors]);
-
-  // DEBUG: Watch form values
-  React.useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      // eslint-disable-next-line no-console
-      console.log("📝 [RegisterForm] Field changed:", { name, type, value: value[name as keyof RegisterInput] });
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
   const onSubmit = async (data: RegisterInput) => {
-    // eslint-disable-next-line no-console
-    console.log("✅ [RegisterForm] onSubmit called with data:", data);
-    // eslint-disable-next-line no-console
-    console.log("📊 [RegisterForm] Current form values:", getValues());
-    // eslint-disable-next-line no-console
-    console.log("🔍 [RegisterForm] Current errors:", errors);
     setApiError("");
 
     try {
       const result = await AuthClientService.register(data);
 
-      // Log the response to debug session status
-      // eslint-disable-next-line no-console
-      console.log("📥 [RegisterForm] Registration response:", result);
-
       // Check if session was created (user is auto-logged in)
       if ("hasSession" in result && !result.hasSession) {
-        // eslint-disable-next-line no-console
-        console.log("⚠️ [RegisterForm] No session created - likely requires email verification");
         // Redirect to login with message
         window.location.assign("/login?registered=true");
       } else {
@@ -94,19 +53,8 @@ export function RegisterForm() {
     }
   };
 
-  // DEBUG: Wrapper for handleSubmit to log when form is submitted
-  const handleFormSubmit = (e: React.FormEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("🚀 [RegisterForm] Form submit event triggered");
-    // eslint-disable-next-line no-console
-    console.log("🚀 [RegisterForm] Event:", e);
-    // eslint-disable-next-line no-console
-    console.log("📋 [RegisterForm] Form values before submit:", getValues());
-    handleSubmit(onSubmit)(e);
-  };
-
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {apiError && (
         <div className="rounded-xl bg-red-50/80 p-4 border border-red-200/50 backdrop-blur-sm" role="alert">
           <div className="flex items-start">

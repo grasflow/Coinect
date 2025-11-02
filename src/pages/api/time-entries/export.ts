@@ -152,7 +152,6 @@ export const GET: APIRoute = async (context) => {
       },
     });
   } catch (error) {
-    console.error("Export time entries error:", error);
     return new Response(
       JSON.stringify({
         error: {

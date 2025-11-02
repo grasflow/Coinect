@@ -94,7 +94,6 @@ export const GET: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-    console.error("Error fetching invoices:", error);
     return new Response(
       JSON.stringify({
         error: {

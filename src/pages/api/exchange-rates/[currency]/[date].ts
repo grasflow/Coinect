@@ -34,7 +34,6 @@ async function fetchNBPRate(currency: string, date: string): Promise<number | nu
 
     return null;
   } catch (error) {
-    console.error("Error fetching NBP rate:", error);
     return null;
   }
 }
@@ -155,7 +154,6 @@ export const GET: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-    console.error("Error fetching exchange rate:", error);
     return new Response(
       JSON.stringify({
         error: {

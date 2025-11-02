@@ -12,8 +12,6 @@ export const GET: APIRoute = async (context) => {
   try {
     const invoiceId = context.params.id;
 
-    console.log("PDF endpoint wywołany dla faktury:", invoiceId);
-
     if (!invoiceId) {
       return new Response(
         JSON.stringify({
@@ -128,8 +126,6 @@ export const GET: APIRoute = async (context) => {
       },
     });
   } catch (error) {
-    console.error("Błąd generowania PDF:", error);
-
     return new Response(
       JSON.stringify({
         error: {

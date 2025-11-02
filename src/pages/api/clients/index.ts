@@ -86,7 +86,6 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("POST /api/clients validation error:", error.errors);
       return new Response(
         JSON.stringify({
           error: {
@@ -102,7 +101,6 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
-    console.error("POST /api/clients error:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -170,7 +168,6 @@ export const GET: APIRoute = async (context) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("GET /api/clients error:", error);
     return new Response(
       JSON.stringify({
         error: {

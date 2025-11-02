@@ -92,7 +92,6 @@ export const POST: APIRoute = async (context) => {
     });
 
     if (uploadError) {
-      console.error("Storage upload error:", uploadError);
       throw new Error(`Failed to upload file: ${uploadError.message}`);
     }
 
@@ -123,7 +122,6 @@ export const POST: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-    console.error("Upload logo error:", error);
     return new Response(
       JSON.stringify({
         error: {

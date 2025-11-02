@@ -15,12 +15,6 @@ export const POST: APIRoute = async (context) => {
 
     const { user, session } = await authService.register(validatedData);
 
-    // Log registration success for debugging
-    console.log("✅ [Register] User registered successfully:", {
-      userId: user.id,
-      hasSession: !!session,
-    });
-
     return new Response(
       JSON.stringify({
         success: true,

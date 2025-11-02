@@ -15,8 +15,6 @@ export function LoginForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
-    getValues,
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -24,33 +22,6 @@ export function LoginForm() {
       password: "",
     },
   });
-
-  // DEBUG: Log component mount
-  React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log("🔵 [LoginForm] Component mounted");
-    return () => {
-      // eslint-disable-next-line no-console
-      console.log("🔴 [LoginForm] Component unmounted");
-    };
-  }, []);
-
-  // DEBUG: Log errors whenever they change
-  React.useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      // eslint-disable-next-line no-console
-      console.log("❌ [LoginForm] Validation errors:", errors);
-    }
-  }, [errors]);
-
-  // DEBUG: Watch form values
-  React.useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      // eslint-disable-next-line no-console
-      console.log("📝 [LoginForm] Field changed:", { name, type, value: value[name as keyof LoginInput] });
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
 
   // Sprawdź czy jest komunikat o sukcesie resetowania hasła lub rejestracji
   React.useEffect(() => {
@@ -69,12 +40,6 @@ export function LoginForm() {
   }, []);
 
   const onSubmit = async (data: LoginInput) => {
-    // eslint-disable-next-line no-console
-    console.log("✅ [LoginForm] onSubmit called with data:", data);
-    // eslint-disable-next-line no-console
-    console.log("📊 [LoginForm] Current form values:", getValues());
-    // eslint-disable-next-line no-console
-    console.log("🔍 [LoginForm] Current errors:", errors);
     setApiError("");
 
     try {
@@ -91,19 +56,8 @@ export function LoginForm() {
     }
   };
 
-  // DEBUG: Wrapper for handleSubmit to log when form is submitted
-  const handleFormSubmit = (e: React.FormEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("🚀 [LoginForm] Form submit event triggered");
-    // eslint-disable-next-line no-console
-    console.log("🚀 [LoginForm] Event:", e);
-    // eslint-disable-next-line no-console
-    console.log("📋 [LoginForm] Form values before submit:", getValues());
-    handleSubmit(onSubmit)(e);
-  };
-
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {successMessage && (
         <div className="rounded-xl bg-green-50/80 p-4 border border-green-200/50 backdrop-blur-sm" role="alert">
           <div className="flex items-start">
