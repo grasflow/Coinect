@@ -300,7 +300,9 @@ function DashboardViewContent() {
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium text-sm leading-tight order-2 sm:order-1">{entry.client_name}</span>
+                        <span className="font-medium text-sm leading-tight order-2 sm:order-1">
+                          {entry.client_name}
+                        </span>
                         <Badge className="shrink-0 order-1 sm:order-2">
                           <HoursDisplay hours={entry.hours} />
                         </Badge>
@@ -371,9 +373,7 @@ function DashboardViewContent() {
                         <span className="font-medium text-sm leading-tight">{invoice.invoice_number}</span>
                         {invoice.is_manual && <Badge className="shrink-0">Ręczna</Badge>}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
-                        {invoice.client_name}
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{invoice.client_name}</p>
                     </div>
                     <div className="text-left sm:text-right sm:ml-3">
                       <p className="font-medium text-sm leading-tight">
