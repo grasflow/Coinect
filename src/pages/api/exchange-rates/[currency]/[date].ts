@@ -33,7 +33,7 @@ async function fetchNBPRate(currency: string, date: string): Promise<number | nu
     }
 
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -153,7 +153,7 @@ export const GET: APIRoute = async (context) => {
         headers: { "Content-Type": "application/json" },
       }
     );
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: {

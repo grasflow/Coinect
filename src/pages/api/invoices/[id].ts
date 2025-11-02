@@ -88,7 +88,7 @@ export const GET: APIRoute = async (context) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: {
@@ -457,7 +457,7 @@ export const DELETE: APIRoute = async (context) => {
         headers: { "Content-Type": "application/json" },
       }
     );
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: {

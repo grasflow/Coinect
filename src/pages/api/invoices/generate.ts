@@ -382,7 +382,6 @@ export const POST: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return new Response(
         JSON.stringify({

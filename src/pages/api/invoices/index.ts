@@ -93,7 +93,7 @@ export const GET: APIRoute = async (context) => {
         headers: { "Content-Type": "application/json" },
       }
     );
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
         error: {

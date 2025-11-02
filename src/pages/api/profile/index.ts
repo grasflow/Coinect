@@ -114,7 +114,6 @@ export const PATCH: APIRoute = async (context) => {
       }
     );
   } catch (error) {
-
     // Obsługa błędów walidacji Zod
     if (error instanceof ZodError) {
       return new Response(
