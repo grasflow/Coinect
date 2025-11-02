@@ -292,26 +292,28 @@ function DashboardViewContent() {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {summary.recent_time_entries.map((entry) => (
                   <div
                     key={entry.id}
-                    className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 sm:p-3.5 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50 transition-colors gap-1.5 sm:gap-4"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <Text className="font-medium">{entry.client_name}</Text>
-                        <Badge>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-sm leading-tight order-2 sm:order-1">{entry.client_name}</span>
+                        <Badge className="shrink-0 order-1 sm:order-2">
                           <HoursDisplay hours={entry.hours} />
                         </Badge>
                       </div>
                       {entry.public_description && (
-                        <Muted className="text-sm truncate">{entry.public_description}</Muted>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-2 sm:line-clamp-1">
+                          {entry.public_description}
+                        </p>
                       )}
                     </div>
-                    <Muted className="text-sm ml-4 whitespace-nowrap">
+                    <span className="text-xs text-muted-foreground whitespace-nowrap self-start sm:self-auto sm:ml-3">
                       {new Date(entry.date).toLocaleDateString("pl-PL")}
-                    </Muted>
+                    </span>
                   </div>
                 ))}
               </div>
@@ -349,13 +351,13 @@ function DashboardViewContent() {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {summary.recent_invoices.map((invoice) => (
                   <div
                     key={invoice.id}
                     role="button"
                     tabIndex={0}
-                    className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 sm:p-3.5 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50 transition-colors cursor-pointer gap-1.5 sm:gap-4"
                     onClick={() => (window.location.href = `/invoices`)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -365,19 +367,21 @@ function DashboardViewContent() {
                     }}
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <Text className="font-medium">{invoice.invoice_number}</Text>
-                        {invoice.is_manual && <Badge>Ręczna</Badge>}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-sm leading-tight">{invoice.invoice_number}</span>
+                        {invoice.is_manual && <Badge className="shrink-0">Ręczna</Badge>}
                       </div>
-                      <Muted className="text-sm truncate">{invoice.client_name}</Muted>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
+                        {invoice.client_name}
+                      </p>
                     </div>
-                    <div className="text-right ml-4">
-                      <Text className="font-medium">
+                    <div className="text-left sm:text-right sm:ml-3">
+                      <p className="font-medium text-sm leading-tight">
                         {invoice.gross_amount.toFixed(2)} {invoice.currency}
-                      </Text>
-                      <Muted className="text-sm whitespace-nowrap">
+                      </p>
+                      <p className="text-xs text-muted-foreground whitespace-nowrap leading-snug">
                         {new Date(invoice.issue_date).toLocaleDateString("pl-PL")}
-                      </Muted>
+                      </p>
                     </div>
                   </div>
                 ))}

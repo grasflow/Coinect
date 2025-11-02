@@ -186,6 +186,7 @@ function InvoiceGeneratorContent() {
         sale_date: state.settings.saleDate.toISOString().split("T")[0],
         vat_rate: state.settings.vatRate,
         custom_exchange_rate: state.settings.exchangeRate || null,
+        notes: state.settings.notes || undefined,
         // Dodaj dane warunkowo w zależności od trybu
         ...(state.invoiceMode === "time_entries" && {
           time_entry_ids: state.selectedTimeEntryIds,

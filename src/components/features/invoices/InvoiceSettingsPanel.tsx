@@ -2,6 +2,7 @@ import { useEffect, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
@@ -59,6 +60,10 @@ export const InvoiceSettingsPanel = memo(
         exchangeRate: rate,
         isCustomExchangeRate: true,
       });
+    };
+
+    const handleNotesChange = (value: string) => {
+      onChange({ notes: value || undefined });
     };
 
     return (
@@ -137,6 +142,22 @@ export const InvoiceSettingsPanel = memo(
               )}
             </div>
           )}
+
+          {/* Uwagi na fakturze */}
+          <div className="space-y-2">
+            <Label htmlFor="notes">Uwagi (opcjonalnie)</Label>
+            <Textarea
+              id="notes"
+              value={settings.notes || ""}
+              onChange={(e) => handleNotesChange(e.target.value)}
+              placeholder="Dodatkowe informacje wyświetlane na dole faktury..."
+              rows={3}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Uwagi będą wyświetlane na dole faktury, pod informacjami o płatności
+            </p>
+          </div>
         </CardContent>
       </Card>
     );

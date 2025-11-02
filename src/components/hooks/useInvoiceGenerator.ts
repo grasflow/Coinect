@@ -19,6 +19,7 @@ export function useInvoiceGenerator() {
       vatRate: 23,
       exchangeRate: null,
       isCustomExchangeRate: false,
+      notes: undefined,
     },
     summary: {
       netAmount: 0,

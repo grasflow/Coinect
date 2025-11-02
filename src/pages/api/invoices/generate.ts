@@ -29,6 +29,7 @@ const generateInvoiceSchema = z
       )
       .optional(),
     custom_exchange_rate: z.number().positive().nullable().optional(),
+    notes: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -297,6 +298,7 @@ export const POST: APIRoute = async (context) => {
         status: "unpaid",
         is_paid: false,
         is_manual: isManualInvoice,
+        notes: validatedData.notes || null,
       })
       .select()
       .single();

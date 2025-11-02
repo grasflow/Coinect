@@ -54,6 +54,7 @@ export interface InvoiceSettingsViewModel {
   vatRate: number; // Stawka VAT (23, 8, 0)
   exchangeRate?: number | null; // Kurs waluty (jeśli EUR/USD)
   isCustomExchangeRate?: boolean; // Czy kurs został ręcznie nadpisany
+  notes?: string; // Dodatkowe uwagi wyświetlane na dole faktury
 }
 
 /**

@@ -400,21 +400,18 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
 
   /** UWAGI **/
   if (invoice.notes) {
-    const notes = doc.splitTextToSize(invoice.notes, contentWidth - 20);
-    const notesH = notes.length * 6 + 10;
+    const notes = doc.splitTextToSize(invoice.notes, contentWidth);
+    const notesH = notes.length * 6;
     const notesY = y;
-    doc.setDrawColor(200, 200, 200);
-    doc.setFillColor(250, 250, 250);
-    doc.roundedRect(margin, notesY, contentWidth, notesH, 3, 3, "FD");
     doc.setFont("DejaVuSans", "bold");
     doc.setFontSize(10);
     doc.setTextColor(...accent);
-    doc.text("UWAGI:", margin + 5, notesY + 8);
+    doc.text("UWAGI:", margin, notesY + 5);
     doc.setFont("DejaVuSans", "normal");
     doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
-    doc.text(notes, margin + 5, notesY + 15);
-    y += notesH + 10;
+    doc.text(notes, margin, notesY + 12);
+    y += notesH + 17;
   }
 
   /** STOPKA **/

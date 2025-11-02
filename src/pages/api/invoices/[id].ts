@@ -18,6 +18,7 @@ const updateInvoiceSchema = z.object({
     )
     .optional(),
   custom_exchange_rate: z.number().nullable().optional(),
+  notes: z.string().nullable().optional(),
 });
 
 const patchInvoiceSchema = z.object({
@@ -164,6 +165,7 @@ export const PUT: APIRoute = async (context) => {
       vat_rate?: number;
       exchange_rate?: number | null;
       is_custom_exchange_rate?: boolean;
+      notes?: string | null;
     } = {
       is_edited: true,
       edited_at: new Date().toISOString(),
@@ -184,6 +186,10 @@ export const PUT: APIRoute = async (context) => {
     if (validatedData.custom_exchange_rate !== undefined) {
       updateData.exchange_rate = validatedData.custom_exchange_rate;
       updateData.is_custom_exchange_rate = validatedData.custom_exchange_rate !== null;
+    }
+
+    if (validatedData.notes !== undefined) {
+      updateData.notes = validatedData.notes;
     }
 
     const { error: updateError } = await context.locals.supabase

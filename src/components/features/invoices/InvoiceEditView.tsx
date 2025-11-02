@@ -73,6 +73,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
           unit_price: item.unitPrice,
         })),
         custom_exchange_rate: settings.exchangeRate || null,
+        notes: settings.notes || null,
       });
 
       // Zaktualizuj referencje do nowych wartości po zapisaniu

@@ -28,6 +28,7 @@ async function updateInvoice(
       unit_price: number;
     }[];
     custom_exchange_rate?: number | null;
+    notes?: string | null;
   }
 ) {
   const response = await fetch(`/api/invoices/${invoiceId}`, {
@@ -99,6 +100,7 @@ export function useInvoiceEditState(invoiceId: string): {
     vatRate: parseFloat(invoice.vat_rate),
     exchangeRate: invoice.exchange_rate ? parseFloat(invoice.exchange_rate) : null,
     isCustomExchangeRate: invoice.is_custom_exchange_rate || false,
+    notes: invoice.notes || undefined,
   };
 
   // Obliczenie podsumowania
