@@ -79,9 +79,16 @@ export class InvoicesPage {
   }
 
   async createNewInvoice() {
+    // Ensure page is fully loaded and hydrated
+    await this.page.waitForLoadState("domcontentloaded");
+    await this.page.waitForLoadState("networkidle", { timeout: 10000 });
+
     // Wait for button to be visible and enabled
     await this.newInvoiceButton.waitFor({ state: "visible", timeout: 10000 });
     await expect(this.newInvoiceButton).toBeEnabled({ timeout: 5000 });
+
+    // Additional wait to ensure React hydration is complete
+    await this.page.waitForTimeout(500);
 
     // Start waiting for navigation BEFORE clicking (prevents race conditions)
     const navigationPromise = this.page.waitForURL("/invoices/new", { timeout: 30000 });

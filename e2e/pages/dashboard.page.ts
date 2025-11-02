@@ -8,7 +8,8 @@ export class DashboardPage {
   constructor(page: Page) {
     this.page = page;
     this.heading = page.locator("main h1");
-    this.navigation = page.locator("nav");
+    // Use aria-label to target the main navigation specifically (avoids strict mode violation)
+    this.navigation = page.getByRole("navigation", { name: "Górna nawigacja" });
   }
 
   async goto() {
