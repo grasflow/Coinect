@@ -41,3 +41,14 @@ supabase/.env
 *.swp
 *.swo
 *~
+
+# Cloudflare Wrangler
+.wrangler/
+
+# AI tools
+.claude/
+
+# additional cache directories
+.cache/
+.temp/
+.tmp/
