@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { MainNavbar } from "@/components/features/auth/MainNavbar";
+import { BottomNavigation } from "@/components/features/navigation/BottomNavigation";
 import LayoutWrapper from "@/components/LayoutWrapper";
 
 interface Props {
@@ -35,7 +36,7 @@ const userEmail = profile?.email || user.email || "";
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
@@ -92,11 +93,13 @@ const userEmail = profile?.email || user.email || "";
 
     <div id="content-wrapper" class="contents">
       <LayoutWrapper client:load>
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 min-[900px]:pb-8">
           <slot />
         </main>
       </LayoutWrapper>
     </div>
+
+    <BottomNavigation client:load />
   </body>
 </html>
 

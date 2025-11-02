@@ -165,7 +165,7 @@ function TimeEntriesViewContent() {
           <H1>Wpisy Czasu</H1>
           <Muted>Zarządzaj swoimi wpisami czasu pracy</Muted>
         </div>
-        <div className="flex flex-col gap-2 md:flex-row">
+        <div className="flex gap-2 self-start md:self-auto">
           <Button variant="outline" size="sm" className="md:h-10 md:px-4" onClick={handleExport}>
             <DownloadIcon className="mr-2 h-4 w-4" />
             Eksportuj CSV

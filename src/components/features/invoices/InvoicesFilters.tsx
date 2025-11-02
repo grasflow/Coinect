@@ -114,7 +114,7 @@ export function InvoicesFilters({ filters, onChange, clients }: InvoicesFiltersP
 
       {/* Przycisk czyszczenia filtrów */}
       {hasActiveFilters && (
-        <div className="flex justify-end">
+        <div className="flex justify-start md:justify-end">
           <Button variant="outline" size="sm" onClick={handleClearFilters}>
             <X className="mr-2 h-4 w-4" />
             Wyczyść filtry
