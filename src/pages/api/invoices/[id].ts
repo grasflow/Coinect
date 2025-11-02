@@ -19,6 +19,7 @@ const updateInvoiceSchema = z.object({
     .optional(),
   custom_exchange_rate: z.number().nullable().optional(),
   notes: z.string().nullable().optional(),
+  due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 
 const patchInvoiceSchema = z.object({
@@ -190,6 +191,10 @@ export const PUT: APIRoute = async (context) => {
 
     if (validatedData.notes !== undefined) {
       updateData.notes = validatedData.notes;
+    }
+
+    if (validatedData.due_date !== undefined) {
+      updateData.due_date = validatedData.due_date;
     }
 
     const { error: updateError } = await context.locals.supabase

@@ -72,7 +72,7 @@ function DashboardViewContent() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <Stack className="space-y-8">
+      <Stack className="space-y-10">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -94,16 +94,16 @@ function DashboardViewContent() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-5">
           {/* Clients Count */}
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="h-full">
-                <Card className="h-full overflow-hidden transition-all hover:shadow-md cursor-help py-0">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="rounded-lg bg-blue-100 p-1.5 dark:bg-blue-900/20">
-                        <Users className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                <Card className="h-full overflow-hidden transition-all shadow-sm hover:shadow-lg cursor-help py-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="rounded-xl bg-blue-100 p-2 dark:bg-blue-900/20">
+                        <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       </div>
                     </div>
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">{summary.clients_count}</div>
@@ -121,11 +121,11 @@ function DashboardViewContent() {
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="h-full">
-                <Card className="h-full overflow-hidden transition-all hover:shadow-md cursor-help py-0">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="rounded-lg bg-amber-100 p-1.5 dark:bg-amber-900/20">
-                        <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                <Card className="h-full overflow-hidden transition-all shadow-sm hover:shadow-lg cursor-help py-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="rounded-xl bg-amber-100 p-2 dark:bg-amber-900/20">
+                        <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                       </div>
                     </div>
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
@@ -149,11 +149,11 @@ function DashboardViewContent() {
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="h-full">
-                <Card className="h-full overflow-hidden transition-all hover:shadow-md cursor-help py-0">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="rounded-lg bg-green-100 p-1.5 dark:bg-green-900/20">
-                        <FileText className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                <Card className="h-full overflow-hidden transition-all shadow-sm hover:shadow-lg cursor-help py-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="rounded-xl bg-green-100 p-2 dark:bg-green-900/20">
+                        <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
                       </div>
                     </div>
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
@@ -181,11 +181,11 @@ function DashboardViewContent() {
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="h-full">
-                <Card className="h-full overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-primary/5 to-transparent cursor-help py-0">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="rounded-lg bg-primary/10 p-1.5">
-                        <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                <Card className="h-full overflow-hidden transition-all shadow-sm hover:shadow-lg bg-gradient-to-br from-primary/10 to-primary/5 cursor-help py-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="rounded-xl bg-primary/15 p-2">
+                        <TrendingUp className="h-4 w-4 text-primary" />
                       </div>
                     </div>
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5">
@@ -209,11 +209,11 @@ function DashboardViewContent() {
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="h-full">
-                <Card className="h-full overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-orange-50 to-transparent dark:from-orange-900/10 cursor-help py-0">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="rounded-lg bg-orange-100 p-1.5 dark:bg-orange-900/20">
-                        <DollarSign className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                <Card className="h-full overflow-hidden transition-all shadow-sm hover:shadow-lg bg-gradient-to-br from-orange-100/50 to-orange-50/30 dark:from-orange-900/15 dark:to-orange-900/5 cursor-help py-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="rounded-xl bg-orange-100 p-2 dark:bg-orange-900/20">
+                        <DollarSign className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                       </div>
                     </div>
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5 text-orange-600 dark:text-orange-400">
@@ -237,11 +237,11 @@ function DashboardViewContent() {
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="h-full">
-                <Card className="h-full overflow-hidden transition-all hover:shadow-md bg-gradient-to-br from-emerald-50 to-transparent dark:from-emerald-900/10 cursor-help py-0">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="rounded-lg bg-emerald-100 p-1.5 dark:bg-emerald-900/20">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                <Card className="h-full overflow-hidden transition-all shadow-sm hover:shadow-lg bg-gradient-to-br from-emerald-100/50 to-emerald-50/30 dark:from-emerald-900/15 dark:to-emerald-900/5 cursor-help py-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="rounded-xl bg-emerald-100 p-2 dark:bg-emerald-900/20">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       </div>
                     </div>
                     <div className="text-xl md:text-2xl font-bold leading-none mb-1.5 text-emerald-600 dark:text-emerald-400">
@@ -263,7 +263,7 @@ function DashboardViewContent() {
         </div>
 
         {/* Recent Activity */}
-        <Card>
+        <Card className="shadow-sm transition-shadow hover:shadow-md">
           <CardHeader>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
@@ -292,11 +292,11 @@ function DashboardViewContent() {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {summary.recent_time_entries.map((entry) => (
                   <div
                     key={entry.id}
-                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 sm:p-3.5 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50 transition-colors gap-1.5 sm:gap-4"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3.5 sm:p-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:border-gray-700 dark:hover:bg-gray-800/50 dark:hover:border-gray-600 transition-all gap-2 sm:gap-4"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -308,7 +308,7 @@ function DashboardViewContent() {
                         </Badge>
                       </div>
                       {entry.public_description && (
-                        <p className="text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-2 sm:line-clamp-1">
+                        <p className="text-xs text-muted-foreground mt-1 leading-snug line-clamp-2 sm:line-clamp-1">
                           {entry.public_description}
                         </p>
                       )}
@@ -324,7 +324,7 @@ function DashboardViewContent() {
         </Card>
 
         {/* Recent Invoices */}
-        <Card>
+        <Card className="shadow-sm transition-shadow hover:shadow-md">
           <CardHeader>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
@@ -353,13 +353,13 @@ function DashboardViewContent() {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {summary.recent_invoices.map((invoice) => (
                   <div
                     key={invoice.id}
                     role="button"
                     tabIndex={0}
-                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 sm:p-3.5 rounded-lg border border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50 transition-colors cursor-pointer gap-1.5 sm:gap-4"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3.5 sm:p-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:border-gray-700 dark:hover:bg-gray-800/50 dark:hover:border-gray-600 transition-all cursor-pointer gap-2 sm:gap-4"
                     onClick={() => (window.location.href = `/invoices`)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -373,7 +373,7 @@ function DashboardViewContent() {
                         <span className="font-medium text-sm leading-tight">{invoice.invoice_number}</span>
                         {invoice.is_manual && <Badge className="shrink-0">Ręczna</Badge>}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{invoice.client_name}</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-snug">{invoice.client_name}</p>
                     </div>
                     <div className="text-left sm:text-right sm:ml-3">
                       <p className="font-medium text-sm leading-tight">

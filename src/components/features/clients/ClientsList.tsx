@@ -70,7 +70,7 @@ function ClientsListContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <H1>Klienci</H1>
@@ -79,7 +79,7 @@ function ClientsListContent() {
         <ClientForm />
       </div>
 
-      <Card>
+      <Card className="shadow-sm transition-shadow hover:shadow-md">
         <CardHeader>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <h2 className="flex items-center gap-2 leading-none font-semibold">

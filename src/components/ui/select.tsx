@@ -26,6 +26,7 @@ function SelectTrigger({
 }) {
   return (
     <SelectPrimitive.Trigger
+      type="button"
       data-slot="select-trigger"
       data-size={size}
       className={cn(
@@ -47,6 +48,8 @@ function SelectContent({
   children,
   position = "popper",
   align = "center",
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
   return (
@@ -61,6 +64,18 @@ function SelectContent({
         )}
         position={position}
         align={align}
+        onOpenAutoFocus={
+          onOpenAutoFocus ||
+          ((e) => {
+            e.preventDefault();
+          })
+        }
+        onCloseAutoFocus={
+          onCloseAutoFocus ||
+          ((e) => {
+            e.preventDefault();
+          })
+        }
         {...props}
       >
         <SelectScrollUpButton />

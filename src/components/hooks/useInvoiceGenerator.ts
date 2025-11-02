@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { addDays } from "date-fns";
 import type {
   InvoiceGeneratorState,
   InvoiceItemViewModel,
@@ -7,6 +8,7 @@ import type {
 } from "@/components/features/invoices/types";
 
 export function useInvoiceGenerator() {
+  const initialIssueDate = new Date();
   const [state, setState] = useState<InvoiceGeneratorState>({
     step: 1,
     invoiceMode: "time_entries",
@@ -14,12 +16,14 @@ export function useInvoiceGenerator() {
     items: [],
     manualItems: [],
     settings: {
-      issueDate: new Date(),
-      saleDate: new Date(),
+      issueDate: initialIssueDate,
+      saleDate: initialIssueDate,
       vatRate: 23,
       exchangeRate: null,
       isCustomExchangeRate: false,
       notes: undefined,
+      dueDate: addDays(initialIssueDate, 7), // Domyślnie 7 dni
+      paymentTermDays: 7, // Domyślnie 7 dni
     },
     summary: {
       netAmount: 0,
@@ -100,6 +104,33 @@ export function useInvoiceGenerator() {
       }
     }
   }, [state.step, state.invoiceMode, state.manualItems, state.items]);
+
+  // Automatyczne przeliczanie daty płatności przy zmianie daty wystawienia
+  useEffect(() => {
+    setState((prev) => {
+      const { issueDate, paymentTermDays } = prev.settings;
+
+      // Jeśli paymentTermDays nie jest 'custom', przelicz dueDate automatycznie
+      if (paymentTermDays !== 'custom' && paymentTermDays !== undefined) {
+        const newDueDate = paymentTermDays === 'immediate'
+          ? issueDate
+          : addDays(issueDate, paymentTermDays);
+
+        // Tylko aktualizuj jeśli data się zmieniła
+        if (prev.settings.dueDate?.getTime() !== newDueDate.getTime()) {
+          return {
+            ...prev,
+            settings: {
+              ...prev.settings,
+              dueDate: newDueDate,
+            },
+          };
+        }
+      }
+
+      return prev;
+    });
+  }, [state.settings.issueDate, state.settings.paymentTermDays]);
 
   // Automatyczne przeliczanie podsumowania
   useEffect(() => {

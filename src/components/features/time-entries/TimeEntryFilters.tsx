@@ -27,7 +27,7 @@ export function TimeEntryFilters({ filters, onFilterChange, clients, isLoadingCl
   };
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardContent>
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">

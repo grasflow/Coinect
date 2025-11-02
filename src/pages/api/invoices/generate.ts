@@ -30,6 +30,7 @@ const generateInvoiceSchema = z
       .optional(),
     custom_exchange_rate: z.number().positive().nullable().optional(),
     notes: z.string().optional(),
+    due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   })
   .refine(
     (data) => {
@@ -299,6 +300,7 @@ export const POST: APIRoute = async (context) => {
         is_paid: false,
         is_manual: isManualInvoice,
         notes: validatedData.notes || null,
+        due_date: validatedData.due_date || null,
       })
       .select()
       .single();

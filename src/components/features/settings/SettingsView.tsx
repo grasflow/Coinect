@@ -132,7 +132,7 @@ function SettingsViewContent() {
   }
 
   return (
-    <Stack className="space-y-6">
+    <Stack className="space-y-8">
       {/* Header */}
       <div>
         <H1>Ustawienia</H1>
@@ -140,7 +140,7 @@ function SettingsViewContent() {
       </div>
 
       {/* Profile Information */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <User className="w-5 h-5" />
@@ -293,7 +293,7 @@ function SettingsViewContent() {
       </Card>
 
       {/* Logo Upload */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Upload className="w-5 h-5" />
@@ -355,7 +355,7 @@ function SettingsViewContent() {
       </Card>
 
       {/* Invoice Styling */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Palette className="w-5 h-5" />

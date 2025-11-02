@@ -133,11 +133,18 @@
   }
 
   html {
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Prevent react-remove-scroll from causing scroll jumps in Radix UI components */
+  body[data-scroll-locked] {
+    overflow: visible !important;
+    margin-right: 0 !important;
   }
 
   /* Apply pointer cursor to all clickable elements */

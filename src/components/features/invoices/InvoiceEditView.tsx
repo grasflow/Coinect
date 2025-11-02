@@ -74,6 +74,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
         })),
         custom_exchange_rate: settings.exchangeRate || null,
         notes: settings.notes || null,
+        due_date: settings.dueDate?.toISOString().split("T")[0] || null,
       });
 
       // Zaktualizuj referencje do nowych wartości po zapisaniu
@@ -187,7 +188,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
           </Button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl md:text-3xl font-bold">Edycja faktury {invoice.invoice_number}</h1>
+              <h1 className="text-xl md:text-2xl font-bold">Edycja faktury {invoice.invoice_number}</h1>
               {isModified && <Badge>Niezapisane zmiany</Badge>}
             </div>
             <p className="text-muted-foreground">Klient: {invoice.client?.name}</p>

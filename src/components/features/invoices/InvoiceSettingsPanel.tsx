@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
 import type { InvoiceSettingsPanelProps } from "./types";
 import { useExchangeRate } from "@/components/hooks/useExchangeRate";
+import { PaymentTermSelector } from "./PaymentTermSelector";
 
 const VAT_RATES = [
   { value: 23, label: "23%" },
@@ -66,6 +67,10 @@ export const InvoiceSettingsPanel = memo(
       onChange({ notes: value || undefined });
     };
 
+    const handlePaymentTermChange = (dueDate: Date, paymentTermDays: number | 'immediate' | 'custom' | 'month') => {
+      onChange({ dueDate, paymentTermDays });
+    };
+
     return (
       <Card>
         <CardHeader>
@@ -93,6 +98,14 @@ export const InvoiceSettingsPanel = memo(
               onChange={(e) => handleSaleDateChange(e.target.value)}
             />
           </div>
+
+          {/* Termin płatności */}
+          <PaymentTermSelector
+            issueDate={settings.issueDate}
+            dueDate={settings.dueDate}
+            paymentTermDays={settings.paymentTermDays}
+            onChange={handlePaymentTermChange}
+          />
 
           {/* Stawka VAT */}
           <div className="space-y-2">

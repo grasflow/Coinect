@@ -49,7 +49,7 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardContent className="flex items-center justify-center py-12">
           <LoaderIcon className="h-8 w-8 animate-spin text-muted-foreground" />
         </CardContent>
@@ -59,7 +59,7 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
 
   if (data.data.length === 0) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Text className="text-center">Nie znaleziono wpisów czasu.</Text>
           <Muted className="text-center mt-2">Zmień filtry lub dodaj nowy wpis.</Muted>
@@ -69,7 +69,7 @@ export function TimeEntriesList({ data, isLoading, onEdit, onDelete, onPageChang
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm transition-shadow hover:shadow-md">
       <CardHeader>
         <h2 className="leading-none font-semibold">Wpisy czasu ({data.total})</h2>
       </CardHeader>

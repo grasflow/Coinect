@@ -187,6 +187,7 @@ function InvoiceGeneratorContent() {
         vat_rate: state.settings.vatRate,
         custom_exchange_rate: state.settings.exchangeRate || null,
         notes: state.settings.notes || undefined,
+        due_date: state.settings.dueDate?.toISOString().split("T")[0] || undefined,
         // Dodaj dane warunkowo w zależności od trybu
         ...(state.invoiceMode === "time_entries" && {
           time_entry_ids: state.selectedTimeEntryIds,
@@ -240,12 +241,12 @@ function InvoiceGeneratorContent() {
   })();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Nagłówek strony */}
-      <h1 className="text-2xl md:text-3xl font-bold">Nowa Faktura</h1>
+      <h1 className="text-xl md:text-2xl font-bold">Nowa Faktura</h1>
 
       {/* Stepper */}
-      <Card data-step-indicator>
+      <Card data-step-indicator className="shadow-sm">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             {STEPS.map((step, index) => (
@@ -290,14 +291,14 @@ function InvoiceGeneratorContent() {
 
       {/* Krok 1: Wybór klienta i trybu */}
       {state.step === 1 && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <ClientSelector
             value={state.clientId}
             onChange={selectClient}
             mode={state.invoiceMode === "time_entries" ? "with_unbilled_time_entries" : "all"}
           />
 
-          <Card>
+          <Card className="shadow-sm">
             <CardContent className="pt-6">
               <div className="space-y-4">
                 <h3 className="text-base md:text-lg font-medium">Tryb generowania faktury</h3>
@@ -354,7 +355,7 @@ function InvoiceGeneratorContent() {
 
       {/* Krok 2: Wybór wpisów / pozycje manualne */}
       {state.step === 2 && state.clientId && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {state.invoiceMode === "time_entries" ? (
             <UnbilledTimeEntriesSelector
               clientId={state.clientId}
@@ -369,8 +370,8 @@ function InvoiceGeneratorContent() {
 
       {/* Krok 3: Ustawienia i podsumowanie */}
       {state.step === 3 && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-8">
             {/* Dane stron faktury */}
             {profileData && clientData && (
               <InvoicePartiesPanel
@@ -407,7 +408,7 @@ function InvoiceGeneratorContent() {
       )}
 
       {/* Nawigacja */}
-      <Card>
+      <Card className="shadow-sm">
         <CardContent className="flex justify-between pt-6">
           <Button variant="outline" onClick={goToPreviousStep} disabled={state.step === 1}>
             <ArrowLeft className="mr-2 h-4 w-4" />

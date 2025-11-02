@@ -6,7 +6,7 @@ function H1({ className, children, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       data-slot="h1"
-      className={cn("text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight mb-2", className)}
+      className={cn("text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight mb-2", className)}
       {...props}
     >
       {children}

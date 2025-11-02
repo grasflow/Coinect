@@ -152,6 +152,8 @@ export interface GenerateInvoiceCommand {
     unit_price: number;
   }[];
   custom_exchange_rate?: number | null;
+  due_date?: string;
+  notes?: string;
 }
 
 // POST /api/invoices/generate response
@@ -176,6 +178,8 @@ export interface UpdateInvoiceCommand {
     unit_price: number;
   }[];
   custom_exchange_rate?: number | null;
+  due_date?: string;
+  notes?: string;
 }
 
 // PUT /api/invoices/{invoice_id} response

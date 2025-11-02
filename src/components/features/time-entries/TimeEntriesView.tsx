@@ -159,7 +159,7 @@ function TimeEntriesViewContent() {
   };
 
   return (
-    <div className="container mx-auto space-y-6">
+    <div className="container mx-auto space-y-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <H1>Wpisy Czasu</H1>

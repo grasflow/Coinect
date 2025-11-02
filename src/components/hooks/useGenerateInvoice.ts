@@ -16,6 +16,8 @@ interface GenerateInvoiceCommand {
     unit_price: number;
   }[];
   custom_exchange_rate?: number | null;
+  due_date?: string;
+  notes?: string;
 }
 
 interface GenerateInvoiceResponse {

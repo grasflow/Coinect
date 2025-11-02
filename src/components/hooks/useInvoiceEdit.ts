@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { differenceInDays, differenceInMonths } from "date-fns";
 import type {
   InvoiceEditState,
   InvoiceItemViewModel,
@@ -29,6 +30,7 @@ async function updateInvoice(
     }[];
     custom_exchange_rate?: number | null;
     notes?: string | null;
+    due_date?: string | null;
   }
 ) {
   const response = await fetch(`/api/invoices/${invoiceId}`, {
@@ -65,6 +67,47 @@ export function useUpdateInvoice(invoiceId: string) {
 }
 
 /**
+ * Oblicza paymentTermDays na podstawie różnicy między datą wystawienia a terminem płatności
+ */
+function calculatePaymentTermDays(
+  issueDate: Date,
+  dueDate: Date | undefined
+): number | 'immediate' | 'custom' | 'month' {
+  if (!dueDate) {
+    return 7; // Domyślnie 7 dni jeśli brak dueDate
+  }
+
+  const daysDiff = differenceInDays(dueDate, issueDate);
+
+  // Natychmiastowa płatność
+  if (daysDiff === 0) {
+    return 'immediate';
+  }
+
+  // Sprawdź czy to dokładnie 1 miesiąc
+  const monthsDiff = differenceInMonths(dueDate, issueDate);
+  if (monthsDiff === 1) {
+    // Sprawdź czy dzień miesiąca się zgadza (różnica może być 28-31 dni)
+    const expectedMonthDate = new Date(issueDate);
+    expectedMonthDate.setMonth(expectedMonthDate.getMonth() + 1);
+
+    if (expectedMonthDate.getDate() === dueDate.getDate() &&
+        expectedMonthDate.getMonth() === dueDate.getMonth()) {
+      return 'month';
+    }
+  }
+
+  // Standardowe wartości dni
+  const standardDays = [1, 3, 5, 7, 14, 21, 30, 45, 60, 75, 90];
+  if (standardDays.includes(daysDiff)) {
+    return daysDiff;
+  }
+
+  // Niestandardowa data
+  return 'custom';
+}
+
+/**
  * Hook do konwersji danych z API na EditState
  */
 export function useInvoiceEditState(invoiceId: string): {
@@ -94,13 +137,18 @@ export function useInvoiceEditState(invoiceId: string): {
   }));
 
   // Konwersja ustawień
+  const issueDate = new Date(invoice.issue_date);
+  const dueDate = invoice.due_date ? new Date(invoice.due_date) : undefined;
+
   const settings: InvoiceSettingsViewModel = {
-    issueDate: new Date(invoice.issue_date),
+    issueDate,
     saleDate: new Date(invoice.sale_date),
     vatRate: parseFloat(invoice.vat_rate),
     exchangeRate: invoice.exchange_rate ? parseFloat(invoice.exchange_rate) : null,
     isCustomExchangeRate: invoice.is_custom_exchange_rate || false,
     notes: invoice.notes || undefined,
+    dueDate,
+    paymentTermDays: calculatePaymentTermDays(issueDate, dueDate),
   };
 
   // Obliczenie podsumowania
