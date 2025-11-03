@@ -57,6 +57,7 @@ export interface InvoiceSettingsViewModel {
   notes?: string; // Dodatkowe uwagi wyświetlane na dole faktury
   dueDate?: Date; // Termin płatności
   paymentTermDays?: number | "immediate" | "custom" | "month"; // Wybrany termin w dniach, 'natychmiast', 'wybrana data' lub '1 miesiąc'
+  invoiceNumber?: string; // Numer faktury (edytowalny w widoku edycji)
 }
 
 /**

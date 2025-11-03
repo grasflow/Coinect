@@ -75,6 +75,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
         custom_exchange_rate: settings.exchangeRate || null,
         notes: settings.notes || null,
         due_date: settings.dueDate?.toISOString().split("T")[0] || null,
+        invoice_number: settings.invoiceNumber,
       });
 
       // Zaktualizuj referencje do nowych wartości po zapisaniu
@@ -225,8 +226,25 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
         <CardContent>
           <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-4">
             <div>
-              <div className="text-sm text-muted-foreground">Numer faktury</div>
-              <div className="font-semibold break-words">{invoice.invoice_number}</div>
+              <label htmlFor="invoice-number" className="text-sm text-muted-foreground">
+                Numer faktury
+              </label>
+              <input
+                id="invoice-number"
+                type="text"
+                value={settings?.invoiceNumber || ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Walidacja formatu podczas wpisywania
+                  if (value && !/^FV\/\d{0,4}\/?\d{0,2}\/?\d{0,3}$/.test(value)) {
+                    return; // Nie pozwalaj na nieprawidłowe znaki
+                  }
+                  handleUpdateSettings({ invoiceNumber: value });
+                }}
+                placeholder="FV/RRRR/MM/NNN"
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">Format: FV/RRRR/MM/NNN</p>
             </div>
             <div>
               <div className="text-sm text-muted-foreground">Waluta</div>

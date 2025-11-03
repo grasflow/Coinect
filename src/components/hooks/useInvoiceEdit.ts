@@ -31,6 +31,7 @@ async function updateInvoice(
     custom_exchange_rate?: number | null;
     notes?: string | null;
     due_date?: string | null;
+    invoice_number?: string;
   }
 ) {
   const response = await fetch(`/api/invoices/${invoiceId}`, {
@@ -148,6 +149,7 @@ export function useInvoiceEditState(invoiceId: string): {
     notes: invoice.notes || undefined,
     dueDate,
     paymentTermDays: calculatePaymentTermDays(issueDate, dueDate),
+    invoiceNumber: invoice.invoice_number,
   };
 
   // Obliczenie podsumowania

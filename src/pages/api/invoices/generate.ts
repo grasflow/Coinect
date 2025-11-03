@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { generateInvoiceNumber, amountToWords } from "@/lib/helpers/invoice.helpers";
+import { findNextInvoiceNumber, amountToWords } from "@/lib/helpers/invoice.helpers";
 
 export const prerender = false;
 
@@ -263,15 +263,21 @@ export const POST: APIRoute = async (context) => {
     }
 
     // 6. Generowanie numeru faktury
-    const { data: lastInvoice } = await context.locals.supabase
+    // Używamy daty faktury (issue_date) do określenia miesiąca i roku
+    const invoiceDate = new Date(validatedData.issue_date);
+    const year = invoiceDate.getFullYear();
+    const month = String(invoiceDate.getMonth() + 1).padStart(2, "0");
+
+    // Pobranie wszystkich faktur z tego samego miesiąca/roku
+    const { data: existingInvoices } = await context.locals.supabase
       .from("invoices")
       .select("invoice_number")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
+      .like("invoice_number", `FV/${year}/${month}/%`)
+      .is("deleted_at", null); // Pomijamy usunięte faktury
 
-    const invoiceNumber = generateInvoiceNumber(lastInvoice?.invoice_number || null);
+    const existingNumbers = existingInvoices?.map((inv) => inv.invoice_number) || [];
+    const invoiceNumber = findNextInvoiceNumber(existingNumbers, year, month);
 
     // 7. Kwota słownie
     const grossAmountWords = amountToWords(grossAmount, currency);

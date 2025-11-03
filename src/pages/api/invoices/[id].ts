@@ -23,6 +23,10 @@ const updateInvoiceSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
+  invoice_number: z
+    .string()
+    .regex(/^FV\/\d{4}\/\d{2}\/\d{3}$/, "Numer faktury musi mieć format FV/RRRR/MM/NNN")
+    .optional(),
 });
 
 const patchInvoiceSchema = z.object({
@@ -160,6 +164,32 @@ export const PUT: APIRoute = async (context) => {
       );
     }
 
+    // Sprawdzenie unikalności numeru faktury jeśli został zmieniony
+    if (validatedData.invoice_number && validatedData.invoice_number !== existingInvoice.invoice_number) {
+      const { data: duplicateInvoice } = await context.locals.supabase
+        .from("invoices")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("invoice_number", validatedData.invoice_number)
+        .is("deleted_at", null)
+        .single();
+
+      if (duplicateInvoice) {
+        return new Response(
+          JSON.stringify({
+            error: {
+              code: "VALIDATION_ERROR",
+              message: "Faktura o tym numerze już istnieje",
+            },
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    }
+
     // Aktualizacja podstawowych danych faktury
     const updateData: {
       is_edited: boolean;
@@ -170,6 +200,7 @@ export const PUT: APIRoute = async (context) => {
       exchange_rate?: number | null;
       is_custom_exchange_rate?: boolean;
       notes?: string | null;
+      invoice_number?: string;
     } = {
       is_edited: true,
       edited_at: new Date().toISOString(),
@@ -198,6 +229,10 @@ export const PUT: APIRoute = async (context) => {
 
     if (validatedData.due_date !== undefined) {
       updateData.due_date = validatedData.due_date;
+    }
+
+    if (validatedData.invoice_number) {
+      updateData.invoice_number = validatedData.invoice_number;
     }
 
     const { error: updateError } = await context.locals.supabase

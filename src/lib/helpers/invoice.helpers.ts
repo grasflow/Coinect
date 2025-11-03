@@ -37,14 +37,54 @@ export function isInvoiceOverdue(dueDate: string, status: string): boolean {
 }
 
 /**
+ * Znajduje pierwszy dostępny numer faktury dla danego miesiąca
+ * Wypełnia luki pozostawione po usuniętych fakturach
+ * @param existingNumbers - tablica numerów faktur z danego miesiąca (np. ["FV/2024/10/001", "FV/2024/10/003"])
+ * @param year - rok faktury
+ * @param month - miesiąc faktury (01-12)
+ * @returns następny dostępny numer faktury
+ */
+export function findNextInvoiceNumber(existingNumbers: string[], year: number, month: string): string {
+  if (existingNumbers.length === 0) {
+    return `FV/${year}/${month}/001`;
+  }
+
+  // Wyciągnij numery sekwencyjne i posortuj
+  const sequentialNumbers = existingNumbers
+    .map((num) => {
+      const parts = num.split("/");
+      if (parts.length === 4) {
+        return parseInt(parts[3], 10);
+      }
+      return 0;
+    })
+    .filter((num) => num > 0)
+    .sort((a, b) => a - b);
+
+  // Znajdź pierwszą lukę
+  for (let i = 0; i < sequentialNumbers.length; i++) {
+    const expectedNumber = i + 1;
+    if (sequentialNumbers[i] !== expectedNumber) {
+      // Znaleziono lukę
+      return `FV/${year}/${month}/${String(expectedNumber).padStart(3, "0")}`;
+    }
+  }
+
+  // Brak luk - użyj następnego numeru po maksymalnym
+  const nextNumber = sequentialNumbers[sequentialNumbers.length - 1] + 1;
+  return `FV/${year}/${month}/${String(nextNumber).padStart(3, "0")}`;
+}
+
+/**
  * Generuje numer faktury w formacie: FV/YYYY/MM/NNN
  * @param lastInvoiceNumber - ostatni numer faktury w danym miesiącu (np. "FV/2024/10/005")
+ * @param invoiceDate - data faktury (używana do określenia roku i miesiąca)
  * @returns nowy numer faktury
+ * @deprecated Użyj findNextInvoiceNumber() zamiast tej funkcji dla lepszej obsługi luk
  */
-export function generateInvoiceNumber(lastInvoiceNumber: string | null): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
+export function generateInvoiceNumber(lastInvoiceNumber: string | null, invoiceDate: Date): string {
+  const year = invoiceDate.getFullYear();
+  const month = String(invoiceDate.getMonth() + 1).padStart(2, "0");
 
   // Jeśli nie ma ostatniej faktury lub jest z innego miesiąca, zaczynamy od 001
   if (!lastInvoiceNumber) {
