@@ -180,25 +180,34 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="plain" size="sm" onClick={handleBack}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Powrót
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl md:text-2xl font-bold">Edycja faktury {invoice.invoice_number}</h1>
-              {isModified && <Badge>Niezapisane zmiany</Badge>}
+      <div className="space-y-4">
+        {/* Back button and title */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3 sm:items-center">
+            <Button variant="plain" size="sm" onClick={handleBack} className="shrink-0">
+              <ArrowLeft className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Powrót</span>
+            </Button>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-lg font-bold break-words sm:text-xl md:text-2xl">
+                  Edycja faktury {invoice.invoice_number}
+                </h1>
+                {isModified && <Badge className="shrink-0">Niezapisane zmiany</Badge>}
+              </div>
+              <p className="text-sm text-muted-foreground truncate sm:text-base">
+                Klient: {invoice.client?.name}
+              </p>
             </div>
-            <p className="text-muted-foreground">Klient: {invoice.client?.name}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Action buttons */}
+        <div className="flex gap-2 self-start sm:self-auto sm:justify-end">
           <Button variant="outline" onClick={handleDownloadPDF}>
             <Download className="mr-2 h-4 w-4" />
-            Pobierz PDF
+            <span className="hidden sm:inline">Pobierz PDF</span>
+            <span className="sm:hidden">PDF</span>
           </Button>
           <Button onClick={handleSave} disabled={!isModified || updateMutation.isPending}>
             <Save className="mr-2 h-4 w-4" />
@@ -216,10 +225,10 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
           <CardTitle>Informacje o fakturze</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-4">
             <div>
               <div className="text-sm text-muted-foreground">Numer faktury</div>
-              <div className="font-semibold">{invoice.invoice_number}</div>
+              <div className="font-semibold break-words">{invoice.invoice_number}</div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground">Waluta</div>

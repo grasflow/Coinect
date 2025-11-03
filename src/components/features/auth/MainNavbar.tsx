@@ -21,25 +21,25 @@ export function MainNavbar({ userName, userEmail }: MainNavbarProps) {
           <div className="hidden min-[900px]:flex items-center space-x-8">
             <a
               href="/dashboard"
-              className="text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors py-2"
+              className="flex items-center h-10 text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors"
             >
               Dashboard
             </a>
             <a
               href="/time-entries"
-              className="text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors py-2"
+              className="flex items-center h-10 text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors"
             >
               Wpisy czasu
             </a>
             <a
               href="/clients"
-              className="text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors py-2"
+              className="flex items-center h-10 text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors"
             >
               Klienci
             </a>
             <a
               href="/invoices"
-              className="text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors py-2"
+              className="flex items-center h-10 text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors"
             >
               Faktury
             </a>

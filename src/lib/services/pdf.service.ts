@@ -396,7 +396,20 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
     py += 6;
   });
 
-  y = Math.max(summaryY + summaryH, py) + 15;
+  y = Math.max(summaryY + summaryH, py) + 5;
+
+  // Słownie kwota do zapłaty - poniżej ramki podsumowania
+  const amountInWords = numberToWords(gross);
+  doc.setFont("DejaVuSans", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(80, 80, 80);
+  const wordsText = `Słownie: ${amountInWords}`;
+  const splitWords = doc.splitTextToSize(wordsText, summaryW - 10);
+  splitWords.forEach((line: string, i: number) => {
+    doc.text(line, summaryX + 5, y + i * 3.5);
+  });
+
+  y += splitWords.length * 3.5 + 10;
 
   /** UWAGI **/
   if (invoice.notes) {
@@ -450,6 +463,129 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
 }
 
 /** Pomocnicze **/
+
+/**
+ * Konwertuje liczbę na słowa po polsku (dla kwot w PLN)
+ */
+function numberToWords(amount: number): string {
+  const units = ["", "jeden", "dwa", "trzy", "cztery", "pięć", "sześć", "siedem", "osiem", "dziewięć"];
+  const teens = [
+    "dziesięć",
+    "jedenaście",
+    "dwanaście",
+    "trzynaście",
+    "czternaście",
+    "piętnaście",
+    "szesnaście",
+    "siedemnaście",
+    "osiemnaście",
+    "dziewiętnaście",
+  ];
+  const tens = ["", "", "dwadzieścia", "trzydzieści", "czterdzieści", "pięćdziesiąt", "sześćdziesiąt", "siedemdziesiąt", "osiemdziesiąt", "dziewięćdziesiąt"];
+  const hundreds = ["", "sto", "dwieście", "trzysta", "czterysta", "pięćset", "sześćset", "siedemset", "osiemset", "dziewięćset"];
+
+  // Rozdziel na złotówki i grosze
+  const [zlote, grosze] = amount.toFixed(2).split(".").map(Number);
+
+  // Funkcja pomocnicza do konwersji liczb 0-999
+  const convertUpTo999 = (num: number): string => {
+    if (num === 0) return "";
+
+    const parts: string[] = [];
+    const h = Math.floor(num / 100);
+    const t = Math.floor((num % 100) / 10);
+    const u = num % 10;
+
+    if (h > 0) parts.push(hundreds[h]);
+
+    if (t === 1) {
+      parts.push(teens[u]);
+    } else {
+      if (t > 0) parts.push(tens[t]);
+      if (u > 0 && t !== 1) parts.push(units[u]);
+    }
+
+    return parts.join(" ");
+  };
+
+  // Funkcja do odmian słów (1 tysiąc, 2 tysiące, 5 tysięcy)
+  const getThousandForm = (num: number): string => {
+    if (num === 1) return "tysiąc";
+    const lastDigit = num % 10;
+    const lastTwoDigits = num % 100;
+    if (lastTwoDigits >= 10 && lastTwoDigits <= 20) return "tysięcy";
+    if (lastDigit >= 2 && lastDigit <= 4) return "tysiące";
+    return "tysięcy";
+  };
+
+  const getMillionForm = (num: number): string => {
+    if (num === 1) return "milion";
+    const lastDigit = num % 10;
+    const lastTwoDigits = num % 100;
+    if (lastTwoDigits >= 10 && lastTwoDigits <= 20) return "milionów";
+    if (lastDigit >= 2 && lastDigit <= 4) return "miliony";
+    return "milionów";
+  };
+
+  const getCurrencyForm = (num: number, currency: "PLN" | "gr"): string => {
+    const lastDigit = num % 10;
+    const lastTwoDigits = num % 100;
+
+    if (currency === "PLN") {
+      if (num === 1) return "PLN";
+      if (lastTwoDigits >= 10 && lastTwoDigits <= 20) return "PLN";
+      if (lastDigit >= 2 && lastDigit <= 4) return "PLN";
+      return "PLN";
+    } else {
+      // grosze
+      if (num === 1) return "gr";
+      if (lastTwoDigits >= 10 && lastTwoDigits <= 20) return "gr";
+      if (lastDigit >= 2 && lastDigit <= 4) return "gr";
+      return "gr";
+    }
+  };
+
+  // Konwersja złotówek
+  let result = "";
+
+  if (zlote === 0) {
+    result = "zero";
+  } else {
+    const millions = Math.floor(zlote / 1000000);
+    const thousands = Math.floor((zlote % 1000000) / 1000);
+    const remainder = zlote % 1000;
+
+    const parts: string[] = [];
+
+    if (millions > 0) {
+      parts.push(convertUpTo999(millions));
+      parts.push(getMillionForm(millions));
+    }
+
+    if (thousands > 0) {
+      parts.push(convertUpTo999(thousands));
+      parts.push(getThousandForm(thousands));
+    }
+
+    if (remainder > 0) {
+      parts.push(convertUpTo999(remainder));
+    }
+
+    result = parts.join(" ");
+  }
+
+  result += " " + getCurrencyForm(zlote, "PLN");
+
+  // Dodaj grosze
+  if (grosze > 0) {
+    result += " " + convertUpTo999(grosze) + " " + getCurrencyForm(grosze, "gr");
+  } else {
+    result += " zero gr";
+  }
+
+  return result;
+}
+
 async function loadImageWithDimensions(url: string): Promise<{ base64: string; width: number; height: number }> {
   const res = await fetch(url);
   const buf = await res.arrayBuffer();

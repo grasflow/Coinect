@@ -158,7 +158,7 @@ export const InvoiceItemsEditor = memo(function InvoiceItemsEditor({
             </div>
 
             {/* Ilość, stawka i kwota */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor={`quantity-${index}`}>Ilość (godz.)</Label>
                 <Input
@@ -169,6 +169,7 @@ export const InvoiceItemsEditor = memo(function InvoiceItemsEditor({
                   value={item.quantity}
                   onChange={(e) => handleQuantityChange(index, e.target.value)}
                   disabled={!editable}
+                  className="text-base"
                 />
               </div>
 
@@ -182,12 +183,13 @@ export const InvoiceItemsEditor = memo(function InvoiceItemsEditor({
                   value={item.unitPrice}
                   onChange={(e) => handleUnitPriceChange(index, e.target.value)}
                   disabled={!editable}
+                  className="text-base"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Wartość netto</Label>
-                <div className="flex h-10 items-center rounded-md border bg-muted px-3 font-semibold">
+                <div className="flex h-10 items-center rounded-md border bg-muted px-3 text-base font-semibold">
                   {formatCurrency(item.netAmount)}
                 </div>
               </div>

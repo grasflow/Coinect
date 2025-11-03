@@ -7,6 +7,7 @@ import { Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { InvoicesFilters } from "./InvoicesFilters";
 import { InvoiceRow } from "./InvoiceRow";
+import { InvoiceMobileCard } from "./InvoiceMobileCard";
 import { useInvoices, useToggleInvoicePaid, useDeleteInvoice, useInvoiceTotals } from "@/components/hooks/useInvoices";
 import { useClients } from "@/components/hooks/useClients";
 import { InvoiceSummary } from "./InvoiceSummary";
@@ -180,30 +181,47 @@ function InvoicesListContent() {
             </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Numer</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Klient</TableHead>
-                    <TableHead className="text-right">Kwota brutto</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-[150px]">Akcje</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {invoices.map((invoice) => (
-                    <InvoiceRow
-                      key={invoice.id}
-                      invoice={invoice}
-                      onDownloadPDF={handleDownloadPDF}
-                      onEdit={handleEdit}
-                      onTogglePaid={handleTogglePaid}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
+              {/* Desktop view - Table */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Numer</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Klient</TableHead>
+                      <TableHead className="text-right">Kwota brutto</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-[150px]">Akcje</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {invoices.map((invoice) => (
+                      <InvoiceRow
+                        key={invoice.id}
+                        invoice={invoice}
+                        onDownloadPDF={handleDownloadPDF}
+                        onEdit={handleEdit}
+                        onTogglePaid={handleTogglePaid}
+                        onDelete={handleDelete}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile view - Cards */}
+              <div className="md:hidden space-y-3">
+                {invoices.map((invoice) => (
+                  <InvoiceMobileCard
+                    key={invoice.id}
+                    invoice={invoice}
+                    onDownloadPDF={handleDownloadPDF}
+                    onEdit={handleEdit}
+                    onTogglePaid={handleTogglePaid}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
 
               {/* Paginacja */}
               {totalPages > 1 && (

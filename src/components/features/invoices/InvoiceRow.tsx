@@ -79,7 +79,7 @@ export function InvoiceRow({ invoice, onDownloadPDF, onEdit, onTogglePaid, onDel
 
         {/* Akcje */}
         <TableCell>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {/* Toggle Paid */}
             <Button
               variant="ghost"
