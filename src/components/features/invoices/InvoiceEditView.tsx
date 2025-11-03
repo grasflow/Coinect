@@ -9,6 +9,7 @@ import { InvoiceItemsEditor } from "./InvoiceItemsEditor";
 import { InvoiceSettingsPanel } from "./InvoiceSettingsPanel";
 import { InvoiceSummaryPanel } from "./InvoiceSummaryPanel";
 import { useInvoiceEditState, useUpdateInvoice } from "@/components/hooks/useInvoiceEdit";
+import { safeFormatDateToISO } from "@/lib/helpers/invoice.helpers";
 import type { InvoiceItemViewModel, InvoiceSettingsViewModel } from "./types";
 import QueryProvider from "@/components/QueryProvider";
 
@@ -62,9 +63,19 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
     if (!settings || !initialState) return;
 
     try {
+      // Bezpiecznie formatuj daty
+      const issueDate = safeFormatDateToISO(settings.issueDate);
+      const saleDate = safeFormatDateToISO(settings.saleDate);
+      const dueDate = safeFormatDateToISO(settings.dueDate);
+
+      if (!issueDate || !saleDate) {
+        toast.error("Nieprawidłowe daty wystawienia lub sprzedaży");
+        return;
+      }
+
       await updateMutation.mutateAsync({
-        issue_date: settings.issueDate.toISOString().split("T")[0],
-        sale_date: settings.saleDate.toISOString().split("T")[0],
+        issue_date: issueDate,
+        sale_date: saleDate,
         vat_rate: settings.vatRate,
         items: items.map((item) => ({
           position: item.position,
@@ -74,7 +85,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
         })),
         custom_exchange_rate: settings.exchangeRate || null,
         notes: settings.notes || null,
-        due_date: settings.dueDate?.toISOString().split("T")[0] || null,
+        due_date: dueDate,
         invoice_number: settings.invoiceNumber,
       });
 

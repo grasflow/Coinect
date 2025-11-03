@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addDays, addMonths } from "date-fns";
+import { safeFormatDateToISO } from "@/lib/helpers/invoice.helpers";
 
 interface PaymentTermSelectorProps {
   issueDate: Date;
@@ -28,7 +29,7 @@ const PAYMENT_TERMS = [
 ];
 
 function formatDate(date: Date): string {
-  return date.toISOString().split("T")[0];
+  return safeFormatDateToISO(date) || new Date().toISOString().split("T")[0];
 }
 
 export function PaymentTermSelector({ issueDate, dueDate, paymentTermDays, onChange }: PaymentTermSelectorProps) {

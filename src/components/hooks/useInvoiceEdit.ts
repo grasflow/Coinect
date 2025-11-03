@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { differenceInDays, differenceInMonths } from "date-fns";
+import { safeParseDate } from "@/lib/helpers/invoice.helpers";
 import type {
   InvoiceEditState,
   InvoiceItemViewModel,
@@ -136,13 +137,14 @@ export function useInvoiceEditState(invoiceId: string): {
     originalUnitPrice: parseFloat(item.unit_price),
   }));
 
-  // Konwersja ustawień
-  const issueDate = new Date(invoice.issue_date);
-  const dueDate = invoice.due_date ? new Date(invoice.due_date) : undefined;
+  // Konwersja ustawień - bezpiecznie parsuj daty
+  const issueDate = safeParseDate(invoice.issue_date);
+  const dueDate = invoice.due_date ? safeParseDate(invoice.due_date, undefined) : undefined;
+  const saleDate = safeParseDate(invoice.sale_date, issueDate);
 
   const settings: InvoiceSettingsViewModel = {
     issueDate,
-    saleDate: new Date(invoice.sale_date),
+    saleDate,
     vatRate: parseFloat(invoice.vat_rate),
     exchangeRate: invoice.exchange_rate ? parseFloat(invoice.exchange_rate) : null,
     isCustomExchangeRate: invoice.is_custom_exchange_rate || false,

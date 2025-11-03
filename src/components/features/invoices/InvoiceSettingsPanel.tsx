@@ -9,6 +9,7 @@ import { InfoIcon } from "lucide-react";
 import type { InvoiceSettingsPanelProps } from "./types";
 import { useExchangeRate } from "@/components/hooks/useExchangeRate";
 import { PaymentTermSelector } from "./PaymentTermSelector";
+import { safeFormatDateToISO } from "@/lib/helpers/invoice.helpers";
 
 const VAT_RATES = [
   { value: 23, label: "23%" },
@@ -18,7 +19,7 @@ const VAT_RATES = [
 ];
 
 function formatDate(date: Date): string {
-  return date.toISOString().split("T")[0];
+  return safeFormatDateToISO(date) || new Date().toISOString().split("T")[0];
 }
 
 export const InvoiceSettingsPanel = memo(

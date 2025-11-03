@@ -396,7 +396,7 @@ export async function generateInvoicePDF({ invoice, profile }: GeneratePDFOption
     py += 6;
   });
 
-  y = Math.max(summaryY + summaryH, py) + 5.5;
+  y = Math.max(summaryY + summaryH, py) + 3;
 
   // Słownie kwota do zapłaty - poniżej ramki podsumowania
   const amountInWords = numberToWords(gross);

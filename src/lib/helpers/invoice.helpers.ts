@@ -110,6 +110,51 @@ export function generateInvoiceNumber(lastInvoiceNumber: string | null, invoiceD
 }
 
 /**
+ * Sprawdza czy podany string reprezentuje poprawną datę
+ * @param dateString - string do sprawdzenia
+ * @returns true jeśli data jest poprawna
+ */
+export function isValidDateString(dateString: string | null | undefined): boolean {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  return !isNaN(date.getTime());
+}
+
+/**
+ * Bezpiecznie konwertuje string na obiekt Date
+ * @param dateString - string z datą
+ * @param fallback - domyślna data jeśli string jest niepoprawny
+ * @returns obiekt Date lub fallback
+ */
+export function safeParseDate(dateString: string | null | undefined, fallback: Date = new Date()): Date {
+  if (!dateString) return fallback;
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? fallback : date;
+}
+
+/**
+ * Bezpiecznie konwertuje obiekt Date na string ISO (YYYY-MM-DD)
+ * @param date - obiekt Date do konwersji
+ * @param fallback - domyślny string jeśli data jest niepoprawna
+ * @returns string w formacie YYYY-MM-DD
+ */
+export function safeFormatDateToISO(date: Date | null | undefined, fallback?: string): string | null {
+  if (!date) return fallback || null;
+
+  try {
+    // Sprawdź czy data jest poprawna
+    if (isNaN(date.getTime())) {
+      return fallback || null;
+    }
+
+    // Użyj toISOString() i wytnij część z czasem
+    return date.toISOString().split("T")[0];
+  } catch {
+    return fallback || null;
+  }
+}
+
+/**
  * Konwertuje kwotę na słowa (po polsku)
  * @param amount - kwota do konwersji
  * @param currency - waluta (PLN, EUR, USD)

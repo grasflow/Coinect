@@ -10,6 +10,7 @@ import { useInvoiceGenerator } from "@/components/hooks/useInvoiceGenerator";
 import { useGenerateInvoice } from "@/components/hooks/useGenerateInvoice";
 import { useTimeEntries } from "@/components/hooks/useTimeEntries";
 import { useClientsWithUnbilledTimeEntries } from "@/components/hooks/useClientsWithUnbilledTimeEntries";
+import { safeFormatDateToISO } from "@/lib/helpers/invoice.helpers";
 import { ClientSelector } from "./ClientSelector";
 import { UnbilledTimeEntriesSelector } from "./UnbilledTimeEntriesSelector";
 import { ManualItemsEditor } from "./ManualItemsEditor";
@@ -180,14 +181,24 @@ function InvoiceGeneratorContent() {
     }
 
     try {
+      // Bezpiecznie formatuj daty
+      const issueDate = safeFormatDateToISO(state.settings.issueDate);
+      const saleDate = safeFormatDateToISO(state.settings.saleDate);
+      const dueDate = safeFormatDateToISO(state.settings.dueDate);
+
+      if (!issueDate || !saleDate) {
+        toast.error("Nieprawidłowe daty wystawienia lub sprzedaży");
+        return;
+      }
+
       const payload = {
         client_id: state.clientId,
-        issue_date: state.settings.issueDate.toISOString().split("T")[0],
-        sale_date: state.settings.saleDate.toISOString().split("T")[0],
+        issue_date: issueDate,
+        sale_date: saleDate,
         vat_rate: state.settings.vatRate,
         custom_exchange_rate: state.settings.exchangeRate || null,
         notes: state.settings.notes || undefined,
-        due_date: state.settings.dueDate?.toISOString().split("T")[0] || undefined,
+        due_date: dueDate || undefined,
         // Dodaj dane warunkowo w zależności od trybu
         ...(state.invoiceMode === "time_entries" && {
           time_entry_ids: state.selectedTimeEntryIds,
