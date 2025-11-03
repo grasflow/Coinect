@@ -195,9 +195,7 @@ function InvoiceEditContent({ invoiceId }: InvoiceEditViewProps) {
                 </h1>
                 {isModified && <Badge className="shrink-0">Niezapisane zmiany</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground truncate sm:text-base">
-                Klient: {invoice.client?.name}
-              </p>
+              <p className="text-sm text-muted-foreground truncate sm:text-base">Klient: {invoice.client?.name}</p>
             </div>
           </div>
         </div>

@@ -481,8 +481,30 @@ function numberToWords(amount: number): string {
     "osiemnaście",
     "dziewiętnaście",
   ];
-  const tens = ["", "", "dwadzieścia", "trzydzieści", "czterdzieści", "pięćdziesiąt", "sześćdziesiąt", "siedemdziesiąt", "osiemdziesiąt", "dziewięćdziesiąt"];
-  const hundreds = ["", "sto", "dwieście", "trzysta", "czterysta", "pięćset", "sześćset", "siedemset", "osiemset", "dziewięćset"];
+  const tens = [
+    "",
+    "",
+    "dwadzieścia",
+    "trzydzieści",
+    "czterdzieści",
+    "pięćdziesiąt",
+    "sześćdziesiąt",
+    "siedemdziesiąt",
+    "osiemdziesiąt",
+    "dziewięćdziesiąt",
+  ];
+  const hundreds = [
+    "",
+    "sto",
+    "dwieście",
+    "trzysta",
+    "czterysta",
+    "pięćset",
+    "sześćset",
+    "siedemset",
+    "osiemset",
+    "dziewięćset",
+  ];
 
   // Rozdziel na złotówki i grosze
   const [zlote, grosze] = amount.toFixed(2).split(".").map(Number);
